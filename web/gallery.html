@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Дудлы СберKids — галерея</title>
+  <link rel="stylesheet" href="css/gallery.css">
+</head>
+<body>
+  <header class="top">
+    <div class="top-inner">
+      <p class="eyebrow">СберKids · трек «Приколы»</p>
+      <h1>Календарь дудлов</h1>
+      <p class="lead">Маленькие праздники поверх главного экрана. Каждый дудл — запись в&nbsp;manifest.json и&nbsp;папка с&nbsp;картинками на CDN, без релиза приложения.</p>
+      <dl class="stats" id="stats"></dl>
+      <a class="back" href="index.html">← К прототипу</a>
+    </div>
+  </header>
+  <main id="seasons" class="seasons"></main>
+
+  <template id="card-tpl">
+    <article class="card">
+      <div class="stage">
+        <div class="stage-avatar">
+          <svg class="face" viewBox="0 0 44 44" aria-hidden="true">
+            <circle cx="22" cy="22" r="22" fill="#2e3330"/>
+            <path d="M9 20 L11 6 L19 13 Z M35 20 L33 6 L25 13 Z" fill="#4c524e"/>
+            <path d="M12 16 L13 10 L16 13 Z M32 16 L31 10 L28 13 Z" fill="#e89aac"/>
+            <circle cx="22" cy="25" r="13" fill="#4c524e"/>
+            <ellipse cx="17" cy="23" rx="2.3" ry="3.1" fill="#c3f73a"/>
+            <ellipse cx="27" cy="23" rx="2.3" ry="3.1" fill="#c3f73a"/>
+            <path d="M20.4 28 h3.2 l-1.6 1.7 z" fill="#ff9fb0"/>
+          </svg>
+        </div>
+        <img class="stage-hero" alt="">
+      </div>
+      <div class="body">
+        <div class="chips"><span class="chip chip--date"></span><span class="chip chip--prio"></span></div>
+        <h3 class="title"></h3>
+        <ul class="triggers"></ul>
+        <blockquote class="fact"></blockquote>
+        <div class="assets"></div>
+        <p class="meta"></p>
+        <a class="run" target="_self">Запустить в прототипе</a>
+      </div>
+    </article>
+  </template>
+
+  <script src="js/labels.js"></script>
+  <script src="js/gallery.js"></script>
+</body>
+</html>

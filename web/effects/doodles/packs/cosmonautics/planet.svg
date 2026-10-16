@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+<defs><radialGradient id="p" cx="38%" cy="32%" r="72%"><stop offset="0" stop-color="#e5dbff"/><stop offset="0.55" stop-color="#9775fa"/><stop offset="1" stop-color="#5f3dc4"/></radialGradient><linearGradient id="ring" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff4e6"/><stop offset="0.5" stop-color="#ffc078"/><stop offset="1" stop-color="#e8590c"/></linearGradient></defs>
+<ellipse cx="32" cy="34" rx="28" ry="8" transform="rotate(-20 32 32)" fill="none" stroke="url(#ring)" stroke-width="4.2"/>
+<circle cx="32" cy="32" r="16.5" fill="url(#p)"/>
+<path d="M17.5 26 Q32 21.5 46.5 27" stroke="#b197fc" stroke-opacity=".7" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M16.5 36.5 Q32 33 47.5 38" stroke="#4c2ec4" stroke-opacity=".35" stroke-width="3" fill="none" stroke-linecap="round"/>
+<ellipse cx="26" cy="24" rx="4.5" ry="2.8" transform="rotate(-30 26 24)" fill="#fff" fill-opacity=".55"/>
+<path d="M4 34 A28 8 0 0 0 60 34" transform="rotate(-20 32 32)" fill="none" stroke="url(#ring)" stroke-width="4.2"/>
+</svg>

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="50" viewBox="0 0 400 50">
+<defs><radialGradient id="br" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#ffc9c9"/><stop offset="0.55" stop-color="#fa5252"/><stop offset="1" stop-color="#a61e1e"/></radialGradient><radialGradient id="by" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#fff9db"/><stop offset="0.55" stop-color="#fcc419"/><stop offset="1" stop-color="#e67700"/></radialGradient><radialGradient id="bg" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#d3f9d8"/><stop offset="0.55" stop-color="#51cf66"/><stop offset="1" stop-color="#2b8a3e"/></radialGradient><radialGradient id="bb" cx="40%" cy="30%" r="75%"><stop offset="0" stop-color="#d0ebff"/><stop offset="0.55" stop-color="#4dabf7"/><stop offset="1" stop-color="#1864ab"/></radialGradient><linearGradient id="cap" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#dee2e6"/><stop offset="1" stop-color="#495057"/></linearGradient></defs>
+<path d="M0 8 Q50 38 100 8 Q150 38 200 8 Q250 38 300 8 Q350 38 400 8" stroke="#2b8a3e" stroke-width="3.2" fill="none"/>
+<path d="M0 7 Q50 37 100 7 Q150 37 200 7 Q250 37 300 7 Q350 37 400 7" stroke="#8ce99a" stroke-opacity=".5" stroke-width="1" fill="none"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.00s" repeatCount="indefinite"/><circle cx="25" cy="32" r="11" fill="#fa5252" fill-opacity=".22"/><ellipse cx="25" cy="32" rx="6.2" ry="9" fill="url(#br)"/><ellipse cx="23" cy="28.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="21.8" y="19" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.17s" repeatCount="indefinite"/><circle cx="50" cy="36" r="11" fill="#fcc419" fill-opacity=".22"/><ellipse cx="50" cy="36" rx="6.2" ry="9" fill="url(#by)"/><ellipse cx="48" cy="32.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="46.8" y="23" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.34s" repeatCount="indefinite"/><circle cx="75" cy="32" r="11" fill="#51cf66" fill-opacity=".22"/><ellipse cx="75" cy="32" rx="6.2" ry="9" fill="url(#bg)"/><ellipse cx="73" cy="28.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="71.8" y="19" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.51s" repeatCount="indefinite"/><circle cx="125" cy="32" r="11" fill="#4dabf7" fill-opacity=".22"/><ellipse cx="125" cy="32" rx="6.2" ry="9" fill="url(#bb)"/><ellipse cx="123" cy="28.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="121.8" y="19" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.68s" repeatCount="indefinite"/><circle cx="150" cy="36" r="11" fill="#fa5252" fill-opacity=".22"/><ellipse cx="150" cy="36" rx="6.2" ry="9" fill="url(#br)"/><ellipse cx="148" cy="32.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="146.8" y="23" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.85s" repeatCount="indefinite"/><circle cx="175" cy="32" r="11" fill="#fcc419" fill-opacity=".22"/><ellipse cx="175" cy="32" rx="6.2" ry="9" fill="url(#by)"/><ellipse cx="173" cy="28.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="171.8" y="19" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="1.02s" repeatCount="indefinite"/><circle cx="225" cy="32" r="11" fill="#51cf66" fill-opacity=".22"/><ellipse cx="225" cy="32" rx="6.2" ry="9" fill="url(#bg)"/><ellipse cx="223" cy="28.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="221.8" y="19" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="1.19s" repeatCount="indefinite"/><circle cx="250" cy="36" r="11" fill="#4dabf7" fill-opacity=".22"/><ellipse cx="250" cy="36" rx="6.2" ry="9" fill="url(#bb)"/><ellipse cx="248" cy="32.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="246.8" y="23" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.16s" repeatCount="indefinite"/><circle cx="275" cy="32" r="11" fill="#fa5252" fill-opacity=".22"/><ellipse cx="275" cy="32" rx="6.2" ry="9" fill="url(#br)"/><ellipse cx="273" cy="28.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="271.8" y="19" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.33s" repeatCount="indefinite"/><circle cx="325" cy="32" r="11" fill="#fcc419" fill-opacity=".22"/><ellipse cx="325" cy="32" rx="6.2" ry="9" fill="url(#by)"/><ellipse cx="323" cy="28.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="321.8" y="19" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.50s" repeatCount="indefinite"/><circle cx="350" cy="36" r="11" fill="#51cf66" fill-opacity=".22"/><ellipse cx="350" cy="36" rx="6.2" ry="9" fill="url(#bg)"/><ellipse cx="348" cy="32.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="346.8" y="23" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+<g><animate attributeName="opacity" values="1;.45;1" dur="1.2s" begin="0.67s" repeatCount="indefinite"/><circle cx="375" cy="32" r="11" fill="#4dabf7" fill-opacity=".22"/><ellipse cx="375" cy="32" rx="6.2" ry="9" fill="url(#bb)"/><ellipse cx="373" cy="28.5" rx="1.7" ry="3.2" fill="#fff" fill-opacity=".8"/></g>
+<rect x="371.8" y="19" width="6.4" height="5.5" rx="1.5" fill="url(#cap)"/>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+<defs><radialGradient id="lens" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#ffdeeb"/><stop offset="0.45" stop-color="#f06595"/><stop offset="1" stop-color="#862e9c"/></radialGradient><linearGradient id="frame" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3bf"/><stop offset="1" stop-color="#f59f00"/></linearGradient></defs>
+<path d="M14 52 L4 48 M106 52 L116 48" stroke="#f8f9fa" stroke-opacity=".4" stroke-width="6" stroke-linecap="round"/>
+<path d="M14 52 L4 48 M106 52 L116 48" stroke="#fab005" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M55 55 Q60 49 65 55" fill="none" stroke="#fab005" stroke-width="4" stroke-linecap="round"/>
+<g stroke="url(#frame)" stroke-width="4" stroke-linejoin="round" fill="url(#lens)">
+<path d="M36.0 36.0 L42.5 51.1 L58.8 52.6 L46.5 63.4 L50.1 79.4 L36.0 71.0 L21.9 79.4 L25.5 63.4 L13.2 52.6 L29.5 51.1 Z"/><path d="M84.0 36.0 L90.5 51.1 L106.8 52.6 L94.5 63.4 L98.1 79.4 L84.0 71.0 L69.9 79.4 L73.5 63.4 L61.2 52.6 L77.5 51.1 Z"/></g>
+<ellipse cx="30" cy="54" rx="5" ry="2.6" fill="#fff" fill-opacity=".75" transform="rotate(-30 30 54)"/>
+<ellipse cx="78" cy="54" rx="5" ry="2.6" fill="#fff" fill-opacity=".75" transform="rotate(-30 78 54)"/>
+</svg>

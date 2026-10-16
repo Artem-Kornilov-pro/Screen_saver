@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="150" height="60" viewBox="0 0 150 60">
+<defs><linearGradient id="deck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d0bfff"/><stop offset="0.5" stop-color="#845ef7"/><stop offset="1" stop-color="#5f3dc4"/></linearGradient><radialGradient id="wheel" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff9db"/><stop offset="0.5" stop-color="#ffd43b"/><stop offset="1" stop-color="#e67700"/></radialGradient><linearGradient id="truck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9ecef"/><stop offset="1" stop-color="#868e96"/></linearGradient></defs>
+<path d="M44 30 L52 38 H60 L68 30 Z M82 30 L90 38 H98 L106 30 Z" fill="url(#truck)"/>
+<circle cx="50" cy="44" r="9" fill="url(#wheel)"/><circle cx="50" cy="44" r="3" fill="#e67700"/>
+<circle cx="100" cy="44" r="9" fill="url(#wheel)"/><circle cx="100" cy="44" r="3" fill="#e67700"/>
+<path d="M6 12 Q10 24 26 24 H124 Q140 24 144 12 Q146 8 142 9 Q136 18 124 18 H26 Q14 18 8 9 Q4 8 6 12 Z" fill="url(#deck)"/>
+<path d="M40 21 Q52 15 62 21 Q72 27 84 21 Q96 15 108 21" fill="none" stroke="#ffd43b" stroke-width="3" stroke-linecap="round"/>
+<path d="M20 20 H48" stroke="#fff" stroke-opacity=".55" stroke-width="2" stroke-linecap="round"/>
+</svg>

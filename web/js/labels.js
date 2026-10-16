@@ -1,0 +1,71 @@
+/* Человекочитаемые подписи для записей манифеста (отладка и галерея). */
+(function (global) {
+  'use strict';
+
+  var MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+  var WEEKDAYS = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
+  var SEASONS = { winter: 'Зима', spring: 'Весна', summer: 'Лето', autumn: 'Осень', special: 'Особые дни' };
+  var ANCHORS = { avatar: 'аватару', 'card-thumb': 'карте', paw: 'лапке', piggy: 'копилке' };
+
+  function mdLabel(md) {
+    var p = md.split('-');
+    return +p[1] + ' ' + MONTHS[+p[0] - 1];
+  }
+
+  function when(w) {
+    switch (w && w.type) {
+      case 'fixed': return mdLabel(w.md);
+      case 'range': return mdLabel(w.from) + ' — ' + mdLabel(w.to);
+      case 'nth_weekday':
+        return (w.n > 0 ? w.n + '-й ' : 'последний ') + WEEKDAYS[w.weekday - 1] + ' ' + MONTHS[w.month - 1];
+      case 'dates': return 'по списку дат';
+      case 'birthday': return 'в день рождения';
+      default: return '—';
+    }
+  }
+
+  function triggers(effect) {
+    var t = effect.trigger || 'tap';
+    return (Array.isArray(t) ? t : [t]).map(function (k) {
+      if (k === 'tap') return 'Тап по ' + (ANCHORS[effect.anchor || 'avatar'] || effect.anchor);
+      if (k === 'pull') return 'Потянуть список';
+      if (k === 'shake') return 'Тряхнуть телефон';
+      return k;
+    });
+  }
+
+  // Лестница комбо: тап → быстрые тапы → финальный жест
+  function combo(effect) {
+    var c = effect.combo || {};
+    return [
+      'Тап по ' + (ANCHORS[effect.anchor || 'avatar'] || effect.anchor),
+      (c.taps || 3) + ' быстрых тапа',
+      c.finale === 'pull' ? 'Потянуть список' : 'Тряхнуть телефон'
+    ];
+  }
+
+  // Дата, на которую дудл точно сработает: для показа в прототипе
+  function demoDate(w, year) {
+    if (!w) return null;
+    if (w.type === 'fixed') return year + '-' + w.md;
+    if (w.type === 'range') {
+      // Второй день диапазона: первый часто занят праздником (1 июня, 1 сентября)
+      var p = w.from.split('-');
+      var d = new Date(year, +p[0] - 1, +p[1] + 1);
+      return year + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+    }
+    if (w.type === 'dates' && w.list && w.list.length) return w.list[0];
+    // День рождения берётся из профиля, для демо ставим его на свободную дату
+    if (w.type === 'birthday') return year + '-11-15';
+    return null;
+  }
+
+  global.DoodleLabels = {
+    when: when,
+    triggers: triggers,
+    combo: combo,
+    season: function (s) { return SEASONS[s] || ''; },
+    demoDate: demoDate
+  };
+})(window);

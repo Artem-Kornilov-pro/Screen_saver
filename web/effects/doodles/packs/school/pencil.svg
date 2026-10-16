@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="100" viewBox="0 0 24 100">
+<defs><linearGradient id="body" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff3bf"/><stop offset="0.45" stop-color="#fcc419"/><stop offset="1" stop-color="#e67700"/></linearGradient><linearGradient id="wood" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffe8cc"/><stop offset="1" stop-color="#e8a87c"/></linearGradient><linearGradient id="fer" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f1f3f5"/><stop offset="1" stop-color="#868e96"/></linearGradient><linearGradient id="er" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffdeeb"/><stop offset="1" stop-color="#e64980"/></linearGradient></defs>
+<path d="M5 30 L19 30 L12 4 Z" fill="url(#wood)"/>
+<path d="M9.8 12 L14.2 12 L12 4 Z" fill="#343a40"/>
+<rect x="5" y="30" width="14" height="52" fill="url(#body)"/>
+<path d="M12 30 V82" stroke="#e67700" stroke-opacity=".5" stroke-width="1.2"/>
+<path d="M7.5 34 V78" stroke="#fff" stroke-opacity=".7" stroke-width="1.8" stroke-linecap="round"/>
+<rect x="4.5" y="80" width="15" height="8" rx="1.5" fill="url(#fer)"/>
+<rect x="5" y="88" width="14" height="10" rx="4" fill="url(#er)"/>
+</svg>

@@ -3,78 +3,108 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Праздничный слой — Новый год</title>
+  <title>СберKids — праздничный слой и дудлы</title>
   <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
-  <div class="app" id="app">
+<div class="stage">
+  <div class="phone" id="app">
 
-    <!-- Главный экран: макет приложения, поверх которого идёт эффект -->
-    <main class="screen" id="screen-main">
-      <header class="topbar">
-        <div class="avatar" aria-hidden="true">М</div>
-        <div class="greeting">
-          <span class="greeting-small">Привет,</span>
-          <span class="greeting-name">Маша!</span>
-        </div>
-        <button class="icon-button" type="button" aria-label="Уведомления" data-toast="Новых уведомлений нет">
-          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 3a6 6 0 0 0-6 6v3.6L4.5 15.5h15L18 12.6V9a6 6 0 0 0-6-6Zm0 18a2.5 2.5 0 0 0 2.4-2h-4.8A2.5 2.5 0 0 0 12 21Z" fill="currentColor"/></svg>
+    <!-- Главный экран: макет приложения, поверх которого идут эффекты -->
+    <main class="screen screen-main" id="screen-main">
+      <div class="statusbar">
+        <span>09:32</span>
+        <span class="sb-icons">
+          <svg width="18" height="12" viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="7" rx="1"/><rect x="10" y="2" width="3" height="10" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg>
+          <svg width="26" height="12" viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="2"/><rect x="23.5" y="4" width="2" height="4" rx="1" opacity=".5"/></svg>
+        </span>
+      </div>
+
+      <header class="header">
+        <button class="avatar" type="button" data-anchor="avatar" aria-label="Профиль">
+          <svg class="face" viewBox="0 0 44 44" aria-hidden="true">
+            <rect width="44" height="44" fill="#2e3330"/>
+            <path d="M9 20 L11 6 L19 13 Z M35 20 L33 6 L25 13 Z" fill="#4c524e"/>
+            <path d="M12 16 L13 10 L16 13 Z M32 16 L31 10 L28 13 Z" fill="#e89aac"/>
+            <circle cx="22" cy="25" r="13" fill="#4c524e"/>
+            <ellipse cx="17" cy="23" rx="2.3" ry="3.1" fill="#c3f73a"/>
+            <ellipse cx="27" cy="23" rx="2.3" ry="3.1" fill="#c3f73a"/>
+            <path d="M20.4 28 h3.2 l-1.6 1.7 z" fill="#ff9fb0"/>
+            <path d="M22 29.7 q-1.8 2.2 -3.8 1 M22 29.7 q1.8 2.2 3.8 1" stroke="#2e3330" stroke-width="1" fill="none" stroke-linecap="round"/>
+          </svg>
         </button>
       </header>
 
-      <section class="balance-card">
-        <span class="balance-label">Баланс</span>
-        <span class="balance-value">1 250 ₽</span>
-        <span class="balance-card-number">Детская карта •• 4821</span>
-      </section>
-
-      <nav class="actions" aria-label="Действия">
-        <button class="action" type="button" data-toast="Пополнение в макете не работает">
-          <span class="action-icon"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5Z" fill="currentColor"/></svg></span>
-          Пополнить
-        </button>
-        <button class="action" type="button" data-open="transfer">
-          <span class="action-icon"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 11h11.2l-4.6-4.6L13 5l7 7-7 7-1.4-1.4 4.6-4.6H5v-2Z" fill="currentColor"/></svg></span>
-          Перевести
-        </button>
-        <button class="action" type="button" data-toast="Копилка в макете не работает">
-          <span class="action-icon"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 4c4.4 0 8 2.9 8 6.5 0 2-1.1 3.8-2.8 5V19h-3v-2.1a10 10 0 0 1-4.4 0V19h-3v-3.5C5.1 14.3 4 12.5 4 10.5 4 6.9 7.6 4 12 4Zm3 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z" fill="currentColor"/></svg></span>
-          Копилка
-        </button>
-        <button class="action" type="button" data-toast="Игры в макете не работают">
-          <span class="action-icon"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M7 7h10a5 5 0 0 1 0 10c-1.6 0-2.4-.8-3.2-1.6h-3.6C9.4 16.2 8.6 17 7 17A5 5 0 0 1 7 7Zm0 3v1.5H5.5v1H7V14h1v-1.5h1.5v-1H8V10H7Zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm2 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z" fill="currentColor"/></svg></span>
-          Игры
-        </button>
-      </nav>
-
       <section class="card">
-        <h2 class="card-title">Мои дела</h2>
-        <ul class="tasks">
-          <li><label class="task"><input type="checkbox"><span class="task-text">Убрать в комнате</span><span class="task-reward">+50 ₽</span></label></li>
-          <li><label class="task"><input type="checkbox"><span class="task-text">Сделать уроки</span><span class="task-reward">+30 ₽</span></label></li>
-          <li><label class="task"><input type="checkbox"><span class="task-text">Погулять с собакой</span><span class="task-reward">+40 ₽</span></label></li>
-        </ul>
-      </section>
-
-      <section class="card">
-        <h2 class="card-title">Копилка</h2>
-        <div class="goal">
-          <span class="goal-name">Велосипед</span>
-          <span class="goal-amount">3 400 из 12 000 ₽</span>
+        <div class="card-main">
+          <div>
+            <div class="card-title">СберКарта</div>
+            <div class="balance">35 688 <span>₽</span></div>
+          </div>
+          <span class="card-thumb-wrap" data-anchor="card-thumb">
+            <svg class="card-thumb" viewBox="0 0 76 50" aria-hidden="true">
+              <rect width="76" height="50" fill="#8ad62a"/>
+              <path d="M-4 12 C10 2 20 22 34 12 S58 2 80 12" stroke="#3fa31a" stroke-width="6" fill="none"/>
+              <path d="M-4 28 C10 18 20 38 34 28 S58 18 80 28" stroke="#c9f54a" stroke-width="6" fill="none"/>
+              <path d="M-4 44 C10 34 20 54 34 44 S58 34 80 44" stroke="#3fa31a" stroke-width="6" fill="none"/>
+            </svg>
+          </span>
         </div>
-        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="12000" aria-valuenow="3400">
-          <span class="progress-fill" style="width: 28%"></span>
+        <div class="card-bonus">
+          <span>Бонусы Спасибо</span>
+          <span class="bonus-val">55 <i>С</i></span>
         </div>
       </section>
+
+      <section class="tiles">
+        <button class="tile tile--narrow" type="button" data-toast="Открываем «QR»">
+          <span>QR</span>
+          <i class="ic ic--purple"><svg viewBox="0 0 20 20"><rect x="2" y="2" width="6" height="6" rx="1"/><rect x="12" y="2" width="6" height="6" rx="1"/><rect x="2" y="12" width="6" height="6" rx="1"/><rect x="12" y="12" width="3" height="3"/><rect x="15" y="15" width="3" height="3"/></svg></i>
+        </button>
+        <button class="tile" type="button" data-open="transfer">
+          <span>Скинуть<br>денег</span>
+          <i class="ic ic--blue"><svg viewBox="0 0 20 20"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
+        </button>
+        <button class="tile" type="button" data-toast="Открываем «Пополнить мобилку»">
+          <span>Пополнить<br>мобилку</span>
+          <i class="ic ic--green"><svg viewBox="0 0 20 20"><rect x="6" y="2" width="8" height="16" rx="2"/></svg></i>
+        </button>
+      </section>
+
+      <h2 class="h2">История</h2>
+      <ul class="ops">
+        <li class="op">
+          <i class="op-ic"><svg viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 5l7 6 7-6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></i>
+          <div class="op-body"><b>Уведомление от банка</b><small>Для безопасности ваших средств никому не сообщайте код</small></div>
+        </li>
+        <li class="op">
+          <i class="op-ic op-ic--green">М</i>
+          <div class="op-body"><b>Перевод от мамы</b><small>Карманные деньги</small></div>
+          <span class="op-sum op-sum--plus">+500 ₽</span>
+        </li>
+        <li class="op">
+          <i class="op-ic op-ic--orange">Ш</i>
+          <div class="op-body"><b>Школьная столовая</b><small>Покупка</small></div>
+          <span class="op-sum">−120 ₽</span>
+        </li>
+        <li class="op">
+          <i class="op-ic op-ic--blue">К</i>
+          <div class="op-body"><b>Книжный магазин</b><small>Покупка</small></div>
+          <span class="op-sum">−390 ₽</span>
+        </li>
+      </ul>
     </main>
 
-    <!-- Экран перевода: критичный, праздничный слой здесь запрещён -->
+    <!-- Экран перевода: критичный, праздничный слой и дудлы здесь запрещены -->
     <section class="screen" id="screen-transfer" hidden>
-      <header class="topbar">
-        <button class="icon-button" type="button" aria-label="Назад" data-back>
+      <div class="statusbar">
+        <span>09:32</span>
+      </div>
+      <header class="header header--back">
+        <button class="back-button" type="button" aria-label="Назад" data-back>
           <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M19 11H7.8l4.6-4.6L11 5l-7 7 7 7 1.4-1.4L7.8 13H19v-2Z" fill="currentColor"/></svg>
         </button>
-        <h1 class="screen-title">Перевод</h1>
+        <h1 class="screen-title">Скинуть денег</h1>
       </header>
 
       <section class="card form">
@@ -89,39 +119,71 @@
         <button class="primary-button" type="button" data-toast="Это макет, деньги не уходят">Перевести</button>
       </section>
 
-      <p class="hint">На экранах оплаты, перевода, реквизитов и лимитов праздничный слой не показывается.</p>
+      <p class="screen-hint">На экранах оплаты, перевода, реквизитов и лимитов праздничный слой и дудлы не показываются.</p>
     </section>
+
+    <!-- Индикатор pull-to-refresh: жест приложения, дудл только подписывается на него -->
+    <div class="ptr" id="ptr" aria-hidden="true"><span class="ptr-spinner"></span></div>
 
     <!-- Праздничный слой. Не перехватывает касания. -->
     <canvas class="seasonal-layer" id="seasonal-layer" aria-hidden="true"></canvas>
     <span class="safe-top-probe" id="safe-top-probe" aria-hidden="true"></span>
 
-    <div class="toast" id="toast" role="status" hidden></div>
+    <!-- Слой дудлов: стикеры, частицы и плашка факта. Тоже пропускает касания. -->
+    <div class="doodle-layer" id="doodle-layer" aria-hidden="true"></div>
+    <div class="sr-only" id="doodle-live" aria-live="polite"></div>
 
-    <!-- Отладка для демо: подмена даты и ветер без датчика -->
+    <nav class="tabbar" id="tabbar">
+      <button class="tab tab--active" type="button"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Главный</span></button>
+      <button class="tab" type="button" data-anchor="piggy"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="8" ry="6"/><rect x="10" y="5" width="4" height="3" rx="1"/></svg><span>Копилки</span></button>
+      <button class="tab tab--paw" type="button" data-anchor="paw" aria-label="СберКот">
+        <svg viewBox="0 0 32 32"><ellipse cx="16" cy="20" rx="7" ry="6"/><circle cx="8" cy="13" r="3"/><circle cx="13" cy="8.5" r="3"/><circle cx="19" cy="8.5" r="3"/><circle cx="24" cy="13" r="3"/></svg>
+      </button>
+      <button class="tab" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M8.5 12l2.5 2.5 4.5-5" stroke="#1c1f1e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Дела</span></button>
+      <button class="tab" type="button"><svg viewBox="0 0 24 24"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z"/></svg><span>Контент</span></button>
+    </nav>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <!-- На телефоне панель отладки открывается шестерёнкой, на ноутбуке она всегда рядом с телефоном -->
     <button class="debug-toggle" id="debug-toggle" type="button" aria-label="Отладка эффекта" aria-expanded="false">
       <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.3 7.3 0 0 0-1.7-1L15 3.5h-4L10.7 6a7.3 7.3 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6a7.5 7.5 0 0 0 0 2l-2 1.6 2 3.4 2.4-1c.5.4 1.1.7 1.7 1l.3 2.5h4l.3-2.5c.6-.3 1.2-.6 1.7-1l2.4 1 2-3.4-2-1.6ZM13 15a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" fill="currentColor" transform="translate(-1 0)"/></svg>
     </button>
-    <div class="debug-panel" id="debug-panel" hidden>
-      <h2 class="debug-title">Отладка эффекта</h2>
-      <label class="debug-row">
-        <input type="checkbox" id="debug-override">
-        <span>Подменить дату</span>
-        <input type="date" id="debug-date">
-      </label>
-      <label class="debug-row debug-row-wide">
-        <span>Наклон (если нет датчика)</span>
-        <input type="range" id="debug-tilt" min="-1" max="1" step="0.05" value="0">
-      </label>
-      <div class="debug-buttons">
-        <button type="button" id="debug-show">Показать (как тряска)</button>
-        <button type="button" id="debug-reset">Сбросить «раз в день»</button>
-      </div>
-      <p class="debug-status" id="debug-status"></p>
-    </div>
   </div>
 
-  <script src="js/seasonal.js"></script>
-  <script src="js/app.js"></script>
+  <aside class="debug" id="debug-panel" aria-label="Отладка">
+    <h3>Дата</h3>
+    <label class="dbg-check"><input type="checkbox" id="debug-override"> Подменить дату</label>
+    <input type="date" id="debug-date" aria-label="Дата устройства">
+
+    <h3 class="dbg-section">Праздничный слой</h3>
+    <label>Наклон (если нет датчика)
+      <input type="range" id="debug-tilt" min="-1" max="1" step="0.05" value="0">
+    </label>
+    <div class="dbg-row">
+      <button type="button" id="debug-show">Показать слой</button>
+      <button type="button" id="debug-reset">Сбросить «раз в день»</button>
+    </div>
+    <p id="debug-status" class="dbg-status">…</p>
+
+    <h3 class="dbg-section">Дудлы</h3>
+    <div class="dbg-list" id="debug-doodles"></div>
+    <div class="dbg-row">
+      <button type="button" id="debug-pull">Потянуть список</button>
+      <button type="button" id="debug-shake">Тряхнуть</button>
+    </div>
+    <label class="dbg-check"><input type="checkbox" id="debug-gold"> Золотой финал всегда</label>
+    <label class="dbg-check"><input type="checkbox" id="debug-reduced"> Reduced motion</label>
+    <button type="button" id="debug-doodle-reset" class="dbg-wide">Сбросить дудлы</button>
+    <p id="debug-doodle-status" class="dbg-status">…</p>
+    <p class="dbg-hint">Комбо: тап по подсказке → 3 быстрых тапа → финальный жест (его показывает пиктограмма у якоря). Список можно тянуть мышкой вниз. Плитки во время эффекта нажимаются. «Тряхнуть» сначала получает дудл, если он ловит тряску, иначе праздничный слой.</p>
+    <a class="dbg-link" href="gallery.html">Галерея всех дудлов →</a>
+  </aside>
+</div>
+
+<script src="js/seasonal.js"></script>
+<script src="js/doodles.js"></script>
+<script src="js/labels.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

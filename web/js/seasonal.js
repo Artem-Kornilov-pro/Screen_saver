@@ -79,7 +79,8 @@
     lastTs: 0,
     sprites: {},
     reduceMotion: false,
-    onChange: null
+    onChange: null,
+    onShake: null
   };
 
   // ---------- Конфиг ----------
@@ -375,7 +376,8 @@
     var now = Date.now();
     if (force > SHAKE_FORCE && now - state.lastShake > SHAKE_COOLDOWN) {
       state.lastShake = now;
-      trigger('shake');
+      if (state.onShake) state.onShake();
+      else trigger('shake');
     }
   }
 
@@ -630,6 +632,7 @@
   window.Seasonal = {
     /**
      * host — элемент, поверх которого рисуется слой; canvas — его холст.
+     * onShake — если задан, тряску решает приложение (например, отдаёт её дудлу), а не слой.
      * Первый показ — через 400 мс после загрузки, чтобы не тормозить запуск экрана.
      */
     init: function (options) {
@@ -638,6 +641,7 @@
       state.ctx = state.canvas.getContext('2d');
       state.canvas.hidden = true;
       state.onChange = options.onChange || null;
+      state.onShake = options.onShake || null;
       state.reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
       if (options.dateOverride) state.dateOverride = options.dateOverride;
 

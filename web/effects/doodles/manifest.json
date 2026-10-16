@@ -1,0 +1,348 @@
+{
+  "schema": 1,
+  "enabled": true,
+  "generatedAt": "2026-10-16T12:00:00Z",
+  "prefetchDays": 5,
+  "items": [
+    {
+      "id": "winter-ski",
+      "title": "Снеговик-лыжник",
+      "season": "winter",
+      "when": { "type": "range", "from": "12-01", "to": "02-28" },
+      "priority": 10,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/winter/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "shake"],
+        "anchor": "avatar",
+        "hint": { "type": "image", "image": "snowflake.svg" },
+        "steps": [
+          { "type": "skin", "image": "hat.svg", "scale": 1.6, "ttl": "day" },
+          { "type": "particles", "sprites": ["snowflake.svg", "snowflake2.svg", "snowball.svg"], "count": 40, "origin": "top", "angle": [80, 100], "speed": [90, 180], "gravity": 50, "sway": 50, "size": [12, 28], "durationMs": 3800 },
+          { "type": "sticker", "image": "snowman-ski.svg", "anim": "ski", "size": 170, "durationMs": 3000, "delayMs": 200 }
+        ],
+        "variants": [
+          { "weight": 75, "override": {} },
+          { "weight": 25, "override": { "steps.1.sprites": ["snowball.svg"], "steps.1.count": 30 } }
+        ],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "shake", "effect": { "type": "sticker", "image": "penguin.svg", "anim": "walk", "size": 80, "durationMs": 2600 } },
+        "cooldownMs": 1500
+      },
+      "fact": "У каждой снежинки 6 лучей. А двух одинаковых снежинок не бывает!",
+      "share": "Ко мне в приложение заехал снеговик на лыжах!",
+      "enabled": true
+    },
+    {
+      "id": "newyear-garland",
+      "title": "Новогодняя гирлянда",
+      "season": "winter",
+      "when": { "type": "range", "from": "12-25", "to": "01-08" },
+      "priority": 40,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/newyear/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "pull"],
+        "anchor": "avatar",
+        "hint": { "type": "sparkle" },
+        "steps": [
+          { "type": "skin", "image": "hat.svg", "scale": 1.6, "ttl": "day" },
+          { "type": "sticker", "image": "garland.svg", "anim": "unroll", "fullWidth": true, "durationMs": 3600 },
+          { "type": "particles", "sprites": ["confetti1.svg", "confetti2.svg", "confetti3.svg"], "count": 44, "origin": "top", "angle": [60, 120], "speed": [160, 320], "gravity": 320, "sway": 40, "size": [10, 20], "durationMs": 3000, "delayMs": 400 }
+        ],
+        "variants": [{ "weight": 100, "override": {} }],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "pull", "effect": { "type": "sticker", "image": "gift.svg", "anim": "pop", "at": "paw", "size": 72, "durationMs": 2200 } },
+        "cooldownMs": 1500
+      },
+      "fact": "Подарки можно копить заранее: 50 ₽ в неделю — это 2 600 ₽ к Новому году.",
+      "share": "У меня в приложении зажглась гирлянда!",
+      "enabled": true
+    },
+    {
+      "id": "spring-boat",
+      "title": "Кораблик и капель",
+      "season": "spring",
+      "when": { "type": "range", "from": "03-01", "to": "05-31" },
+      "priority": 10,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/spring/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "shake"],
+        "anchor": "avatar",
+        "hint": { "type": "image", "image": "drop.svg" },
+        "steps": [
+          { "type": "skin", "image": "crown.svg", "scale": 1.6, "ttl": "day" },
+          { "type": "particles", "sprites": ["drop.svg"], "count": 26, "origin": "top", "angle": [88, 92], "speed": [380, 520], "gravity": 900, "spin": 0, "size": [10, 18], "durationMs": 1400 },
+          { "type": "particles", "sprites": ["petal.svg"], "count": 14, "origin": "top", "angle": [70, 110], "speed": [60, 120], "gravity": 40, "sway": 60, "size": [14, 22], "durationMs": 3600, "delayMs": 500 },
+          { "type": "sticker", "image": "boat.svg", "anim": "sail", "size": 92, "durationMs": 4200, "delayMs": 300 }
+        ],
+        "variants": [{ "weight": 100, "override": {} }],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "shake", "effect": { "type": "sticker", "image": "frog.svg", "anim": "bounce", "size": 70, "durationMs": 2800 } },
+        "cooldownMs": 1500
+      },
+      "fact": "Весной тает снег и бегут ручьи. Береги воду: закрывай кран, пока чистишь зубы.",
+      "share": "По моему приложению плывёт кораблик!",
+      "enabled": true
+    },
+    {
+      "id": "april-fools",
+      "title": "Глазастая карта",
+      "season": "spring",
+      "when": { "type": "fixed", "md": "04-01" },
+      "priority": 50,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/april1/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap"],
+        "anchor": "card-thumb",
+        "hint": { "type": "sparkle" },
+        "steps": [
+          { "type": "skin", "image": "eyes.svg", "anchor": "card-thumb", "scale": 0.9, "auto": true },
+          { "type": "particles", "sprites": ["confetti1.svg", "confetti2.svg", "confetti3.svg"], "count": 30, "origin": "anchor", "angle": [-165, -15], "speed": [220, 480], "gravity": 800, "size": [8, 16], "durationMs": 1800 },
+          { "type": "skin", "image": "nose-glasses.svg", "anchor": "avatar", "scale": 1.05, "dy": 0.08, "ttl": "day", "delayMs": 250 }
+        ],
+        "variants": [{ "weight": 100, "override": {} }],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "shake", "effect": { "type": "sticker", "image": "duck.svg", "anim": "pop", "at": "paw", "size": 64, "durationMs": 2000 } },
+        "cooldownMs": 1200
+      },
+      "fact": "Хорошая шутка — та, над которой смеются все. Если кто-то обиделся, извинись.",
+      "share": "У моей карты сегодня выросли глаза!",
+      "enabled": true
+    },
+    {
+      "id": "cosmonautics",
+      "title": "День космонавтики",
+      "season": "spring",
+      "when": { "type": "fixed", "md": "04-12" },
+      "priority": 50,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/cosmonautics/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "shake"],
+        "anchor": "avatar",
+        "hint": { "type": "sparkle" },
+        "steps": [
+          { "type": "skin", "image": "helmet.svg", "scale": 1.6, "ttl": "day" },
+          { "type": "sticker", "image": "rocket.svg", "anim": "fly", "size": 120, "durationMs": 1800, "delayMs": 150 },
+          { "type": "particles", "sprites": ["star1.svg", "star2.svg", "planet.svg"], "count": 36, "origin": "anchor", "angle": [-35, 115], "speed": [220, 640], "gravity": 650, "size": [14, 30], "durationMs": 2400 }
+        ],
+        "variants": [
+          { "weight": 80, "override": {} },
+          { "weight": 20, "override": { "steps.2.sprites": ["rocket.svg", "star2.svg"] } }
+        ],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "shake", "effect": { "type": "sticker", "image": "alien.svg", "anim": "drift", "size": 100, "durationMs": 2600 } },
+        "cooldownMs": 1500
+      },
+      "fact": "12 апреля — День космонавтики! Первым в космос полетел Юрий Гагарин. Его полёт длился 108 минут.",
+      "share": "Мой кот сегодня космонавт!",
+      "enabled": true
+    },
+    {
+      "id": "summer-beach",
+      "title": "Пляжный мяч",
+      "season": "summer",
+      "when": { "type": "range", "from": "06-01", "to": "08-31" },
+      "priority": 10,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/summer/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "shake"],
+        "anchor": "avatar",
+        "hint": { "type": "image", "image": "sun.svg" },
+        "steps": [
+          { "type": "skin", "image": "sunglasses.svg", "scale": 1.1, "dy": 0.04, "ttl": "day" },
+          { "type": "sticker", "image": "beachball.svg", "anim": "bounce", "size": 80, "durationMs": 3200 },
+          { "type": "particles", "sprites": ["bubble.svg"], "count": 18, "origin": "bottom", "angle": [-100, -80], "speed": [90, 170], "gravity": -20, "sway": 35, "spin": 0.5, "size": [16, 36], "durationMs": 3800 },
+          { "type": "particles", "sprites": ["sun.svg"], "count": 10, "origin": "anchor", "angle": [-20, 100], "speed": [150, 320], "gravity": 300, "size": [14, 22], "durationMs": 1600 }
+        ],
+        "variants": [{ "weight": 100, "override": {} }],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "shake", "effect": { "type": "sticker", "image": "crab.svg", "anim": "walk", "size": 64, "durationMs": 3200 } },
+        "cooldownMs": 1500
+      },
+      "fact": "Летом солнце очень жаркое. Надевай панамку и пей больше воды.",
+      "share": "Мой кот уже на пляже, а ты?",
+      "enabled": true
+    },
+    {
+      "id": "june1-balloons",
+      "title": "Шарики на 1 июня",
+      "season": "summer",
+      "when": { "type": "fixed", "md": "06-01" },
+      "priority": 50,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/june1/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "pull"],
+        "anchor": "avatar",
+        "hint": { "type": "image", "image": "balloon-green.svg" },
+        "steps": [
+          { "type": "skin", "image": "partyhat.svg", "scale": 1.6, "ttl": "day" },
+          { "type": "particles", "sprites": ["balloon-red.svg", "balloon-blue.svg", "balloon-yellow.svg", "balloon-green.svg"], "count": 16, "origin": "bottom", "angle": [-100, -80], "speed": [150, 250], "gravity": -40, "sway": 25, "spin": 0.4, "size": [46, 72], "durationMs": 4000 },
+          { "type": "particles", "sprites": ["confetti1.svg", "confetti3.svg"], "count": 24, "origin": "top", "angle": [70, 110], "speed": [120, 260], "gravity": 260, "sway": 30, "size": [8, 14], "durationMs": 2800, "delayMs": 300 }
+        ],
+        "variants": [{ "weight": 100, "override": {} }],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "pull", "effect": { "type": "sticker", "image": "kite.svg", "anim": "drift", "size": 96, "durationMs": 3000 } },
+        "cooldownMs": 1500
+      },
+      "fact": "1 июня — День защиты детей. У каждого ребёнка есть право на игру и отдых.",
+      "share": "Потяни список вниз — там шарики!",
+      "enabled": true
+    },
+    {
+      "id": "autumn-leaves",
+      "title": "Листопад",
+      "season": "autumn",
+      "when": { "type": "range", "from": "09-01", "to": "11-30" },
+      "priority": 10,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/autumn/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "shake"],
+        "anchor": "avatar",
+        "hint": { "type": "image", "image": "maple.svg" },
+        "steps": [
+          { "type": "skin", "image": "hat.svg", "scale": 1.6, "ttl": "day" },
+          { "type": "particles", "sprites": ["maple.svg", "leaf.svg", "acorn.svg"], "count": 28, "origin": "top", "angle": [80, 100], "speed": [120, 220], "gravity": 60, "sway": 70, "size": [18, 32], "durationMs": 3600 },
+          { "type": "sticker", "image": "umbrella.svg", "anim": "float", "size": 120, "durationMs": 3400, "delayMs": 300 }
+        ],
+        "variants": [
+          { "weight": 75, "override": {} },
+          { "weight": 25, "override": { "steps.1.sprites": ["maple.svg"], "steps.1.count": 40 } }
+        ],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "shake", "effect": { "type": "sticker", "image": "hedgehog.svg", "anim": "walk", "size": 90, "durationMs": 3600 } },
+        "cooldownMs": 1500
+      },
+      "fact": "Осенью белки и ёжики делают запасы на зиму. Люди тоже копят — например, в копилке.",
+      "share": "У меня в приложении листопад!",
+      "enabled": true
+    },
+    {
+      "id": "savings-day",
+      "title": "Монетки в копилку",
+      "season": "autumn",
+      "when": { "type": "fixed", "md": "10-31" },
+      "priority": 50,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/savings/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "shake"],
+        "anchor": "card-thumb",
+        "hint": { "type": "image", "image": "coin.svg" },
+        "steps": [
+          { "type": "sticker", "image": "coin.svg", "anim": "arc", "at": "piggy", "size": 30, "repeat": 6, "staggerMs": 110, "jitter": 14, "durationMs": 900 },
+          { "type": "sticker", "image": "piggy.svg", "anim": "pop", "at": "piggy", "size": 60, "durationMs": 2000, "delayMs": 650 },
+          { "type": "particles", "sprites": ["star.svg"], "count": 12, "origin": "at", "at": "piggy", "angle": [-165, -15], "speed": [140, 280], "gravity": 500, "size": [10, 18], "durationMs": 1400, "delayMs": 1000 }
+        ],
+        "variants": [{ "weight": 100, "override": {} }],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "shake", "effect": { "type": "particles", "sprites": ["coin.svg"], "count": 40, "origin": "top", "angle": [80, 100], "speed": [200, 360], "gravity": 600, "size": [18, 30], "durationMs": 2200 } },
+        "cooldownMs": 1500
+      },
+      "fact": "31 октября — Всемирный день сбережений. Если откладывать 10 ₽ в день, за год накопится 3 650 ₽!",
+      "share": "Я покормил копилку монетками!",
+      "enabled": true
+    },
+    {
+      "id": "birthday",
+      "title": "День рождения",
+      "season": "special",
+      "when": { "type": "birthday" },
+      "priority": 100,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/birthday/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "shake"],
+        "anchor": "avatar",
+        "hint": { "type": "image", "image": "candle.svg" },
+        "steps": [
+          { "type": "skin", "image": "starglasses.svg", "scale": 1.1, "dy": 0.04, "ttl": "day" },
+          { "type": "sticker", "image": "popper.svg", "anim": "fly", "size": 100, "durationMs": 1800, "delayMs": 100 },
+          { "type": "particles", "sprites": ["confetti1.svg", "confetti3.svg", "firework.svg"], "count": 32, "origin": "anchor", "angle": [-40, 120], "speed": [220, 600], "gravity": 600, "size": [12, 26], "durationMs": 2400 },
+          { "type": "particles", "sprites": ["confetti1.svg", "confetti3.svg"], "count": 20, "origin": "top", "angle": [70, 110], "speed": [120, 260], "gravity": 260, "sway": 30, "size": [8, 14], "durationMs": 2800, "delayMs": 300 }
+        ],
+        "variants": [{ "weight": 100, "override": {} }],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "shake", "effect": { "type": "combo", "steps": [
+          { "type": "sticker", "image": "cake.svg", "anim": "pop", "at": "paw", "size": 120, "durationMs": 2800 },
+          { "type": "particles", "sprites": ["firework.svg"], "count": 24, "origin": "top", "angle": [60, 120], "speed": [160, 320], "gravity": 200, "sway": 20, "size": [18, 34], "durationMs": 3000, "delayMs": 200 }
+        ] } }
+      },
+      "enabled": true
+    },
+    {
+      "id": "knowledge-day",
+      "title": "1 сентября",
+      "season": "autumn",
+      "when": { "type": "fixed", "md": "09-01" },
+      "priority": 50,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/school/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "pull"],
+        "anchor": "avatar",
+        "hint": { "type": "image", "image": "pencil.svg" },
+        "steps": [
+          { "type": "skin", "image": "headphones.svg", "scale": 1.5, "ttl": "day" },
+          { "type": "sticker", "image": "plane.svg", "anim": "fly", "size": 90, "durationMs": 2200, "delayMs": 150 },
+          { "type": "particles", "sprites": ["paperball.svg", "pencil.svg"], "count": 24, "origin": "top", "angle": [80, 100], "speed": [140, 260], "gravity": 380, "size": [16, 30], "durationMs": 2600 }
+        ],
+        "variants": [
+          { "weight": 70, "override": {} },
+          { "weight": 30, "override": { "steps.2.sprites": ["paperball.svg"], "steps.2.count": 30 } }
+        ],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "pull", "effect": { "type": "combo", "steps": [
+          { "type": "sticker", "image": "pencilrocket.svg", "anim": "fly", "size": 140, "durationMs": 2000 },
+          { "type": "particles", "sprites": ["paperball.svg", "pencil.svg"], "count": 20, "origin": "bottom", "angle": [-110, -70], "speed": [380, 620], "gravity": 500, "size": [16, 28], "durationMs": 2200, "delayMs": 300 }
+        ] } }
+      },
+      "enabled": true
+    },
+    {
+      "id": "summer-break",
+      "title": "Старт каникул",
+      "season": "spring",
+      "when": { "type": "range", "from": "05-25", "to": "05-31" },
+      "priority": 40,
+      "age": { "min": 6, "max": 13 },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/vacation/",
+      "effect": {
+        "type": "combo",
+        "trigger": ["tap", "shake"],
+        "anchor": "avatar",
+        "hint": { "type": "image", "image": "icecream.svg" },
+        "steps": [
+          { "type": "skin", "image": "cap.svg", "scale": 1.5, "ttl": "day" },
+          { "type": "particles", "sprites": ["sheet.svg"], "count": 20, "origin": "top", "angle": [70, 110], "speed": [80, 160], "gravity": 60, "sway": 70, "size": [20, 34], "durationMs": 3600 },
+          { "type": "sticker", "image": "skateboard.svg", "anim": "sail", "size": 46, "durationMs": 3000, "delayMs": 200 },
+          { "type": "particles", "sprites": ["icecream.svg"], "count": 10, "origin": "anchor", "angle": [-30, 110], "speed": [200, 420], "gravity": 600, "size": [18, 30], "durationMs": 1800 }
+        ],
+        "variants": [{ "weight": 100, "override": {} }],
+        "combo": { "taps": 3, "windowMs": 2500, "finale": "shake", "effect": { "type": "combo", "steps": [
+          { "type": "sticker", "image": "kite.svg", "anim": "drift", "size": 130, "durationMs": 3000 },
+          { "type": "particles", "sprites": ["sheet.svg", "icecream.svg"], "count": 22, "origin": "top", "angle": [70, 110], "speed": [120, 240], "gravity": 120, "sway": 50, "size": [18, 30], "durationMs": 3000, "delayMs": 200 }
+        ] } }
+      },
+      "enabled": true
+    }
+  ]
+}

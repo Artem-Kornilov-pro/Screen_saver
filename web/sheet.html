@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Стикер-лист дудлов</title>
+  <style>
+    :root { --bg: #0b0d0c; --tile: #1a1d1c; --line: #2a2f2c; --text: #f2f5f3; --text-2: #959e99; }
+    * { box-sizing: border-box; margin: 0; }
+    body { background: var(--bg); color: var(--text); font: 14px/1.4 -apple-system, BlinkMacSystemFont, Roboto, "Segoe UI", sans-serif; padding: 24px 16px; }
+    h2 { font-size: 20px; margin: 8px 0 12px; }
+    .pack { max-width: 980px; margin: 0 auto 28px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+    figure { margin: 0; padding: 14px 10px 10px; border: 1px solid var(--line); border-radius: 18px; background: var(--tile); text-align: center; }
+    figure img { width: 100%; height: 110px; object-fit: contain; }
+    figcaption { margin-top: 6px; font-size: 12px; color: var(--text-2); }
+  </style>
+</head>
+<body>
+  <!-- Стикер-лист: ?ids=winter-ski,autumn-leaves — какие дудлы показать (по умолчанию все) -->
+  <main id="root"></main>
+  <script src="js/doodles.js"></script>
+  <script>
+    (function () {
+      var manifestUrl = new URL('effects/doodles/manifest.json', location.href);
+      var ids = (new URLSearchParams(location.search).get('ids') || '').split(',').filter(Boolean);
+      fetch(manifestUrl.href, { cache: 'no-cache' }).then(function (r) { return r.json(); }).then(function (m) {
+        var root = document.getElementById('root');
+        m.items.forEach(function (it) {
+          if (ids.length && ids.indexOf(it.id) === -1) return;
+          var base = new URL(it.pack, manifestUrl);
+          var sec = document.createElement('section');
+          sec.className = 'pack';
+          var h = document.createElement('h2');
+          h.textContent = it.title || it.id;
+          var grid = document.createElement('div');
+          grid.className = 'grid';
+          sec.appendChild(h);
+          sec.appendChild(grid);
+          Object.keys(Doodles.collectAssets(it.effect, {})).forEach(function (name) {
+            var f = document.createElement('figure');
+            var img = document.createElement('img');
+            img.src = new URL(name, base).href;
+            img.alt = name;
+            var cap = document.createElement('figcaption');
+            cap.textContent = name;
+            f.appendChild(img);
+            f.appendChild(cap);
+            grid.appendChild(f);
+          });
+          root.appendChild(sec);
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
