@@ -1,0 +1,425 @@
+:root {
+  --bg: #F2F5F7;
+  --surface: #FFFFFF;
+  --text: #1F2328;
+  --text-muted: #6B7480;
+  --accent: #21A038;
+  --accent-soft: #E3F5E7;
+  --line: #E4E8EC;
+  --radius: 20px;
+  --shadow: 0 2px 10px rgba(20, 40, 60, 0.06);
+  --page: #D9DEE3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #111417;
+    --surface: #1C2126;
+    --text: #EEF1F4;
+    --text-muted: #9AA4AF;
+    --accent: #2FC14D;
+    --accent-soft: #1D3324;
+    --line: #2A3138;
+    --shadow: none;
+    --page: #000000;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: var(--page);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* Колонка шириной с телефон: на ноутбуке демо выглядит как приложение */
+.app {
+  position: relative;
+  max-width: 430px;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 96px);
+}
+
+/* ---------- Праздничный слой ---------- */
+
+.seasonal-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.safe-top-probe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: env(safe-area-inset-top);
+  visibility: hidden;
+}
+
+/* ---------- Главный экран ---------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0 20px;
+}
+
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #FFB547;
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.greeting {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  line-height: 1.2;
+}
+
+.greeting-small {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.greeting-name {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.screen-title {
+  margin: 0;
+  font-size: 22px;
+}
+
+.balance-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, #21A038, #12863A);
+  color: #FFFFFF;
+}
+
+.balance-label {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.balance-value {
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.balance-card-number {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 4px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  font-size: 12px;
+}
+
+.action:active,
+.primary-button:active,
+.icon-button:active {
+  transform: scale(0.96);
+}
+
+.action-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.card {
+  margin-bottom: 12px;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.tasks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.tasks li:last-child .task {
+  border-bottom: 0;
+}
+
+.task input {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+}
+
+.task-text {
+  flex: 1;
+}
+
+.task input:checked ~ .task-text {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.task-reward {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.goal {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 15px;
+}
+
+.goal-amount {
+  color: var(--text-muted);
+}
+
+.progress {
+  height: 10px;
+  border-radius: 5px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: var(--accent);
+}
+
+/* ---------- Экран перевода ---------- */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.field-input {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+  font-size: 17px;
+}
+
+.primary-button {
+  margin-top: 4px;
+  padding: 16px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--accent);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 17px;
+}
+
+.hint {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+/* ---------- Тост ---------- */
+
+.toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 76px);
+  z-index: 30;
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(31, 35, 40, 0.92);
+  color: #FFFFFF;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ---------- Отладка ---------- */
+
+.debug-toggle {
+  position: absolute;
+  left: 16px;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(31, 35, 40, 0.55);
+  color: #FFFFFF;
+}
+
+.debug-panel {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: calc(env(safe-area-inset-bottom) + 64px);
+  z-index: 20;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(31, 35, 40, 0.94);
+  color: #FFFFFF;
+  font-size: 14px;
+}
+
+.debug-title {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.debug-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.debug-row-wide {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 4px;
+}
+
+.debug-row input[type="date"] {
+  margin-left: auto;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 8px;
+  color: #1F2328;
+}
+
+.debug-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.debug-buttons button {
+  flex: 1;
+  padding: 10px;
+  border: 0;
+  border-radius: 10px;
+  background: #FFFFFF;
+  color: #1F2328;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.debug-status {
+  min-height: 1.4em;
+  margin: 10px 0 0;
+  color: #C9D1D9;
+  font-size: 13px;
+}

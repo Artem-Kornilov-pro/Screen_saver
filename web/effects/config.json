@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "maxParticles": 80,
+  "effects": [
+    {
+      "id": "new_year",
+      "title": "Новый год",
+      "dates": { "from": "12-20", "to": "01-10" },
+      "priority": 100,
+      "triggers": ["first_open_of_day", "shake"],
+      "durationMs": 9000,
+      "particles": {
+        "kind": "snowflake",
+        "count": 60,
+        "speed": [45, 110],
+        "size": [12, 30],
+        "colors": ["#8EC5FF", "#B6DAFF", "#6FAEF0"],
+        "spin": true,
+        "tiltWind": true,
+        "tapToPop": true
+      },
+      "decor": [
+        { "kind": "tree", "anchor": "bottom_end", "widthPct": 0.34 },
+        { "kind": "garland", "anchor": "top" }
+      ]
+    }
+  ]
+}
