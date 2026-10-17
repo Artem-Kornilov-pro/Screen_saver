@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="146" viewBox="0 0 120 146">
+<defs><linearGradient id="rim"><stop stop-color="#fff3bf"/><stop offset=".4" stop-color="#ffd43b"/><stop offset="1" stop-color="#f08c00"/></linearGradient><linearGradient id="glass" x2="1" y2="1"><stop stop-color="#e7f5ff" stop-opacity=".8"/><stop offset="1" stop-color="#74c0fc" stop-opacity=".2"/></linearGradient><linearGradient id="paw"><stop stop-color="#d0bfff"/><stop offset="1" stop-color="#7950f2"/></linearGradient></defs>
+<path d="M72 80L104 124" stroke="#5f3dc4" stroke-width="15" stroke-linecap="round"/><path d="M74 83L100 119" stroke="#b197fc" stroke-width="6" stroke-linecap="round"/>
+<circle cx="49" cy="47" r="37" fill="url(#glass)" stroke="url(#rim)" stroke-width="10"/><path d="M25 44Q27 25 45 24" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+<path d="M75 140L70 123Q63 115 70 110Q75 106 80 112Q72 98 79 95Q86 92 91 105Q89 92 97 94Q103 95 105 111Q109 102 115 108Q121 117 113 140Z" fill="url(#paw)"/>
+<ellipse cx="94" cy="123" rx="9" ry="7" fill="#fcc2d7" opacity=".85"/>
+</svg>

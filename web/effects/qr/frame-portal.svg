@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="0 0 360 360">
+<defs><linearGradient id="portal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e5dbff"/><stop offset=".4" stop-color="#9775fa"/><stop offset=".7" stop-color="#f783ac"/><stop offset="1" stop-color="#d0bfff"/></linearGradient></defs>
+<circle cx="180" cy="180" r="170" fill="none" stroke="#5f3dc4" stroke-width="18" opacity=".35"/>
+<circle cx="180" cy="180" r="169" fill="none" stroke="url(#portal)" stroke-width="9"/>
+<path d="M16 180A164 164 0 0 1 180 16M344 180A164 164 0 0 1 180 344" fill="none" stroke="#f3f0ff" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+<g fill="#fff3bf"><path d="M61 39L65 53L79 57L65 61L61 75L57 61L43 57L57 53Z"/><path d="M305 276L309 288L321 292L309 296L305 308L301 296L289 292L301 288Z"/></g>
+<g fill="#f3f0ff"><circle cx="252" cy="28" r="4"/><circle cx="32" cy="249" r="4"/><circle cx="330" cy="114" r="3"/></g>
+</svg>
