@@ -3,8 +3,6 @@
   "enabled": true,
   "generatedAt": "2026-10-16T12:00:00Z",
   "prefetchDays": 5,
-<<<<<<< Updated upstream
-=======
   "scale": 1.4,
   "settings": {
     "holidayPriority": 40,
@@ -19,7 +17,6 @@
     "flipDownAngle": 150,
     "flipUpAngle": 60
   },
->>>>>>> Stashed changes
   "items": [
     {
       "id": "winter-ski",

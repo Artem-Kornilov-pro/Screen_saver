@@ -1122,13 +1122,9 @@
       '<circle cx="2.5" cy="16" r="2.2" fill="currentColor" stroke="none"/></svg>'
   };
 
-<<<<<<< Updated upstream
-  var TRACE_RADIUS = 30;      // px: насколько близко палец должен пройти мимо точки узора
-=======
   var TRACE_RADIUS = 30;       // px: насколько близко палец должен пройти мимо точки узора
   var BUDDY_LINGER_MS = 5000;  // сколько стикер дня ждёт после финала, прежде чем уйти
   var BUDDY_FADE_MS = 1000;    // и как долго растворяется
->>>>>>> Stashed changes
 
   // Дрожащая линия скетч-стикеров: SVG-фильтр, один на страницу
   function ensureDefs() {
@@ -1330,11 +1326,7 @@
     var b = c.item.effect.buddy || {};
     var img = c.img(buddyImageOf(c.item.effect));
     if (!img) return null;
-<<<<<<< Updated upstream
-    var size = b.size || 44;
-=======
-    var size = (b.size || 40) * (c.scale || 1);
->>>>>>> Stashed changes
+    var size = (b.size || 44) * (c.scale || 1);
     var ratio = (img.naturalWidth / img.naturalHeight) || 1;
     var width = Math.round(size * ratio);
     var day = dayNumber(c.date);
@@ -1416,8 +1408,6 @@
     }
   }
 
-<<<<<<< Updated upstream
-=======
   // Обратно к пряткам: выглядывает из-за края или проплывает, как до первого тапа
   function unparkBuddy(c) {
     if (!c.buddyMode || !c.buddyParked) return;
@@ -1454,7 +1444,6 @@
     c.buddyHolder.classList.remove('is-leaving');
   }
 
->>>>>>> Stashed changes
   function updateHud(c) {
     var combo = comboOf(c.item.effect);
     if (!c.hud) {
@@ -1882,35 +1871,6 @@
     var reduced = !!opts.reducedMotion ||
       (global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-<<<<<<< Updated upstream
-    return loadManifest(manifestUrl.href)
-      .then(function (manifest) {
-        armEvents(manifest, manifestUrl, opts, reduced, token);
-        var item = pick(manifest, opts.date);
-        if (!item) return null;
-        if (item.pool) item = dressForSeason(item, manifest, manifestUrl, opts.date);
-        var base = new URL(item.pack || 'packs/' + item.id + '/', manifestUrl);
-        var url = function (name) { return new URL(name, base).href; };
-        var imgs = {};
-        var names = Object.keys(collectAssets(item.effect, {}));
-        var loads = names.map(function (n) {
-          return loadAsset(url(n)).then(function (img) { imgs[url(n)] = img; });
-        });
-        loads.push(loadImage(SPARK_SRC).then(function (img) { imgs[SPARK_KEY] = img; }));
-        return Promise.all(loads).then(function () {
-          if (token !== seq) return null;
-          var c = {
-            item: item, root: opts.root, layer: opts.layer, live_region: opts.liveRegion || null,
-            date: opts.date, dayKey: ymd(opts.date), reduced: reduced, facts: !!opts.facts,
-            url: url, img: function (n) { return imgs[url(n)]; },
-            src: function (n) { return (imgs[url(n)] || {}).src || url(n); },
-            timers: [], live: [], cleanups: [], skins: [], taps: [],
-            level: 0, lastAction: 0, hud: null,
-            fx: null, hint: null, anchor: null
-          };
-          ensureDefs();
-          return arm(c) ? item : null;
-=======
     return loadManifest(bundleUrl.href)
       .then(function (base) {
         var cached = cdnKey ? lsGet(cdnKey) : null;
@@ -1944,7 +1904,6 @@
         // Если CDN успел прийти раньше, чем собрался первый дудл, отвечаем уже собранным по CDN
         return armAll(merged, src, opts, reduced, token).then(function (item) {
           return item === null && latest ? latest : item;
->>>>>>> Stashed changes
         });
       })
       .catch(function () {
