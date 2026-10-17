@@ -6,7 +6,7 @@
     'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   var WEEKDAYS = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
   var SEASONS = { winter: 'Зима', spring: 'Весна', summer: 'Лето', autumn: 'Осень', special: 'Особые дни' };
-  var ANCHORS = { avatar: 'аватару', 'card-thumb': 'карте', paw: 'лапке', piggy: 'копилке' };
+  var ANCHORS = { avatar: 'аватару', 'card-thumb': 'карте', paw: 'лапке', savings: 'копилке' };
 
   function mdLabel(md) {
     var p = md.split('-');

@@ -61,10 +61,70 @@
   // ---------- Жесты приложения ----------
 
   // Тряска одна на оба слоя. Сначала её получает дудл дня, если он на неё отвечает, иначе праздничный слой.
+  // Тряска одна на оба слоя. Идёт комбо дудла — тряска его. Лежит снег — тряска его стряхивает.
+  // Иначе сначала дудл дня, если он отвечает на тряску, потом праздничный слой.
   function shake() {
+    if (!Doodles.inCombo() && Seasonal.hasSnow()) {
+      Seasonal.trigger('shake');
+      return 'Стряхнули снег';
+    }
     if (Doodles.trigger('shake')) return 'Тряска ушла дудлу';
     var result = Seasonal.trigger('shake');
     return result.effect ? 'Показываем: ' + result.effect.title : result.reason;
+  }
+
+  // Перевернули экраном вниз, подержали и вернули — событие 'flip' (ночь со светлячками).
+  // Без касания экрана, как в Blackbox: телефон как предмет.
+  var FLIP_HOLD = 1200;
+  var flipDownSince = 0;
+  var flipArmed = false;
+  window.addEventListener('deviceorientation', function (event) {
+    if (event.beta === null || event.beta === undefined) return;
+    var tilt = Math.abs(event.beta);
+    var now = Date.now();
+    if (tilt > 150) {
+      if (!flipDownSince) flipDownSince = now;
+      if (now - flipDownSince > FLIP_HOLD) flipArmed = true;
+      return;
+    }
+    flipDownSince = 0;
+    if (flipArmed && tilt < 60) {
+      flipArmed = false;
+      Doodles.event('flip');
+    }
+  });
+
+  // ---------- Баланс: события «пополнение» и «красивое число» ----------
+
+  var balanceEl = document.getElementById('balance-value');
+  var balance = 35688;
+  var balanceAnim = 0;
+
+  function formatMoney(value) {
+    return Math.round(value).toLocaleString('ru-RU');
+  }
+
+  // Сумма досчитывается до нового значения, потом слой проверяет, не «красивое» ли оно.
+  // Сама сумма никуда не уходит: проверка идёт на устройстве.
+  function setBalance(value) {
+    var from = balance;
+    var start = 0;
+    balance = value;
+    window.cancelAnimationFrame(balanceAnim);
+    function tick(ts) {
+      if (!start) start = ts;
+      var t = Math.min(1, (ts - start) / 700);
+      balanceEl.textContent = formatMoney(from + (value - from) * (1 - Math.pow(1 - t, 3)));
+      if (t < 1) balanceAnim = window.requestAnimationFrame(tick);
+      else Doodles.event('balance', { value: value });
+    }
+    balanceAnim = window.requestAnimationFrame(tick);
+  }
+
+  function topUp(amount) {
+    Doodles.event('topup', { amount: amount });
+    // Монетки долетают до баланса — тогда он и меняется
+    window.setTimeout(function () { setBalance(balance + amount); }, 850);
   }
 
   // Pull-to-refresh главного экрана: сам жест и индикатор — приложения, дудл только подписывается на 'pull'.
@@ -238,6 +298,11 @@
   });
   debugReduced.addEventListener('change', startDoodles);
   debugGold.addEventListener('change', function () { Doodles.setGold(debugGold.checked); });
+  document.getElementById('debug-topup').addEventListener('click', function () { topUp(500); });
+  document.getElementById('debug-flip').addEventListener('click', function () { Doodles.event('flip'); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-balance]'), function (button) {
+    button.addEventListener('click', function () { setBalance(Number(button.getAttribute('data-balance'))); });
+  });
 
   var seasonalReady = Seasonal.init({
     host: app,

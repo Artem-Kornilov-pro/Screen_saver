@@ -22,24 +22,15 @@
 
       <header class="header">
         <button class="avatar" type="button" data-anchor="avatar" aria-label="Профиль">
-          <svg class="face" viewBox="0 0 44 44" aria-hidden="true">
-            <rect width="44" height="44" fill="#2e3330"/>
-            <path d="M9 20 L11 6 L19 13 Z M35 20 L33 6 L25 13 Z" fill="#4c524e"/>
-            <path d="M12 16 L13 10 L16 13 Z M32 16 L31 10 L28 13 Z" fill="#e89aac"/>
-            <circle cx="22" cy="25" r="13" fill="#4c524e"/>
-            <ellipse cx="17" cy="23" rx="2.3" ry="3.1" fill="#c3f73a"/>
-            <ellipse cx="27" cy="23" rx="2.3" ry="3.1" fill="#c3f73a"/>
-            <path d="M20.4 28 h3.2 l-1.6 1.7 z" fill="#ff9fb0"/>
-            <path d="M22 29.7 q-1.8 2.2 -3.8 1 M22 29.7 q1.8 2.2 3.8 1" stroke="#2e3330" stroke-width="1" fill="none" stroke-linecap="round"/>
-          </svg>
+          <span class="face" aria-hidden="true">М</span>
         </button>
       </header>
 
-      <section class="card">
+      <section class="card" data-snow>
         <div class="card-main">
           <div>
             <div class="card-title">СберКарта</div>
-            <div class="balance">35 688 <span>₽</span></div>
+            <div class="balance" data-anchor="balance"><span id="balance-value">35 688</span> <span class="currency">₽</span></div>
           </div>
           <span class="card-thumb-wrap" data-anchor="card-thumb">
             <svg class="card-thumb" viewBox="0 0 76 50" aria-hidden="true">
@@ -57,15 +48,15 @@
       </section>
 
       <section class="tiles">
-        <button class="tile tile--narrow" type="button" data-toast="Открываем «QR»">
+        <button class="tile tile--narrow" type="button" data-snow data-toast="Открываем «QR»">
           <span>QR</span>
           <i class="ic ic--purple"><svg viewBox="0 0 20 20"><rect x="2" y="2" width="6" height="6" rx="1"/><rect x="12" y="2" width="6" height="6" rx="1"/><rect x="2" y="12" width="6" height="6" rx="1"/><rect x="12" y="12" width="3" height="3"/><rect x="15" y="15" width="3" height="3"/></svg></i>
         </button>
-        <button class="tile" type="button" data-open="transfer">
+        <button class="tile" type="button" data-open="transfer" data-snow>
           <span>Скинуть<br>денег</span>
           <i class="ic ic--blue"><svg viewBox="0 0 20 20"><path d="M4 10h11M11 5l5 5-5 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></i>
         </button>
-        <button class="tile" type="button" data-toast="Открываем «Пополнить мобилку»">
+        <button class="tile" type="button" data-toast="Открываем «Пополнить мобилку»" data-snow>
           <span>Пополнить<br>мобилку</span>
           <i class="ic ic--green"><svg viewBox="0 0 20 20"><rect x="6" y="2" width="8" height="16" rx="2"/></svg></i>
         </button>
@@ -73,21 +64,21 @@
 
       <h2 class="h2">История</h2>
       <ul class="ops">
-        <li class="op">
+        <li class="op" data-snow>
           <i class="op-ic"><svg viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 5l7 6 7-6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg></i>
           <div class="op-body"><b>Уведомление от банка</b><small>Для безопасности ваших средств никому не сообщайте код</small></div>
         </li>
-        <li class="op">
+        <li class="op" data-anchor="income" data-snow>
           <i class="op-ic op-ic--green">М</i>
           <div class="op-body"><b>Перевод от мамы</b><small>Карманные деньги</small></div>
           <span class="op-sum op-sum--plus">+500 ₽</span>
         </li>
-        <li class="op">
+        <li class="op" data-snow>
           <i class="op-ic op-ic--orange">Ш</i>
           <div class="op-body"><b>Школьная столовая</b><small>Покупка</small></div>
           <span class="op-sum">−120 ₽</span>
         </li>
-        <li class="op">
+        <li class="op" data-snow>
           <i class="op-ic op-ic--blue">К</i>
           <div class="op-body"><b>Книжный магазин</b><small>Покупка</small></div>
           <span class="op-sum">−390 ₽</span>
@@ -133,10 +124,10 @@
     <div class="doodle-layer" id="doodle-layer" aria-hidden="true"></div>
     <div class="sr-only" id="doodle-live" aria-live="polite"></div>
 
-    <nav class="tabbar" id="tabbar">
+    <nav class="tabbar" id="tabbar" data-snow>
       <button class="tab tab--active" type="button"><svg viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></svg><span>Главный</span></button>
-      <button class="tab" type="button" data-anchor="piggy"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="8" ry="6"/><rect x="10" y="5" width="4" height="3" rx="1"/></svg><span>Копилки</span></button>
-      <button class="tab tab--paw" type="button" data-anchor="paw" aria-label="СберКот">
+      <button class="tab" type="button" data-anchor="savings"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="8" ry="6"/><rect x="10" y="5" width="4" height="3" rx="1"/></svg><span>Копилки</span></button>
+      <button class="tab tab--paw" type="button" data-anchor="paw" aria-label="Центральная кнопка">
         <svg viewBox="0 0 32 32"><ellipse cx="16" cy="20" rx="7" ry="6"/><circle cx="8" cy="13" r="3"/><circle cx="13" cy="8.5" r="3"/><circle cx="19" cy="8.5" r="3"/><circle cx="24" cy="13" r="3"/></svg>
       </button>
       <button class="tab" type="button"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M8.5 12l2.5 2.5 4.5-5" stroke="#1c1f1e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Дела</span></button>
@@ -176,6 +167,17 @@
     <label class="dbg-check"><input type="checkbox" id="debug-reduced"> Reduced motion</label>
     <button type="button" id="debug-doodle-reset" class="dbg-wide">Сбросить дудлы</button>
     <p id="debug-doodle-status" class="dbg-status">…</p>
+
+    <h3 class="dbg-section">События</h3>
+    <div class="dbg-row">
+      <button type="button" id="debug-topup">Пополнение +500 ₽</button>
+      <button type="button" id="debug-flip">Экраном вниз</button>
+    </div>
+    <div class="dbg-row">
+      <button type="button" data-balance="7777">Баланс 7 777</button>
+      <button type="button" data-balance="40000">Баланс 40 000</button>
+      <button type="button" data-balance="12345">12 345</button>
+    </div>
     <p class="dbg-hint">Комбо: тап по подсказке → 3 быстрых тапа → финальный жест (его показывает пиктограмма у якоря). Список можно тянуть мышкой вниз. Плитки во время эффекта нажимаются. «Тряхнуть» сначала получает дудл, если он ловит тряску, иначе праздничный слой.</p>
     <a class="dbg-link" href="gallery.html">Галерея всех дудлов →</a>
   </aside>

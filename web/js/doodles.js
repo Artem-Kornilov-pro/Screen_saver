@@ -112,6 +112,43 @@
     });
   }
 
+  // Картинки пака берём текстом и кладём в localStorage: без сети дудл всё равно покажется
+  function loadAsset(href) {
+    if (!/\.svg(\?|$)/i.test(href) || !global.fetch) return loadImage(href);
+    var key = 'asset.' + href;
+    return fetch(href)
+      .then(function (r) {
+        if (!r.ok) throw new Error('asset ' + r.status);
+        return r.text();
+      })
+      .then(function (text) {
+        lsSet(key, text);
+        return text;
+      }, function () {
+        var cached = lsGet(key);
+        if (typeof cached !== 'string') throw new Error('asset ' + href);
+        return cached;
+      })
+      .then(function (text) { return loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(text)); });
+  }
+
+  // Манифест тоже: при ошибке сети берём последнюю удачную копию
+  function loadManifest(href) {
+    return fetch(href, { cache: 'no-cache' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('manifest ' + r.status);
+        return r.json();
+      })
+      .then(function (m) {
+        lsSet('manifest', m);
+        return m;
+      }, function () {
+        var cached = lsGet('manifest');
+        if (!cached) throw new Error('no manifest');
+        return cached;
+      });
+  }
+
   // ---------- Утилиты эффектов ----------
 
   function rand(a, b) { return a + Math.random() * (b - a); }
@@ -369,6 +406,17 @@
         })
       };
     },
+    // Появляется в правом верхнем углу и покачивается (луна ночью)
+    hang: function (W, H, w, h) {
+      var x = W * 0.74 - w / 2, y = 58;
+      return {
+        frames: sample(60, function (t) {
+          var o = t < 0.1 ? EASE.smooth(t / 0.1) : t > 0.85 ? EASE.smooth((1 - t) / 0.15) : 1;
+          var s = t < 0.15 ? spring(t / 0.15 * 1.2) : 1;
+          return { x: x, y: y + Math.sin(t * Math.PI * 4) * 4, r: Math.sin(t * Math.PI * 3) * 4, sx: s, sy: s, o: o };
+        })
+      };
+    },
     // Reduced motion: стикер просто проявляется и гаснет
     fade: function (W, H, w, h) {
       var x = W / 2 - w / 2, y = H * 0.35;
@@ -580,7 +628,7 @@
         el.className = 'doodle-skin';
         el.alt = '';
         el.setAttribute('data-src', e.image);
-        el.src = ctx.url(e.image);
+        el.src = ctx.src(e.image);
         el.style.width = a.offsetWidth * (e.scale || 1.5) + 'px';
         el.style.marginLeft = a.offsetWidth * (e.dx || 0) + 'px';
         el.style.marginTop = a.offsetWidth * (e.dy || 0) + 'px';
@@ -656,6 +704,81 @@
     }
   };
 
+  // Лучи-взрыв из якоря
+  RENDERERS.rays = function (e, ctx) {
+    if (ctx.reduced) return;
+    var p = anchorPoint(ctx);
+    var colors = e.colors || NEON;
+    var stops = [];
+    for (var i = 0; i < 12; i++) {
+      var a = i * 30, col = colors[i % colors.length];
+      stops.push(col + ' ' + a + 'deg ' + (a + 10) + 'deg', 'transparent ' + (a + 10) + 'deg ' + (a + 30) + 'deg');
+    }
+    var el = document.createElement('div');
+    el.className = 'doodle-rays';
+    el.style.left = p.x + 'px';
+    el.style.top = p.y + 'px';
+    el.style.background = 'conic-gradient(' + stops.join(', ') + ')';
+    ctx.layer.appendChild(el);
+    var anim = el.animate([
+      { transform: 'translate(-50%,-50%) scale(.2) rotate(0deg)', opacity: 0 },
+      { transform: 'translate(-50%,-50%) scale(1) rotate(25deg)', opacity: 0.9, offset: 0.25 },
+      { transform: 'translate(-50%,-50%) scale(1.25) rotate(60deg)', opacity: 0 }
+    ], { duration: e.durationMs || 1800, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'forwards' });
+    track(ctx, el, anim);
+  };
+
+  // Глянцевая звезда с числом над якорем: «красивое» число в балансе. Число — сама сумма, не текст.
+  RENDERERS.badge = function (e, ctx) {
+    var img = ctx.img(e.image);
+    if (!img) return;
+    var p = anchorPoint(ctx);
+    var size = e.size || 140;
+    var label = (ctx.eventData && ctx.eventData.label) || '';
+    var el = document.createElement('div');
+    el.className = 'doodle-badge';
+    el.style.width = el.style.height = size + 'px';
+    el.style.left = p.x - size / 2 + 'px';
+    el.style.top = p.y - size / 2 + 'px';
+    var pic = document.createElement('img');
+    pic.src = img.src;
+    pic.alt = '';
+    var num = document.createElement('span');
+    num.className = 'doodle-badge-num';
+    num.textContent = label;
+    num.style.fontSize = Math.round(size * (label.length > 5 ? 0.15 : 0.19)) + 'px';
+    el.appendChild(pic);
+    el.appendChild(num);
+    ctx.layer.appendChild(el);
+    var frames = ctx.reduced ? PATHS.fade(0, 0, 0, 0).frames.map(function (f) {
+      return { offset: f.offset, opacity: f.opacity };
+    }) : sample(60, function (t) {
+      if (t < 0.25) {
+        var s = spring(t / 0.25 * 1.25);
+        return { x: 0, y: (1 - s) * 20, r: (1 - s) * -20, sx: s, sy: s };
+      }
+      if (t < 0.8) {
+        var b = (t - 0.25) / 0.55;
+        return { x: 0, y: Math.sin(b * Math.PI * 2) * -4, r: Math.sin(b * Math.PI * 3) * 5 };
+      }
+      var k = EASE.inQuad((t - 0.8) / 0.2);
+      return { x: 0, y: -40 * k, sx: 1 + k * 0.15, o: 1 - k };
+    });
+    var anim = el.animate(frames, { duration: e.durationMs || 2600, easing: 'linear', fill: 'forwards' });
+    track(ctx, el, anim);
+  };
+
+  // Ночь: экран мягко темнеет поверх интерфейса и светлеет обратно. Касания проходят насквозь.
+  RENDERERS.night = function (e, ctx) {
+    var el = document.createElement('div');
+    el.className = 'doodle-night';
+    ctx.layer.appendChild(el);
+    var anim = el.animate([
+      { opacity: 0 }, { opacity: 1, offset: 0.1 }, { opacity: 1, offset: 0.82 }, { opacity: 0 }
+    ], { duration: e.durationMs || 6000, easing: 'ease-in-out', fill: 'forwards' });
+    track(ctx, el, anim);
+  };
+
   function spawnSticker(e, ctx, img) {
     var W = ctx.layer.clientWidth, H = ctx.layer.clientHeight;
     var ratio = (img.naturalWidth / img.naturalHeight) || 1;
@@ -699,7 +822,7 @@
     el.className = 'doodle-hint';
     if (hint.image) {
       var img = document.createElement('img');
-      img.src = ctx.url(hint.image);
+      img.src = ctx.src(hint.image);
       img.alt = '';
       el.appendChild(img);
     } else {
@@ -1034,8 +1157,104 @@
     resetCombo(c);
   }
 
+  // ---------- События приложения ----------
+  //
+  // Не зависят от даты: работают каждый день. Приложение сообщает о событии через Doodles.event(),
+  // манифест решает, отвечать ли на него и как (раздел events).
+
+  var ectx = null;
+
+  function isSequence(s) {
+    var step = Number(s[1]) - Number(s[0]);
+    if (Math.abs(step) !== 1) return false;
+    for (var i = 2; i < s.length; i++) if (Number(s[i]) - Number(s[i - 1]) !== step) return false;
+    return true;
+  }
+
+  // «Красивое» число: 777, 5 555 · 1 000, 35 000 · 1 234, 9 876 · 12 321
+  function nicePattern(value, patterns) {
+    var n = Math.floor(Math.abs(Number(value)));
+    if (!isFinite(n) || n < 100) return null;
+    var str = String(n);
+    var checks = {
+      repdigit: /^(\d)\1{2,}$/.test(str),
+      round: n >= 1000 && n % 1000 === 0,
+      sequence: str.length >= 3 && isSequence(str),
+      mirror: str.length >= 4 && str === str.split('').reverse().join('') && !/^(\d)\1+$/.test(str)
+    };
+    for (var i = 0; i < patterns.length; i++) if (checks[patterns[i]]) return patterns[i];
+    return null;
+  }
+
+  function armEvents(manifest, manifestUrl, opts, reduced, token) {
+    if (manifest.enabled === false) return Promise.resolve(null);
+    var defs = (manifest.events || []).filter(function (d) {
+      return d && d.enabled !== false && d.on && d.effect && RENDERERS[d.effect.type];
+    });
+    if (!defs.length) return Promise.resolve(null);
+    var imgs = {};
+    var loads = [];
+    defs.forEach(function (d) {
+      var base = new URL(d.pack || 'packs/events/', manifestUrl);
+      d._url = function (name) { return new URL(name, base).href; };
+      d._img = function (name) { return imgs[d._url(name)]; };
+      Object.keys(collectAssets(d.effect, {})).forEach(function (n) {
+        loads.push(loadAsset(d._url(n)).then(function (img) { imgs[d._url(n)] = img; }, function () {
+          // Нет картинки — этот шаг просто пропустится
+        }));
+      });
+    });
+    return Promise.all(loads).then(function () {
+      if (token !== seq) return null;
+      ectx = {
+        root: opts.root, layer: opts.layer, reduced: reduced, defs: defs, item: { id: 'events', effect: {} },
+        timers: [], live: [], cleanups: [], skins: [], taps: [], level: 0, fx: null, anchor: null
+      };
+      return ectx;
+    });
+  }
+
+  /** Событие приложения: 'balance' { value }, 'topup' { amount }, 'flip'. true — что-то показали. */
+  function fireEvent(name, data) {
+    if (suppressed || !ectx) return false;
+    var now = Date.now();
+    var fired = false;
+    ectx.defs.forEach(function (d) {
+      if (d.on !== name || now - (d._last || 0) < (d.cooldownMs || 0)) return;
+      var info = { label: '', pattern: null };
+      if (name === 'balance') {
+        info.pattern = nicePattern(data && data.value, d.patterns || ['repdigit', 'round', 'sequence', 'mirror']);
+        if (!info.pattern) return;
+        info.label = Math.floor(data.value).toLocaleString('ru-RU');
+      } else if (data && data.amount) {
+        info.label = '+' + Math.floor(data.amount).toLocaleString('ru-RU');
+      }
+      var anchor = anchorEl(ectx, d.anchor || 'avatar');
+      if (!anchor) return;
+      d._last = now;
+      var c = styled(ectx, d.style || 'sticker', 1);
+      c.anchor = anchor;
+      c.url = d._url;
+      c.img = d._img;
+      c.src = function (n) { return (d._img(n) || {}).src || d._url(n); };
+      c.eventData = info;
+      run(d.effect, c);
+      fired = true;
+    });
+    if (fired) haptic();
+    return fired;
+  }
+
+  function destroyEvents() {
+    if (!ectx) return;
+    stopAll(ectx);
+    if (ectx.fx) ectx.fx.c.remove();
+    ectx = null;
+  }
+
   function destroy() {
     seq++;
+    destroyEvents();
     if (!ctx) return;
     stopAll(ctx);
     ctx.cleanups.forEach(function (fn) { fn(); });
@@ -1046,7 +1265,10 @@
   }
 
   document.addEventListener('visibilitychange', function () {
-    if (document.hidden) stopAll(ctx);
+    if (document.hidden) {
+      stopAll(ctx);
+      stopAll(ectx);
+    }
   });
 
   function init(opts) {
@@ -1056,12 +1278,9 @@
     var reduced = !!opts.reducedMotion ||
       (global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
-    return fetch(manifestUrl.href, { cache: 'no-cache' })
-      .then(function (r) {
-        if (!r.ok) throw new Error('manifest ' + r.status);
-        return r.json();
-      })
+    return loadManifest(manifestUrl.href)
       .then(function (manifest) {
+        armEvents(manifest, manifestUrl, opts, reduced, token);
         var item = pick(manifest, opts.date);
         if (!item) return null;
         var base = new URL(item.pack || 'packs/' + item.id + '/', manifestUrl);
@@ -1069,7 +1288,7 @@
         var imgs = {};
         var names = Object.keys(collectAssets(item.effect, {}));
         var loads = names.map(function (n) {
-          return loadImage(url(n)).then(function (img) { imgs[url(n)] = img; });
+          return loadAsset(url(n)).then(function (img) { imgs[url(n)] = img; });
         });
         loads.push(loadImage(SPARK_SRC).then(function (img) { imgs[SPARK_KEY] = img; }));
         return Promise.all(loads).then(function () {
@@ -1078,6 +1297,7 @@
             item: item, root: opts.root, layer: opts.layer, live_region: opts.liveRegion || null,
             date: opts.date, dayKey: ymd(opts.date), reduced: reduced, facts: !!opts.facts,
             url: url, img: function (n) { return imgs[url(n)]; },
+            src: function (n) { return (imgs[url(n)] || {}).src || url(n); },
             timers: [], live: [], cleanups: [], skins: [], taps: [],
             level: 0, lastAction: 0, hud: null,
             fx: null, hint: null, anchor: null
@@ -1101,8 +1321,15 @@
     // Критичный экран (оплата, перевод, реквизиты, лимиты): сцена гаснет, триггеры не работают
     setSuppressed: function (value) {
       suppressed = !!value;
-      if (suppressed) stopAll(ctx);
+      if (suppressed) {
+        stopAll(ctx);
+        stopAll(ectx);
+      }
     },
+    // События приложения: 'balance' { value }, 'topup' { amount }, 'flip' (перевернули экраном вниз и обратно)
+    event: fireEvent,
+    // Ребёнок сейчас проходит комбо: тряску и жесты отдаём дудлу, а не праздничному слою
+    inCombo: function () { return !!ctx && ctx.level > 0; },
     reset: function () { destroy(); lsClear(); },
     // Отладка: золотой финал каждый раз, а не с шансом из манифеста
     setGold: function (value) { forceGold = !!value; },
