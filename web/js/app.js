@@ -74,21 +74,21 @@
   }
 
   // Перевернули экраном вниз, подержали и вернули — событие 'flip' (ночь со светлячками).
-  // Без касания экрана, как в Blackbox: телефон как предмет.
-  var FLIP_HOLD = 1200;
+  // Без касания экрана, как в Blackbox: телефон как предмет. Пороги приходят из конфига дудлов.
   var flipDownSince = 0;
   var flipArmed = false;
   window.addEventListener('deviceorientation', function (event) {
     if (event.beta === null || event.beta === undefined) return;
+    var cfg = Doodles.settings();
     var tilt = Math.abs(event.beta);
     var now = Date.now();
-    if (tilt > 150) {
+    if (tilt > cfg.flipDownAngle) {
       if (!flipDownSince) flipDownSince = now;
-      if (now - flipDownSince > FLIP_HOLD) flipArmed = true;
+      if (now - flipDownSince > cfg.flipHoldMs) flipArmed = true;
       return;
     }
     flipDownSince = 0;
-    if (flipArmed && tilt < 60) {
+    if (flipArmed && tilt < cfg.flipUpAngle) {
       flipArmed = false;
       flip();
     }
@@ -100,19 +100,45 @@
     return Doodles.event('flip') ? 'Ночь' : 'На переворот сейчас ничего нет';
   }
 
-  // «67»: 6-го числа в 19:00 — один раз за вечер. Проверяем при входе и раз в минуту.
-  function checkClock() {
+  // Часы: при входе и раз в минуту сообщаем дату и время, а что и когда показать — решает конфиг
+  // (например, «67» 6-го числа в 19:00). Один раз за день следит сам слой.
+  function clockNow(override) {
     var date = Seasonal.effectiveDate();
     var now = new Date();
-    if (date.getDate() !== 6 || now.getHours() !== 19) return;
-    var key = 'sbkids.clock67';
-    var day = Doodles.ymd(date);
-    try { if (window.localStorage.getItem(key) === day) return; } catch (err) { /* без хранилища — просто покажем */ }
-    if (Doodles.event('clock', { day: 6, hour: 19 })) {
-      try { window.localStorage.setItem(key, day); } catch (err) { /* нет хранилища */ }
-    }
+    var t = {
+      month: date.getMonth() + 1, day: date.getDate(), weekday: (date.getDay() + 6) % 7 + 1,
+      hour: now.getHours(), minute: now.getMinutes(), date: Doodles.ymd(date)
+    };
+    if (override) Object.keys(override).forEach(function (k) { t[k] = override[k]; });
+    return t;
+  }
+
+  function checkClock() {
+    Doodles.event('clock', clockNow());
   }
   window.setInterval(checkClock, 60000);
+
+  // ---------- Эффекты уступают приложению ----------
+
+  // Нажали кнопку приложения или начали листать — идущая сцена и снег мягко гаснут, комбо сбрасывается.
+  // Тап по пустому месту не гасит: им лопают снежинки, тянут список и обводят узор.
+  function skipEffects() {
+    Doodles.skip();
+    Seasonal.skip();
+  }
+
+  app.addEventListener('click', function (event) {
+    var target = event.target.closest('button, a, input, label, [data-toast], [data-open], [data-back]');
+    if (!target || target.closest('.doodle-tab, .doodle-buddy, #debug-toggle')) return;
+    skipEffects();
+  }, true);
+
+  var skipScrollTop = 0;
+  mainScreen.addEventListener('scroll', function () {
+    if (Math.abs(mainScreen.scrollTop - skipScrollTop) < 24) return;
+    skipScrollTop = mainScreen.scrollTop;
+    skipEffects();
+  }, { passive: true });
 
   // ---------- Баланс: события «пополнение» и «красивое число» ----------
 
@@ -217,21 +243,37 @@
   function startDoodles() {
     var run = ++doodleRun;
     debugDoodleStatus.textContent = 'Загрузка дудла…';
-    return Doodles.init({
-      manifestUrl: DOODLES_MANIFEST,
-      root: app,
-      layer: document.getElementById('doodle-layer'),
-      liveRegion: document.getElementById('doodle-live'),
-      date: Seasonal.effectiveDate(),
-      reducedMotion: debugReduced.checked
-    }).then(function (item) {
-      if (run !== doodleRun) return item;
+    var show = function (item) {
       markDoodle(item ? item.id : null);
       debugDoodleStatus.textContent = item
         ? 'Дудл дня: «' + item.title + '». Комбо: ' + DoodleLabels.combo(item.effect).join(' → ') + '.'
         : 'На эту дату дудла нет';
+      showSources();
+    };
+    return Doodles.init({
+      manifestUrl: DOODLES_MANIFEST,
+      cdnUrl: cdnUrl('doodles/manifest.json'),
+      root: app,
+      layer: document.getElementById('doodle-layer'),
+      liveRegion: document.getElementById('doodle-live'),
+      date: Seasonal.effectiveDate(),
+      reducedMotion: debugReduced.checked,
+      // Конфиг с CDN пришёл позже и поменял дудл — обновляем подпись
+      onChange: function (item) { if (run === doodleRun) show(item); }
+    }).then(function (item) {
+      if (run !== doodleRun) return item;
+      show(item);
       return item;
     });
+  }
+
+  // Откуда пришли конфиги: приложение, CDN или его кэш — видно в отладке
+  var SOURCE_NAMES = { bundle: 'приложение', cdn: 'CDN', 'cdn-cache': 'кэш CDN', fallback: 'встроенный', none: '—' };
+  function showSources() {
+    var el = document.getElementById('debug-cdn-status');
+    el.textContent = 'Конфиги: слой — ' + (SOURCE_NAMES[Seasonal.source()] || Seasonal.source()) +
+      ', дудлы — ' + (SOURCE_NAMES[Doodles.source()] || Doodles.source()) +
+      (cdnBase ? '. CDN: ' + cdnBase : '. CDN не задан, работаем на дефолте приложения');
   }
 
   // Дудл из пула выпадает по очереди: ищем ближайший к началу года день, когда он дудл дня
@@ -251,14 +293,17 @@
       .then(function (manifest) {
         var year = new Date().getFullYear();
         manifest.items.forEach(function (item) {
-          var date = item.pool ? poolDate(manifest, item, year) : DoodleLabels.demoDate(item.when, year);
+          // Сезонный дудл в обычный день делит очередь с пулом: берём день, когда он правда выпадает
+          var date = DoodleLabels.demoDate(item.when, year);
+          var picked = date && Doodles._pick(manifest, parseDate(date));
+          if (!picked || picked.id !== item.id) date = poolDate(manifest, item, year);
           if (!date) return;
           var button = document.createElement('button');
           button.type = 'button';
           button.setAttribute('data-id', item.id);
           button.appendChild(document.createTextNode(item.title || item.id));
           var small = document.createElement('small');
-          small.textContent = item.pool ? 'дудл дня · ' + Number(date.slice(8)) + '.' + date.slice(5, 7) : DoodleLabels.when(item.when);
+          small.textContent = (item.pool ? 'дудл дня' : DoodleLabels.when(item.when)) + ' · ' + Number(date.slice(8)) + '.' + date.slice(5, 7);
           button.appendChild(small);
           button.addEventListener('click', function () {
             // День рождения живёт в профиле: для демо кладём его на ту же дату
@@ -283,6 +328,14 @@
 
   var params = new URLSearchParams(window.location.search);
   var urlDate = parseDate(params.get('date'));
+
+  // Адрес CDN с конфигами — настройка приложения (прод или тест). В прототипе — ?cdn=папка/ в адресе.
+  // Без него слой работает на конфигах и картинках, которые лежат в самом приложении.
+  var cdnBase = null;
+  try { cdnBase = params.get('cdn') ? new URL(params.get('cdn').replace(/\/?$/, '/'), location.href).href : null; } catch (err) { cdnBase = null; }
+  function cdnUrl(file) {
+    return cdnBase ? new URL(file, cdnBase).href : null;
+  }
   // ?birthday=2026-11-15 — день рождения в профиле для демо (галерея открывает так дудл дня рождения)
   if (parseDate(params.get('birthday'))) Doodles.setBirthday(params.get('birthday'));
   debugDate.value = urlDate ? urlDate.toISOString().slice(0, 10) : new Date().getFullYear() + '-12-31';
@@ -329,7 +382,16 @@
   debugGold.addEventListener('change', function () { Doodles.setGold(debugGold.checked); });
   document.getElementById('debug-topup').addEventListener('click', function () { topUp(500); });
   document.getElementById('debug-flip').addEventListener('click', function () { debugStatus.textContent = flip(); });
-  document.getElementById('debug-clock').addEventListener('click', function () { Doodles.event('clock', { day: 6, hour: 19 }); });
+  document.getElementById('debug-clock').addEventListener('click', function () {
+    Doodles.event('clock', clockNow({ day: 6, hour: 19, minute: 0, debug: true }));
+  });
+  document.getElementById('debug-cdn-apply').addEventListener('click', function () {
+    var value = document.getElementById('debug-cdn').value.trim();
+    var next = new URLSearchParams(window.location.search);
+    if (value) next.set('cdn', value); else next.delete('cdn');
+    window.location.search = next.toString();
+  });
+  document.getElementById('debug-cdn').value = params.get('cdn') || '';
   Array.prototype.forEach.call(document.querySelectorAll('[data-balance]'), function (button) {
     button.addEventListener('click', function () { setBalance(Number(button.getAttribute('data-balance'))); });
   });
@@ -337,6 +399,8 @@
   var seasonalReady = Seasonal.init({
     host: app,
     canvas: document.getElementById('seasonal-layer'),
+    configUrl: 'effects/config.json',
+    cdnUrl: cdnUrl('config.json'),
     dateOverride: urlDate,
     onShake: shake,
     onChange: function (effect) {

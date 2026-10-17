@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "settings": {
+    "shakeForce": 14
+  },
+  "effects": [
+    {
+      "id": "autumn",
+      "durationMs": 9000,
+      "particles": { "count": 45, "size": [20, 38] }
+    }
+  ]
+}

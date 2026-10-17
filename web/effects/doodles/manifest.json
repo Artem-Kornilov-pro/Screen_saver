@@ -3,6 +3,23 @@
   "enabled": true,
   "generatedAt": "2026-10-16T12:00:00Z",
   "prefetchDays": 5,
+<<<<<<< Updated upstream
+=======
+  "scale": 1.4,
+  "settings": {
+    "holidayPriority": 40,
+    "maxParticles": 80,
+    "comboIdleMs": 7000,
+    "finaleMs": 3200,
+    "buddyLingerMs": 5000,
+    "buddyFadeMs": 1000,
+    "traceRadius": 30,
+    "goldChance": 0.1,
+    "flipHoldMs": 1200,
+    "flipDownAngle": 150,
+    "flipUpAngle": 60
+  },
+>>>>>>> Stashed changes
   "items": [
     {
       "id": "winter-ski",
@@ -1883,7 +1900,7 @@
       "id": "nice-number",
       "title": "Красивое число",
       "on": "balance",
-      "patterns": ["repdigit", "round", "sequence", "mirror"],
+      "rules": [{ "type": "repeat", "min": 3 }, { "type": "multiple", "of": 1000 }, { "type": "sequence", "min": 3 }, { "type": "mirror", "min": 4 }],
       "anchor": "balance",
       "pack": "packs/events/",
       "style": "neon",
@@ -1937,8 +1954,8 @@
       "id": "six-seven",
       "title": "67 в балансе",
       "on": "balance",
-      "patterns": [
-        "sixseven"
+      "rules": [
+        { "type": "contains", "value": "67" }
       ],
       "anchor": "balance",
       "pack": "packs/everyday/",

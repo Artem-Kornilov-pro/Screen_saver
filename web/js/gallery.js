@@ -122,7 +122,9 @@
       it._bytes = bytes;
     });
 
-    var d = it.pool ? poolDate(it, year) : DoodleLabels.demoDate(it.when, year);
+    var d = DoodleLabels.demoDate(it.when, year);
+    var picked = d && manifestCache && window.Doodles && Doodles._pick(manifestCache, new Date(d + 'T12:00:00'));
+    if (!picked || picked.id !== it.id) d = poolDate(it, year);
     var run = node.querySelector('.run');
     if (d) run.href = 'index.html?date=' + d + (it.when && it.when.type === 'birthday' ? '&birthday=' + d : ''); else run.remove();
     return node;

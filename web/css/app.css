@@ -496,6 +496,11 @@ input { font: inherit; color: inherit; }
   font: inherit; color-scheme: dark;
 }
 .debug input[type=range] { accent-color: var(--green); }
+.debug input[type=text] {
+  padding: 8px 10px; border-radius: 10px;
+  border: 1px solid #2f3532; background: #1b1f1d; color: #fff;
+  font: inherit;
+}
 .dbg-row { display: flex; gap: 8px; }
 .debug button {
   flex: 1;
@@ -662,4 +667,37 @@ input { font: inherit; color: inherit; }
   .doodle-peek .doodle-buddy, .doodle-buddy--float, .doodle-buddy--float.is-parked, .doodle-peek.is-out .doodle-buddy, .g-flip, .g-trace { animation: none; }
   .doodle-peek .doodle-buddy { transform: translateY(8%); }
   .doodle-buddy--float { left: 70%; }
+}
+
+/* ---------- Язычок дудла сбоку ---------- */
+/* Сидит у правого края шапки, наполовину за краем экрана: не закрывает кнопки, аватар и карта
+   остаются приложению. Раз в несколько секунд выглядывает, чтобы его заметили. */
+.doodle-tab {
+  position: absolute;
+  top: 50%;
+  right: -16px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  padding: 6px 26px 6px 10px;
+  border-radius: 999px 0 0 999px;
+  background: rgba(20, 23, 22, .9);
+  box-shadow: 0 0 0 1px rgba(195, 247, 58, .4), 0 6px 18px rgba(0, 0, 0, .45);
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(30%, -50%);
+  transition: transform .35s cubic-bezier(.3, 1.4, .5, 1), opacity 1s ease;
+  animation: doodle-tab-nudge 6s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+.doodle-tab .doodle-buddy { position: relative; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .4)); }
+.doodle-tab.is-out { transform: translate(0, -50%); animation: none; }
+.doodle-tab.is-leaving { opacity: 0; }
+@keyframes doodle-tab-nudge {
+  0%, 78%, 100% { transform: translate(30%, -50%); }
+  84% { transform: translate(6%, -50%) rotate(-4deg); }
+  90% { transform: translate(18%, -50%) rotate(2deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .doodle-tab { animation: none; }
 }

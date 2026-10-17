@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "scale": 1.7,
+  "settings": {
+    "buddyLingerMs": 2500
+  },
+  "events": [
+    {
+      "id": "nice-number",
+      "rules": [
+        { "type": "endsWith", "value": "88" },
+        { "type": "repeat", "min": 3 }
+      ]
+    }
+  ]
+}

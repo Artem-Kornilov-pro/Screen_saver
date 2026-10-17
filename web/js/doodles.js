@@ -10,9 +10,103 @@
   var MAX_PARTICLES = 80;
   var LS = 'sbkids.doodles.';
 
-  var HINT_SPARKLE =
-    '<svg viewBox="0 0 48 48" width="18" height="18"><path d="M24 2 C26 16 32 22 46 24 C32 26 26 32 24 46 ' +
-    'C22 32 16 26 2 24 C16 22 22 16 24 2 Z" fill="#c3f73a"/><circle cx="24" cy="24" r="4" fill="#fff"/></svg>';
+  // ---------- Настройки из конфига ----------
+  //
+  // Пороги и тайминги приходят из манифеста (settings), чтобы подкрутить их после тестов на телефонах
+  // без релиза. Каждое значение зажимается в безопасные границы: кривой конфиг не сделает
+  // 1000 частиц или стикер, который не уходит никогда. [мин, макс, по умолчанию]
+  var SETTINGS_LIMITS = {
+    holidayPriority: [0, 1000, 40],
+    maxParticles: [10, 150, 80],
+    comboIdleMs: [2000, 30000, 7000],
+    finaleMs: [1000, 10000, 3200],
+    buddyLingerMs: [0, 30000, 5000],
+    buddyFadeMs: [200, 5000, 1000],
+    traceRadius: [12, 80, 30],
+    goldChance: [0, 1, 0.1],
+    flipHoldMs: [300, 5000, 1200],
+    flipDownAngle: [120, 179, 150],
+    flipUpAngle: [10, 90, 60]
+  };
+  var settings = {};
+
+  function applySettings(raw) {
+    Object.keys(SETTINGS_LIMITS).forEach(function (key) {
+      var lim = SETTINGS_LIMITS[key];
+      var v = Number(raw && raw[key]);
+      settings[key] = raw && raw[key] != null && isFinite(v) ? Math.max(lim[0], Math.min(lim[1], v)) : lim[2];
+    });
+    HOLIDAY_PRIORITY = settings.holidayPriority;
+    MAX_PARTICLES = settings.maxParticles;
+    COMBO_IDLE_MS = settings.comboIdleMs;
+    FINALE_MS = settings.finaleMs;
+    BUDDY_LINGER_MS = settings.buddyLingerMs;
+    BUDDY_FADE_MS = settings.buddyFadeMs;
+    TRACE_RADIUS = settings.traceRadius;
+  }
+
+  // ---------- Дефолт в приложении + CDN поверх ----------
+  //
+  // Приложение несёт конфиг и картинки по умолчанию: слой работает сразу, даже без сети.
+  // Конфиг с CDN (адрес передаёт приложение) дополняет дефолт по id: тот же id — поля CDN поверх
+  // (вложенные объекты сливаются, массивы заменяются), новый id — добавляется, enabled: false — выключает.
+
+  function isPlain(v) { return v && typeof v === 'object' && !Array.isArray(v); }
+
+  function deepMerge(base, over) {
+    if (!isPlain(base) || !isPlain(over)) return over === undefined ? base : over;
+    var out = {};
+    Object.keys(base).forEach(function (k) { out[k] = base[k]; });
+    Object.keys(over).forEach(function (k) { out[k] = deepMerge(base[k], over[k]); });
+    return out;
+  }
+
+  function mergeById(base, over) {
+    var out = (base || []).map(function (it) { return deepMerge(it, { _src: 'bundle' }); });
+    (Array.isArray(over) ? over : []).forEach(function (it) {
+      if (!isPlain(it) || typeof it.id !== 'string') return;
+      for (var i = 0; i < out.length; i++) {
+        if (out[i].id === it.id) {
+          // Свой pack на CDN — картинки ищем сначала там; иначе CDN поменял только числа и правила
+          out[i] = deepMerge(out[i], deepMerge(it, { _src: 'cdn', _cdnFirst: 'pack' in it }));
+          return;
+        }
+      }
+      out.push(deepMerge(it, { _src: 'cdn', _cdnFirst: true }));
+    });
+    return out;
+  }
+
+  function mergeManifest(base, cdn) {
+    var useCdn = isPlain(cdn) && cdn.schema === base.schema;
+    var m = deepMerge(base, {});
+    if (useCdn) {
+      ['enabled', 'scale', 'prefetchDays'].forEach(function (k) { if (k in cdn) m[k] = cdn[k]; });
+      m.settings = deepMerge(base.settings || {}, isPlain(cdn.settings) ? cdn.settings : {});
+    }
+    m.items = mergeById(base.items, useCdn ? cdn.items : null);
+    m.events = mergeById(base.events, useCdn ? cdn.events : null);
+    var seasons = {};
+    Object.keys(base.seasons || {}).forEach(function (k) { seasons[k] = deepMerge(base.seasons[k], { _src: 'bundle' }); });
+    if (useCdn && isPlain(cdn.seasons)) {
+      Object.keys(cdn.seasons).forEach(function (k) {
+        if (isPlain(cdn.seasons[k])) {
+          seasons[k] = deepMerge(seasons[k] || {}, deepMerge(cdn.seasons[k], { _src: 'cdn', _cdnFirst: !base.seasons || !base.seasons[k] || 'pack' in cdn.seasons[k] }));
+        }
+      });
+    }
+    m.seasons = seasons;
+    return m;
+  }
+
+  // Откуда брать картинки записи. Новая запись с CDN или свой pack на CDN — сначала CDN, потом приложение.
+  // Запись из приложения, которой CDN поменял только числа, — сначала приложение: без лишних запросов.
+  function sourceBases(entry, rel, src) {
+    var bundle = new URL(rel, src.bundle).href;
+    if (entry._src !== 'cdn' || !src.cdn) return [bundle];
+    var cdn = new URL(rel, src.cdn).href;
+    return entry._cdnFirst ? [cdn, bundle] : [bundle, cdn];
+  }
 
   // ---------- Хранилище (только локально) ----------
 
@@ -111,12 +205,17 @@
   }
 
   // «Обыденный» дудл надевает сезонную одежду: аксессуар на стикер дня и частицы сезона в сцену и финал
-  function dressForSeason(item, manifest, manifestUrl, d) {
+  function dressForSeason(item, manifest, src, d, extra) {
     var dressed = JSON.parse(JSON.stringify(item));
     var season = seasonOf(manifest, d);
     if (!season) return dressed;
-    var base = new URL(season.def.pack || 'packs/' + season.id + '/', manifestUrl);
-    var abs = function (name) { return new URL(name, base).href; };
+    var bases = sourceBases(season.def, season.def.pack || 'packs/' + season.id + '/', src);
+    // Имя картинки — адрес на первом источнике, остальные адреса — запасные
+    var abs = function (name) {
+      var hrefs = bases.map(function (b) { return new URL(name, b).href; });
+      extra[hrefs[0]] = hrefs;
+      return hrefs[0];
+    };
     var eff = dressed.effect;
     if (season.def.wear && eff.buddy) {
       eff.buddy.wear = abs(season.def.wear);
@@ -161,7 +260,25 @@
   }
 
   // Картинки пака берём текстом и кладём в localStorage: без сети дудл всё равно покажется
+  var allowedOrigins = [location.origin];
+
+  function isAllowed(href) {
+    try { return allowedOrigins.indexOf(new URL(href).origin) !== -1; } catch (e) { return false; }
+  }
+
+  // Картинка из списка адресов по порядку: CDN, потом приложение
+  function loadFirst(hrefs) {
+    var i = 0;
+    function next() {
+      if (i >= hrefs.length) return Promise.reject(new Error('asset'));
+      return loadAsset(hrefs[i++]).catch(next);
+    }
+    return next();
+  }
+
   function loadAsset(href) {
+    // Только свой CDN: чужая ссылка в конфиге не превратится в запрос наружу
+    if (!isAllowed(href)) return Promise.reject(new Error('blocked ' + href));
     if (!/\.svg(\?|$)/i.test(href) || !global.fetch) return loadImage(href);
     var key = 'asset.' + href;
     return fetch(href)
@@ -211,8 +328,10 @@
     ctx.timers.push(setTimeout(fn, ms));
   }
 
+  // Без имени — «дом» дудла: аватар или карта, куда надеваются аксессуары и откуда летят частицы.
+  // У дудлов дня дома нет — тогда это сам язычок.
   function anchorEl(ctx, name) {
-    return name ? ctx.root.querySelector('[data-anchor="' + name + '"]') : ctx.anchor;
+    return name ? ctx.root.querySelector('[data-anchor="' + name + '"]') : (ctx.home || ctx.anchor);
   }
 
   // Центр якоря в координатах слоя эффектов
@@ -917,23 +1036,6 @@
 
   // ---------- Подсказка, факт, альбом ----------
 
-  function showHint(ctx) {
-    var hint = ctx.item.effect.hint;
-    if (!hint || lsGet('seen.' + ctx.item.id) === ctx.dayKey) return;
-    var el = document.createElement('span');
-    el.className = 'doodle-hint';
-    if (hint.image) {
-      var img = document.createElement('img');
-      img.src = ctx.src(hint.image);
-      img.alt = '';
-      el.appendChild(img);
-    } else {
-      el.innerHTML = HINT_SPARKLE;
-    }
-    ctx.anchor.appendChild(el);
-    ctx.hint = el;
-  }
-
   function hideHint(ctx) {
     lsSet('seen.' + ctx.item.id, ctx.dayKey);
     if (ctx.hint) { ctx.hint.remove(); ctx.hint = null; }
@@ -1020,7 +1122,13 @@
       '<circle cx="2.5" cy="16" r="2.2" fill="currentColor" stroke="none"/></svg>'
   };
 
+<<<<<<< Updated upstream
   var TRACE_RADIUS = 30;      // px: насколько близко палец должен пройти мимо точки узора
+=======
+  var TRACE_RADIUS = 30;       // px: насколько близко палец должен пройти мимо точки узора
+  var BUDDY_LINGER_MS = 5000;  // сколько стикер дня ждёт после финала, прежде чем уйти
+  var BUDDY_FADE_MS = 1000;    // и как долго растворяется
+>>>>>>> Stashed changes
 
   // Дрожащая линия скетч-стикеров: SVG-фильтр, один на страницу
   function ensureDefs() {
@@ -1039,7 +1147,7 @@
     var c = eff.combo || {};
     return {
       taps: c.taps || 3, windowMs: c.windowMs || 2500, finale: c.finale || 'shake', effect: c.effect || null,
-      gold: c.goldChance == null ? 0.1 : c.goldChance, mode: c.mode || 'taps', trace: c.trace || null
+      gold: c.goldChance == null ? settings.goldChance : c.goldChance, mode: c.mode || 'taps', trace: c.trace || null
     };
   }
 
@@ -1203,15 +1311,36 @@
   // Один день стикер выглядывает из-за края элемента, другой — проплывает по экрану.
   // Это единственное, что ловит касание в дудле, поэтому стикер маленький и стоит у краёв.
 
+  // Картинка на язычке: стикер дня, иначе подсказка дудла, иначе аксессуар (колпак, шлем), иначе
+  // стикер сцены, кроме растянутых на всю ширину (гирлянда), иначе искра
+  function buddyImageOf(eff) {
+    if (eff.buddy && eff.buddy.image) return eff.buddy.image;
+    if (eff.hint && eff.hint.image) return eff.hint.image;
+    var steps = eff.steps || [];
+    var pickStep = function (type) {
+      for (var i = 0; i < steps.length; i++) {
+        if (steps[i].type === type && steps[i].image && !steps[i].fullWidth) return steps[i].image;
+      }
+      return null;
+    };
+    return pickStep('skin') || pickStep('sticker') || SPARK_KEY;
+  }
+
   function createBuddy(c) {
-    var b = c.item.effect.buddy;
-    var img = c.img(b.image);
+    var b = c.item.effect.buddy || {};
+    var img = c.img(buddyImageOf(c.item.effect));
     if (!img) return null;
+<<<<<<< Updated upstream
     var size = b.size || 44;
+=======
+    var size = (b.size || 40) * (c.scale || 1);
+>>>>>>> Stashed changes
     var ratio = (img.naturalWidth / img.naturalHeight) || 1;
     var width = Math.round(size * ratio);
     var day = dayNumber(c.date);
-    var mode = b.mode || (day % 2 ? 'float' : 'peek');
+    // По умолчанию — язычок сбоку: не закрывает кнопки, тап по аватару и карте остаётся приложению.
+    // peek и float — старые режимы, включаются из конфига (buddy.mode).
+    var mode = b.mode || 'tab';
     var el = document.createElement('button');
     el.type = 'button';
     el.className = 'doodle-buddy';
@@ -1236,6 +1365,14 @@
       el.appendChild(wear);
     }
     var holder = el;
+    if (mode === 'tab') {
+      var dock = c.root.querySelector('[data-doodle-dock]') || c.root;
+      if (window.getComputedStyle(dock).position === 'static') dock.style.position = 'relative';
+      holder = document.createElement('span');
+      holder.className = 'doodle-tab';
+      holder.appendChild(el);
+      dock.appendChild(holder);
+    }
     if (mode === 'peek') {
       var hosts = Array.prototype.filter.call(c.root.querySelectorAll('[data-snow]'), function (host) {
         return host.getClientRects().length && window.getComputedStyle(host).overflow !== 'hidden';
@@ -1268,7 +1405,7 @@
   function parkBuddy(c) {
     if (!c.buddyMode || c.buddyParked) return;
     c.buddyParked = true;
-    if (c.buddyMode === 'peek') {
+    if (c.buddyMode === 'peek' || c.buddyMode === 'tab') {
       c.buddyHolder.classList.add('is-out');
     } else {
       var r = c.anchor.getBoundingClientRect();
@@ -1279,6 +1416,45 @@
     }
   }
 
+<<<<<<< Updated upstream
+=======
+  // Обратно к пряткам: выглядывает из-за края или проплывает, как до первого тапа
+  function unparkBuddy(c) {
+    if (!c.buddyMode || !c.buddyParked) return;
+    c.buddyParked = false;
+    if (c.buddyMode === 'peek' || c.buddyMode === 'tab') {
+      c.buddyHolder.classList.remove('is-out');
+    } else {
+      c.anchor.classList.remove('is-parked');
+      c.anchor.style.left = '';
+      c.anchor.style.top = c.buddyTop;
+    }
+  }
+
+  // После финала стикер ждёт BUDDY_LINGER_MS, растворяется и снова прячется — его можно найти опять.
+  // Тап, пока он не исчез, отменяет уход и сразу запускает комбо заново.
+  function scheduleBuddyLeave(c) {
+    if (!c.buddyMode) return;
+    cancelBuddyLeave(c);
+    c.leaveTimer = window.setTimeout(function () {
+      c.buddyHolder.style.transitionDuration = BUDDY_FADE_MS + 'ms';
+      c.buddyHolder.classList.add('is-leaving');
+      c.leaveTimer = window.setTimeout(function () {
+        unparkBuddy(c);
+        c.buddyHolder.classList.remove('is-leaving');
+        c.leaveTimer = 0;
+      }, BUDDY_FADE_MS);
+    }, BUDDY_LINGER_MS);
+  }
+
+  function cancelBuddyLeave(c) {
+    if (!c || !c.buddyMode) return;
+    window.clearTimeout(c.leaveTimer);
+    c.leaveTimer = 0;
+    c.buddyHolder.classList.remove('is-leaving');
+  }
+
+>>>>>>> Stashed changes
   function updateHud(c) {
     var combo = comboOf(c.item.effect);
     if (!c.hud) {
@@ -1311,6 +1487,11 @@
     c.level = 0;
     c.gold = false;
     endTrace(c);
+    if (c === ctx && pendingApply) {
+      var apply = pendingApply;
+      pendingApply = null;
+      window.setTimeout(apply, 0);
+    }
     c.taps = [];
     if (c.hud) { c.hud.remove(); c.hud = null; }
   }
@@ -1417,18 +1598,15 @@
     return list;
   }
 
+  // Дудл запускается с язычка сбоку (или стикера дня). Аватар и карта — только «дом»: на них надеваются
+  // аксессуары, а их тап всегда достаётся приложению (профиль, карта).
   function arm(c) {
     var eff = c.item.effect;
-    if (eff.anchor === 'buddy') {
-      c.anchor = eff.buddy ? createBuddy(c) : null;
-      if (!c.anchor) return false;
-      ctx = c;
-      c.anchor.addEventListener('click', onTap);
-      c.cleanups.push(function () { c.buddyHolder.remove(); });
-      if (suppressed) c.buddyHolder.style.visibility = 'hidden';
-      return true;
+    if (eff.anchor && eff.anchor !== 'buddy') {
+      c.home = c.root.querySelector('[data-anchor="' + eff.anchor + '"]');
+      if (!c.home) return false;
     }
-    c.anchor = c.root.querySelector('[data-anchor="' + (eff.anchor || 'avatar') + '"]');
+    c.anchor = createBuddy(c);
     if (!c.anchor) return false;
     ctx = c;
     var skinDay = lsGet('skin.' + c.item.id) === c.dayKey;
@@ -1436,12 +1614,39 @@
       if (s.auto) RENDERERS.skin(s, c, false);
       else if (skinDay && s.ttl === 'day') RENDERERS.skin(s, c, true);
     });
-    showHint(c);
-    if (triggersOf(eff).indexOf('tap') !== -1) {
-      c.anchor.addEventListener('click', onTap);
-      c.cleanups.push(function () { c.anchor.removeEventListener('click', onTap); });
-    }
+    // Ловит тап весь язычок, а не только картинка
+    var target = c.buddyMode === 'tab' ? c.buddyHolder : c.anchor;
+    target.addEventListener('click', onTap);
+    c.cleanups.push(function () { c.buddyHolder.remove(); });
+    if (suppressed) c.buddyHolder.style.visibility = 'hidden';
     return true;
+  }
+
+  // Ребёнок занялся приложением (нажал кнопку, начал листать): сцена мягко гаснет,
+  // комбо сбрасывается, язычок возвращается на место. Играть можно снова в любой момент.
+  function skip() {
+    [ctx, ectx].forEach(function (c) {
+      if (!c) return;
+      c.timers.forEach(clearTimeout);
+      c.timers = [];
+      c.live.slice().forEach(function (el) {
+        var out = el.animate([{ opacity: window.getComputedStyle(el).opacity }, { opacity: 0 }], { duration: 250, fill: 'forwards' });
+        out.onfinish = function () { untrack(c, el); };
+      });
+      var fx = c.fx;
+      if (fx && fx.list.length) {
+        fx.c.style.transition = 'opacity .25s';
+        fx.c.style.opacity = '0';
+        window.setTimeout(function () {
+          fx.list = [];
+          fx.g.clearRect(0, 0, fx.w, fx.h);
+          fx.c.style.opacity = '';
+        }, 260);
+      }
+      resetCombo(c);
+      cancelBuddyLeave(c);
+      unparkBuddy(c);
+    });
   }
 
   function stopAll(c) {
@@ -1472,23 +1677,56 @@
     return true;
   }
 
-  // «Красивое» число: 777, 5 555 · 1 000, 35 000 · 1 234, 9 876 · 12 321
-  function nicePattern(value, patterns) {
+  // Правило «красивого» числа из конфига. Новое правило — запись в манифесте, без релиза.
+  function matchRule(rule, n, str) {
+    if (!isPlain(rule)) return false;
+    var value = rule.value == null ? '' : String(rule.value);
+    switch (rule.type) {
+      case 'repeat': return str.length >= (rule.min || 3) && /^(\d)\1+$/.test(str);
+      case 'multiple': return rule.of > 0 && n >= rule.of && n % rule.of === 0;
+      case 'sequence': return str.length >= (rule.min || 3) && isSequence(str);
+      case 'mirror': return str.length >= (rule.min || 4) && str === str.split('').reverse().join('') && !/^(\d)\1+$/.test(str);
+      case 'contains': return value !== '' && str.indexOf(value) !== -1;
+      case 'endsWith': return value !== '' && str.slice(-value.length) === value;
+      case 'equals': return n === Number(rule.value);
+      default: return false;
+    }
+  }
+
+  // Старые имена шаблонов из первых версий манифеста — те же правила
+  var PATTERN_RULES = {
+    repdigit: { type: 'repeat', min: 3 },
+    round: { type: 'multiple', of: 1000 },
+    sequence: { type: 'sequence', min: 3 },
+    mirror: { type: 'mirror', min: 4 },
+    sixseven: { type: 'contains', value: '67' }
+  };
+
+  // «Красивое» число: 777, 5 555 · 1 000, 35 000 · 1 234, 9 876 · 12 321 · …67…
+  function niceMatch(value, def) {
     var n = Math.floor(Math.abs(Number(value)));
-    if (!isFinite(n) || n < 10) return null;
+    if (!isFinite(n) || n < (def.minValue || 10)) return null;
     var str = String(n);
-    var checks = {
-      repdigit: /^(\d)\1{2,}$/.test(str),
-      round: n >= 1000 && n % 1000 === 0,
-      sequence: str.length >= 3 && isSequence(str),
-      mirror: str.length >= 4 && str === str.split('').reverse().join('') && !/^(\d)\1+$/.test(str),
-      sixseven: str.indexOf('67') !== -1
-    };
-    for (var i = 0; i < patterns.length; i++) if (checks[patterns[i]]) return patterns[i];
+    var rules = Array.isArray(def.rules) ? def.rules :
+      (def.patterns || ['repdigit', 'round', 'sequence', 'mirror']).map(function (k) { return PATTERN_RULES[k]; });
+    for (var i = 0; i < rules.length; i++) if (matchRule(rules[i], n, str)) return rules[i].type;
     return null;
   }
 
-  function armEvents(manifest, manifestUrl, opts, reduced, token) {
+  // Расписание clock: любые из month, day, weekday (1 — понедельник), hour, minute, hours: [с, по]
+  function clockMatches(match, t) {
+    if (!isPlain(match) || !t) return false;
+    var keys = ['month', 'day', 'weekday', 'hour', 'minute'];
+    for (var i = 0; i < keys.length; i++) {
+      var want = match[keys[i]];
+      if (want == null) continue;
+      if (Array.isArray(want) ? want.indexOf(t[keys[i]]) === -1 : t[keys[i]] !== want) return false;
+    }
+    if (Array.isArray(match.hours) && !(t.hour >= match.hours[0] && t.hour <= match.hours[1])) return false;
+    return true;
+  }
+
+  function armEvents(manifest, src, opts, reduced, token) {
     if (manifest.enabled === false) return Promise.resolve(null);
     var defs = (manifest.events || []).filter(function (d) {
       return d && d.enabled !== false && d.on && d.effect && RENDERERS[d.effect.type];
@@ -1497,11 +1735,12 @@
     var imgs = {};
     var loads = [];
     defs.forEach(function (d) {
-      var base = new URL(d.pack || 'packs/events/', manifestUrl);
-      d._url = function (name) { return new URL(name, base).href; };
-      d._img = function (name) { return imgs[d._url(name)]; };
+      var bases = sourceBases(d, d.pack || 'packs/events/', src);
+      d._url = function (name) { return new URL(name, bases[0]).href; };
+      d._img = function (name) { return imgs[name]; };
       Object.keys(collectAssets(d.effect, {})).forEach(function (n) {
-        loads.push(loadAsset(d._url(n)).then(function (img) { imgs[d._url(n)] = img; }, function () {
+        var hrefs = bases.map(function (b) { return new URL(n, b).href; });
+        loads.push(loadFirst(hrefs).then(function (img) { imgs[n] = img; }, function () {
           // Нет картинки — этот шаг просто пропустится
         }));
       });
@@ -1516,7 +1755,10 @@
     });
   }
 
-  /** Событие приложения: 'balance' { value }, 'topup' { amount }, 'flip'. true — что-то показали. */
+  /**
+   * Событие приложения. true — что-то показали.
+   * 'balance' { value } · 'topup' { amount } · 'flip' · 'clock' { month, day, weekday, hour, minute, date }
+   */
   function fireEvent(name, data) {
     if (suppressed || !ectx) return false;
     var now = Date.now();
@@ -1525,14 +1767,18 @@
       if (d.on !== name || now - (d._last || 0) < (d.cooldownMs || 0)) return;
       var info = { label: '', pattern: null };
       if (name === 'clock') {
-        var m = d.match || {};
-        if ((m.day != null && (!data || data.day !== m.day)) || (m.hour != null && (!data || data.hour !== m.hour))) return;
+        if (!clockMatches(d.match, data)) return;
+        // По расписанию — один раз за день, если в конфиге не сказано иначе (отладка не считается)
+        var onceKey = 'clock.' + d.id;
+        if (d.oncePerDay !== false && !data.debug && lsGet(onceKey) === data.date) return;
+        if (d.oncePerDay !== false && !data.debug) lsSet(onceKey, data.date);
       }
       if (name === 'balance') {
-        info.pattern = nicePattern(data && data.value, d.patterns || ['repdigit', 'round', 'sequence', 'mirror']);
+        info.pattern = niceMatch(data && data.value, d);
         if (!info.pattern) return;
         info.label = Math.floor(data.value).toLocaleString('ru-RU');
       } else if (data && data.amount) {
+        if (d.minAmount && data.amount < d.minAmount) return;
         info.label = '+' + Math.floor(data.amount).toLocaleString('ru-RU');
       }
       var anchor = anchorEl(ectx, d.anchor || 'avatar');
@@ -1560,6 +1806,10 @@
 
   function destroy() {
     seq++;
+    teardown();
+  }
+
+  function teardown() {
     destroyEvents();
     if (!ctx) return;
     stopAll(ctx);
@@ -1577,13 +1827,62 @@
     }
   });
 
+  // Собирает слой из готового (слитого) манифеста: настройки, события и дудл на сегодня
+  function armAll(manifest, src, opts, reduced, token) {
+    applySettings(manifest.settings);
+    armEvents(manifest, src, opts, reduced, token);
+    var item = pick(manifest, opts.date);
+    if (!item) return Promise.resolve(null);
+    var extra = {};
+    if (item.pool) item = dressForSeason(item, manifest, src, opts.date, extra);
+    var bases = sourceBases(item, item.pack || 'packs/' + item.id + '/', src);
+    var url = function (name) { return new URL(name, bases[0]).href; };
+    var imgs = {};
+    var loads = Object.keys(collectAssets(item.effect, {})).map(function (n) {
+      var hrefs = extra[n] || bases.map(function (b) { return new URL(n, b).href; });
+      return loadFirst(hrefs).then(function (img) { imgs[n] = img; });
+    });
+    loads.push(loadImage(SPARK_SRC).then(function (img) { imgs[SPARK_KEY] = img; }));
+    return Promise.all(loads).then(function () {
+      if (token !== seq) return null;
+      var c = {
+        item: item, root: opts.root, layer: opts.layer, live_region: opts.liveRegion || null,
+        date: opts.date, dayKey: ymd(opts.date), reduced: reduced, facts: !!opts.facts,
+        url: url, img: function (n) { return imgs[n]; },
+        src: function (n) { return (imgs[n] || {}).src || url(n); },
+        timers: [], live: [], cleanups: [], skins: [], taps: [],
+        level: 0, lastAction: 0, hud: null, scale: Number(manifest.scale) || 1,
+        fx: null, hint: null, anchor: null
+      };
+      ensureDefs();
+      return arm(c) ? item : null;
+    });
+  }
+
+  applySettings(null);
+  var pendingApply = null;
+  var current = null;   // { manifest, source } — что сейчас применено, для отладки
+
+  // Новый конфиг с CDN применяем сразу, но не посреди комбо ребёнка: тогда — как только комбо закончится
+  function applyWhenIdle(fn) {
+    if (ctx && ctx.level > 0) pendingApply = fn;
+    else fn();
+  }
+
   function init(opts) {
     destroy();
+    pendingApply = null;
     var token = seq;
-    var manifestUrl = new URL(opts.manifestUrl, location.href);
+    var latest = null;
+    var bundleUrl = new URL(opts.manifestUrl, location.href);
+    var cdnUrl = opts.cdnUrl ? new URL(opts.cdnUrl, location.href) : null;
+    var src = { bundle: bundleUrl, cdn: cdnUrl };
+    allowedOrigins = [location.origin, bundleUrl.origin].concat(cdnUrl ? [cdnUrl.origin] : []);
+    var cdnKey = cdnUrl ? 'cdn.' + cdnUrl.href : null;
     var reduced = !!opts.reducedMotion ||
       (global.matchMedia && global.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
+<<<<<<< Updated upstream
     return loadManifest(manifestUrl.href)
       .then(function (manifest) {
         armEvents(manifest, manifestUrl, opts, reduced, token);
@@ -1611,6 +1910,41 @@
           };
           ensureDefs();
           return arm(c) ? item : null;
+=======
+    return loadManifest(bundleUrl.href)
+      .then(function (base) {
+        var cached = cdnKey ? lsGet(cdnKey) : null;
+        var merged = mergeManifest(base, cached);
+        current = { manifest: merged, source: cached ? 'cdn-cache' : 'bundle' };
+        if (cdnUrl && global.fetch) {
+          fetch(cdnUrl.href, { cache: 'no-cache' })
+            .then(function (r) {
+              if (!r.ok) throw new Error('cdn ' + r.status);
+              return r.json();
+            })
+            .then(function (fresh) {
+              if (token !== seq || JSON.stringify(fresh) === JSON.stringify(cached)) {
+                if (current) current.source = 'cdn';
+                return;
+              }
+              lsSet(cdnKey, fresh);
+              applyWhenIdle(function () {
+                seq++;
+                teardown();
+                var next = mergeManifest(base, fresh);
+                current = { manifest: next, source: 'cdn' };
+                latest = armAll(next, src, opts, reduced, seq).then(function (item) {
+                  if (opts.onChange) opts.onChange(item);
+                  return item;
+                });
+              });
+            })
+            .catch(function () { /* CDN недоступен — остаёмся на дефолте или кэше */ });
+        }
+        // Если CDN успел прийти раньше, чем собрался первый дудл, отвечаем уже собранным по CDN
+        return armAll(merged, src, opts, reduced, token).then(function (item) {
+          return item === null && latest ? latest : item;
+>>>>>>> Stashed changes
         });
       })
       .catch(function () {
@@ -1636,6 +1970,8 @@
     },
     // События приложения: 'balance' { value }, 'topup' { amount }, 'flip' (перевернули экраном вниз и обратно)
     event: fireEvent,
+    // Ребёнок нажал кнопку приложения или начал листать: сцена гаснет, комбо сбрасывается
+    skip: skip,
     // Ребёнок сейчас проходит комбо: тряску и жесты отдаём дудлу, а не праздничному слою
     inCombo: function () { return !!ctx && ctx.level > 0; },
     reset: function () { destroy(); lsClear(); },
@@ -1647,6 +1983,10 @@
       p.birthday = value || null;
       lsSet('profile', p);
     },
+    // Настройки после слияния дефолта и CDN (жесты приложения тоже берут пороги отсюда)
+    settings: function () { return settings; },
+    // Откуда пришёл конфиг: 'bundle' — дефолт приложения, 'cdn-cache' — прошлый CDN, 'cdn' — свежий CDN
+    source: function () { return current ? current.source : 'none'; },
     ymd: ymd,
     collectAssets: collectAssets,
     _pick: pick

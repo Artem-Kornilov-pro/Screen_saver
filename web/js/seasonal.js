@@ -19,7 +19,69 @@
   var SPRITE_SIZE = 64;       // px, заготовка снежинки
   var CAP_BIN = 4;            // px, ширина столбика сугроба
 
-  var SUPPORTED_PARTICLES = ['snowflake'];
+  // snowflake рисуется кодом; sprites — картинки из конфига (листья, лепестки, пузыри), без релиза
+  var SUPPORTED_PARTICLES = ['snowflake', 'sprites'];
+  var FIRST_SHOW_DELAY = 400; // мс после первого кадра
+
+  // Пороги и тайминги из конфига (settings), зажатые в безопасные границы: [мин, макс, по умолчанию]
+  var SETTINGS_LIMITS = {
+    shakeForce: [8, 40, 18],
+    shakeCooldownMs: [500, 5000, 1500],
+    firstShowDelayMs: [0, 3000, 400],
+    fadeInMs: [100, 3000, 600],
+    fadeOutMs: [200, 5000, 1500]
+  };
+
+  function applySettings(raw) {
+    var v = {};
+    Object.keys(SETTINGS_LIMITS).forEach(function (key) {
+      var lim = SETTINGS_LIMITS[key];
+      var n = Number(raw && raw[key]);
+      v[key] = raw && raw[key] != null && isFinite(n) ? Math.max(lim[0], Math.min(lim[1], n)) : lim[2];
+    });
+    SHAKE_FORCE = v.shakeForce;
+    SHAKE_COOLDOWN = v.shakeCooldownMs;
+    FIRST_SHOW_DELAY = v.firstShowDelayMs;
+    FADE_IN = v.fadeInMs / 1000;
+    FADE_OUT = v.fadeOutMs / 1000;
+  }
+
+  // ---------- Дефолт в приложении + CDN поверх ----------
+  //
+  // Как у дудлов: конфиг из приложения — база, конфиг с CDN дополняет его по id эффекта
+  // (вложенные объекты сливаются, массивы заменяются, enabled: false выключает).
+
+  function isPlain(v) { return v && typeof v === 'object' && !Array.isArray(v); }
+
+  function deepMerge(base, over) {
+    if (!isPlain(base) || !isPlain(over)) return over === undefined ? base : over;
+    var out = {};
+    Object.keys(base).forEach(function (k) { out[k] = base[k]; });
+    Object.keys(over).forEach(function (k) { out[k] = deepMerge(base[k], over[k]); });
+    return out;
+  }
+
+  function mergeConfig(base, cdn) {
+    var useCdn = isPlain(cdn) && cdn.version === base.version;
+    var m = deepMerge(base, {});
+    if (useCdn && 'maxParticles' in cdn) m.maxParticles = cdn.maxParticles;
+    m.settings = deepMerge(base.settings || {}, useCdn && isPlain(cdn.settings) ? cdn.settings : {});
+    var effects = (base.effects || []).map(function (e) { return deepMerge(e, { _src: 'bundle' }); });
+    (useCdn && Array.isArray(cdn.effects) ? cdn.effects : []).forEach(function (e) {
+      if (!isPlain(e) || typeof e.id !== 'string') return;
+      for (var i = 0; i < effects.length; i++) {
+        if (effects[i].id === e.id) {
+          // Новые картинки на CDN — ищем сначала там; иначе CDN поменял только числа
+          var newSprites = isPlain(e.particles) && Array.isArray(e.particles.sprites);
+          effects[i] = deepMerge(effects[i], deepMerge(e, { _src: 'cdn', _cdnFirst: newSprites }));
+          return;
+        }
+      }
+      effects.push(deepMerge(e, { _src: 'cdn', _cdnFirst: true }));
+    });
+    m.effects = effects;
+    return m;
+  }
 
   // Встроенная копия конфига: работает без сети и при битом файле на CDN.
   var FALLBACK_CONFIG = {
@@ -121,7 +183,10 @@
     var to = dayOrdinal(raw.dates.to);
     var p = raw.particles;
     if (from === null || to === null) return null;
+    if (raw.enabled === false) return null;
     if (SUPPORTED_PARTICLES.indexOf(p.kind) === -1 || !(p.count > 0)) return null;
+    var sprites = (Array.isArray(p.sprites) ? p.sprites : []).filter(function (n) { return typeof n === 'string'; });
+    if (p.kind === 'sprites' && !sprites.length) return null;
     var colors = (Array.isArray(p.colors) ? p.colors : []).filter(function (c) {
       return /^#[0-9a-f]{6}$/i.test(c);
     });
@@ -142,8 +207,13 @@
         spin: !!p.spin,
         tiltWind: !!p.tiltWind,
         tapToPop: !!p.tapToPop,
-        settle: normalizeSettle(p.settle)
+        settle: p.rise ? null : normalizeSettle(p.settle),
+        sprites: sprites,
+        rise: !!p.rise,
+        images: []
       },
+      src: raw._src || 'bundle',
+      cdnFirst: !!raw._cdnFirst,
       decor: (Array.isArray(raw.decor) ? raw.decor : []).filter(function (d) {
         return d && typeof d.kind === 'string';
       })
@@ -158,7 +228,77 @@
     }).filter(Boolean);
     if (!effects.length) return null;
     var max = Number(raw.maxParticles);
-    return { maxParticles: max > 0 ? Math.min(max, 200) : 80, effects: effects };
+    return { maxParticles: max > 0 ? Math.min(max, 200) : 80, effects: effects, settings: raw.settings || {} };
+  }
+
+  // ---------- Картинки частиц (только свой CDN) ----------
+
+  var allowedOrigins = [location.origin];
+
+  function isAllowed(href) {
+    try { return allowedOrigins.indexOf(new URL(href).origin) !== -1; } catch (err) { return false; }
+  }
+
+  function loadImage(src) {
+    return new Promise(function (resolve, reject) {
+      var img = new Image();
+      img.onload = function () { resolve(img); };
+      img.onerror = reject;
+      img.src = src;
+    });
+  }
+
+  // SVG берём текстом и кэшируем: без сети картинки берутся из прошлой загрузки
+  function loadSvg(href) {
+    if (!isAllowed(href)) return Promise.reject(new Error('blocked'));
+    var key = 'seasonal.asset.' + href;
+    return fetch(href)
+      .then(function (r) {
+        if (!r.ok) throw new Error('asset');
+        return r.text();
+      })
+      .then(function (text) {
+        writeStorage(key, text);
+        return text;
+      }, function () {
+        var cached = readStorage(key);
+        if (cached === null) throw new Error('asset');
+        return cached;
+      })
+      .then(function (text) { return loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(text)); });
+  }
+
+  function loadFirst(hrefs) {
+    var i = 0;
+    function next() {
+      if (i >= hrefs.length) return Promise.reject(new Error('asset'));
+      return loadSvg(hrefs[i++]).catch(next);
+    }
+    return next();
+  }
+
+  // Картинка растеризуется один раз в заготовку SPRITE_SIZE, с сохранением пропорций
+  function rasterize(img) {
+    var c = document.createElement('canvas');
+    c.width = c.height = SPRITE_SIZE;
+    var ratio = (img.naturalWidth / img.naturalHeight) || 1;
+    var w = ratio >= 1 ? SPRITE_SIZE : SPRITE_SIZE * ratio;
+    var h = ratio >= 1 ? SPRITE_SIZE / ratio : SPRITE_SIZE;
+    c.getContext('2d').drawImage(img, (SPRITE_SIZE - w) / 2, (SPRITE_SIZE - h) / 2, w, h);
+    return c;
+  }
+
+  // Картинки эффекта: пришёл с CDN — ищем сначала там, потом в приложении
+  function preloadSprites(config, sources) {
+    if (!config || !window.fetch) return Promise.resolve();
+    return Promise.all(config.effects.map(function (e) {
+      if (e.particles.kind !== 'sprites') return null;
+      var bases = e.src !== 'cdn' || !sources.cdn ? [sources.bundle]
+        : e.cdnFirst ? [sources.cdn, sources.bundle] : [sources.bundle, sources.cdn];
+      return Promise.all(e.particles.sprites.map(function (name) {
+        return loadFirst(bases.map(function (b) { return new URL(name, b).href; })).then(rasterize, function () { return null; });
+      })).then(function (images) { e.particles.images = images.filter(Boolean); });
+    }));
   }
 
   function readStorage(key) {
@@ -169,24 +309,67 @@
     try { window.localStorage.setItem(key, value); } catch (err) { /* хранилище недоступно — живём без него */ }
   }
 
-  function loadConfig() {
-    var fallback = sanitizeConfig(FALLBACK_CONFIG);
-    var cached = null;
-    try { cached = sanitizeConfig(JSON.parse(readStorage(STORAGE_CONFIG))); } catch (err) { cached = null; }
-    state.config = cached || fallback;
+  function readJson(key) {
+    try { return JSON.parse(readStorage(key)); } catch (err) { return null; }
+  }
+
+  function setConfig(config) {
+    state.config = config;
+    applySettings(config && config.settings);
+  }
+
+  // Дефолт из приложения сразу; конфиг с CDN — в фоне, применяется, как только не идёт показ
+  function loadConfig(options) {
+    var bundleUrl = new URL(options.configUrl || CONFIG_URL, location.href);
+    var cdnUrl = options.cdnUrl ? new URL(options.cdnUrl, location.href) : null;
+    var sources = { bundle: bundleUrl, cdn: cdnUrl };
+    allowedOrigins = [location.origin, bundleUrl.origin].concat(cdnUrl ? [cdnUrl.origin] : []);
+    var cdnKey = cdnUrl ? 'seasonal.cdn.' + cdnUrl.href : null;
+    var fallbackRaw = FALLBACK_CONFIG;
+    setConfig(sanitizeConfig(fallbackRaw));
+    state.source = 'fallback';
 
     if (!window.fetch) return Promise.resolve(state.config);
-    return fetch(CONFIG_URL, { cache: 'no-store' })
-      .then(function (response) { return response.ok ? response.json() : null; })
-      .then(function (raw) {
-        var fresh = sanitizeConfig(raw);
-        if (fresh) {
-          state.config = fresh;
-          writeStorage(STORAGE_CONFIG, JSON.stringify(raw));
-        }
-        return state.config;
+    return fetch(bundleUrl.href, { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .catch(function () { return null; })
+      .then(function (bundleRaw) {
+        // Дефолт из приложения; если не прочитался — его прошлая копия, потом встроенная
+        var base = sanitizeConfig(bundleRaw) ? bundleRaw : (sanitizeConfig(readJson(STORAGE_CONFIG)) ? readJson(STORAGE_CONFIG) : fallbackRaw);
+        if (sanitizeConfig(bundleRaw)) writeStorage(STORAGE_CONFIG, JSON.stringify(bundleRaw));
+        var cached = cdnKey ? readJson(cdnKey) : null;
+        var merged = sanitizeConfig(mergeConfig(base, cached)) || sanitizeConfig(base);
+        state.source = cached ? 'cdn-cache' : 'bundle';
+        if (cdnUrl) fetchCdn(cdnUrl, cdnKey, cached, base, sources);
+        return preloadSprites(merged, sources).then(function () {
+          setConfig(merged);
+          return state.config;
+        });
+      });
+  }
+
+  function fetchCdn(cdnUrl, cdnKey, cached, base, sources) {
+    fetch(cdnUrl.href, { cache: 'no-cache' })
+      .then(function (r) {
+        if (!r.ok) throw new Error('cdn');
+        return r.json();
       })
-      .catch(function () { return state.config; });
+      .then(function (fresh) {
+        if (JSON.stringify(fresh) === JSON.stringify(cached)) {
+          state.source = 'cdn';
+          return;
+        }
+        var next = sanitizeConfig(mergeConfig(base, fresh));
+        if (!next) return;
+        writeStorage(cdnKey, JSON.stringify(fresh));
+        preloadSprites(next, sources).then(function () {
+          // Не посреди показа: применим, когда он закончится
+          if (state.run) state.pendingConfig = next;
+          else setConfig(next);
+          state.source = 'cdn';
+        });
+      })
+      .catch(function () { /* CDN недоступен — остаёмся на дефолте или кэше */ });
   }
 
   // ---------- Когда показывать ----------
@@ -235,6 +418,9 @@
     }
     var effect = effectFor(date, name);
     if (!effect) return { effect: null, reason: 'На эту дату эффекта нет' };
+    if (effect.particles.kind === 'sprites' && !effect.particles.images.length) {
+      return { effect: null, reason: 'Картинки эффекта не загрузились' };
+    }
     if (limited) writeStorage(STORAGE_DAY, dayKey(date));
     startRun(effect);
     return { effect: effect, reason: '' };
@@ -254,9 +440,14 @@
     var spec = run.effect.particles;
     var depth = Math.random();
     var size = lerp(spec.size, depth);
+    var h = state.height;
+    var y = spec.rise
+      ? (seeding ? rand(h * 0.4, h * 1.5) : h + size + rand(0, 60))
+      : (seeding ? rand(-h * 0.5, h * 0.6) : -size - rand(0, 60));
     return {
       x: rand(0, state.width),
-      y: seeding ? rand(-state.height * 0.5, state.height * 0.6) : -size - rand(0, 60),
+      y: y,
+      sprite: spec.images.length ? Math.floor(Math.random() * spec.images.length) : -1,
       size: size,
       depth: depth,
       fall: lerp(spec.speed, depth) * rand(0.85, 1.15),
@@ -305,6 +496,10 @@
     state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
     state.canvas.hidden = true;
     if (state.caps.length) scheduleMelt();
+    if (state.pendingConfig) {
+      setConfig(state.pendingConfig);
+      state.pendingConfig = null;
+    }
     notify();
   }
 
@@ -465,7 +660,7 @@
       var prevY = f.y;
       var sway = Math.sin(run.time * 1.4 + f.phase) * 18 * (0.5 + f.depth);
       f.x += (run.wind * (0.5 + 0.5 * f.depth) + sway) * dt;
-      f.y += f.fall * dt;
+      f.y += f.fall * dt * (run.effect.particles.rise ? -1 : 1);
       // Снежинка переднего плана, пересёкшая верхний край элемента, может на нём остаться
       if (settle && f.depth > 0.25 && landOnCap(f, prevY, settle)) {
         if (spawning) run.flakes[i] = makeFlake(run, false);
@@ -475,7 +670,7 @@
       f.angle += f.spin * dt;
       if (f.x < -f.size) f.x = w + f.size;
       else if (f.x > w + f.size) f.x = -f.size;
-      if (f.y > h + f.size) {
+      if (run.effect.particles.rise ? f.y < -f.size : f.y > h + f.size) {
         if (spawning) run.flakes[i] = makeFlake(run, false);
         else run.flakes.splice(i, 1);
       }
@@ -791,7 +986,8 @@
       var cos = Math.cos(f.angle) * scale;
       var sin = Math.sin(f.angle) * scale;
       ctx.setTransform(cos, sin, -sin, cos, f.x * dpr, f.y * dpr);
-      ctx.drawImage(snowflakeSprite(f.color), -SPRITE_SIZE / 2, -SPRITE_SIZE / 2);
+      var images = run.effect.particles.images;
+      ctx.drawImage(f.sprite >= 0 && images[f.sprite] ? images[f.sprite] : snowflakeSprite(f.color), -SPRITE_SIZE / 2, -SPRITE_SIZE / 2);
     });
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -830,6 +1026,7 @@
     /**
      * host — элемент, поверх которого рисуется слой; canvas — его холст.
      * onShake — если задан, тряску решает приложение (например, отдаёт её дудлу), а не слой.
+     * configUrl — конфиг по умолчанию из приложения, cdnUrl — конфиг с CDN поверх него (адрес даёт приложение).
      * Первый показ — через 400 мс после загрузки, чтобы не тормозить запуск экрана.
      */
     init: function (options) {
@@ -853,14 +1050,14 @@
         if (document.hidden) {
           if (state.run) endRun();
         } else {
-          window.setTimeout(function () { trigger('first_open_of_day'); }, 400);
+          window.setTimeout(function () { trigger('first_open_of_day'); }, FIRST_SHOW_DELAY);
         }
       });
 
-      return loadConfig().then(function () {
+      return loadConfig(options).then(function () {
         return new Promise(function (resolve) {
           window.requestAnimationFrame(function () {
-            window.setTimeout(function () { resolve(trigger('first_open_of_day')); }, 400);
+            window.setTimeout(function () { resolve(trigger('first_open_of_day')); }, FIRST_SHOW_DELAY);
           });
         });
       });
@@ -885,6 +1082,14 @@
 
     /** Лежит ли осевший снег: тогда тряска стряхивает его. */
     hasSnow: hasSnow,
+
+    /** Ребёнок нажал кнопку приложения или начал листать: показ мягко гаснет. Осевший снег остаётся. */
+    skip: function () {
+      if (state.run && !state.run.closing) state.run.closing = true;
+    },
+
+    /** Откуда конфиг: 'fallback', 'bundle', 'cdn-cache', 'cdn'. */
+    source: function () { return state.source; },
 
     resetDailyLimit: function () {
       try { window.localStorage.removeItem(STORAGE_DAY); } catch (err) { /* нет хранилища — нечего сбрасывать */ }

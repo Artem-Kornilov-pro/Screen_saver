@@ -20,8 +20,8 @@
         </span>
       </div>
 
-      <header class="header">
-        <button class="avatar" type="button" data-anchor="avatar" aria-label="Профиль">
+      <header class="header" data-doodle-dock>
+        <button class="avatar" type="button" data-anchor="avatar" aria-label="Профиль" data-toast="Открываем профиль">
           <span class="face" aria-hidden="true">М</span>
         </button>
       </header>
@@ -32,7 +32,7 @@
             <div class="card-title">СберКарта</div>
             <div class="balance" data-anchor="balance"><span id="balance-value">35 688</span> <span class="currency">₽</span></div>
           </div>
-          <span class="card-thumb-wrap" data-anchor="card-thumb">
+          <span class="card-thumb-wrap" data-anchor="card-thumb" role="button" aria-label="Карта" data-toast="Открываем «СберКарту»">
             <svg class="card-thumb" viewBox="0 0 76 50" aria-hidden="true">
               <rect width="76" height="50" fill="#8ad62a"/>
               <path d="M-4 12 C10 2 20 22 34 12 S58 2 80 12" stroke="#3fa31a" stroke-width="6" fill="none"/>
@@ -183,6 +183,12 @@
       <button type="button" id="debug-clock">6-е, 19:00</button>
     </div>
     <p class="dbg-hint">Комбо: тап по подсказке → 3 быстрых тапа → финальный жест (его показывает пиктограмма у якоря). Список можно тянуть мышкой вниз. Плитки во время эффекта нажимаются. «Тряхнуть» сначала получает дудл, если он ловит тряску, иначе праздничный слой.</p>
+    <h3 class="dbg-section">Конфиги</h3>
+    <label>CDN (папка с config.json и doodles/manifest.json)
+      <input type="text" id="debug-cdn" placeholder="например, cdn-demo/" spellcheck="false">
+    </label>
+    <button type="button" id="debug-cdn-apply" class="dbg-wide">Применить CDN</button>
+    <p id="debug-cdn-status" class="dbg-status">…</p>
     <a class="dbg-link" href="gallery.html">Галерея всех дудлов →</a>
   </aside>
 </div>
