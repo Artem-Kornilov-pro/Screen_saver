@@ -243,6 +243,17 @@
     return null;
   }
 
+  // В сезон часть дней отдана дудлам дня из пула, поэтому первый день диапазона подходит не всегда:
+  // проверяем, что дудл на этой дате правда выпадает, иначе ищем ближайший такой день.
+  function demoDate(manifest, item, year) {
+    if (item.pool) return poolDate(manifest, item, year);
+    var date = DoodleLabels.demoDate(item.when, year);
+    if (!date || !item.when || item.when.type !== 'range') return date;
+    var parts = date.split('-').map(Number);
+    var picked = Doodles._pick(manifest, new Date(parts[0], parts[1] - 1, parts[2], 12));
+    return picked && picked.id === item.id ? date : poolDate(manifest, item, year) || date;
+  }
+
   // Кнопки быстрого перехода к дате дудла: строятся из того же манифеста
   function buildDoodleButtons() {
     if (!window.fetch) return;
@@ -251,7 +262,7 @@
       .then(function (manifest) {
         var year = new Date().getFullYear();
         manifest.items.forEach(function (item) {
-          var date = item.pool ? poolDate(manifest, item, year) : DoodleLabels.demoDate(item.when, year);
+          var date = demoDate(manifest, item, year);
           if (!date) return;
           var button = document.createElement('button');
           button.type = 'button';
