@@ -3,9 +3,9 @@
   'use strict';
 
   var MANIFEST = 'effects/doodles/manifest.json';
-  var ORDER = ['special', 'winter', 'spring', 'summer', 'autumn'];
-  var COLORS = { special: 'var(--special)', winter: 'var(--winter)', spring: 'var(--spring)', summer: 'var(--summer)', autumn: 'var(--autumn)' };
-  var ROLES = { skin: 'аксессуар', sticker: 'стикер', particles: 'частица', secret: 'финал', hint: 'подсказка' };
+  var ORDER = ['everyday', 'special', 'winter', 'spring', 'summer', 'autumn'];
+  var COLORS = { everyday: 'var(--everyday)', special: 'var(--special)', winter: 'var(--winter)', spring: 'var(--spring)', summer: 'var(--summer)', autumn: 'var(--autumn)' };
+  var ROLES = { skin: 'аксессуар', sticker: 'стикер', particles: 'частица', secret: 'финал', hint: 'подсказка', buddy: 'стикер дня' };
 
   var manifestUrl = new URL(MANIFEST, location.href);
 
@@ -24,6 +24,7 @@
       if (e.type === 'sticker') add(e.image, secret ? 'secret' : 'sticker');
       if (e.type === 'particles') (e.sprites || []).forEach(function (s) { add(s, secret ? 'secret' : 'particles'); });
     }
+    if (effect.buddy) add(effect.buddy.image, 'buddy');
     walk(effect, false);
     if (effect.combo) walk(effect.combo.effect, true);
     if (effect.hint && effect.hint.image) add(effect.hint.image, 'hint');
@@ -52,6 +53,17 @@
     })).then(function (sizes) { return sizes.reduce(function (a, b) { return a + b; }, 0); });
   }
 
+  // Дудл из пула: первый день года, когда он выпадает дудлом дня
+  var manifestCache = null;
+  function poolDate(it, year) {
+    if (!manifestCache || !window.Doodles) return null;
+    for (var d = new Date(year, 0, 1, 12); d.getFullYear() === year; d.setDate(d.getDate() + 1)) {
+      var picked = Doodles._pick(manifestCache, d);
+      if (picked && picked.id === it.id) return Doodles.ymd(d);
+    }
+    return null;
+  }
+
   function kb(bytes) { return (bytes / 1024).toFixed(1).replace('.', ',') + ' КБ'; }
 
   function buildCard(it, tpl, year) {
@@ -75,7 +87,7 @@
     var heroImg = node.querySelector('.stage-hero');
     if (hero) heroImg.src = url(hero); else heroImg.remove();
 
-    node.querySelector('.chip--date').textContent = DoodleLabels.when(it.when);
+    node.querySelector('.chip--date').textContent = it.pool ? 'дудл дня по очереди' : DoodleLabels.when(it.when);
     node.querySelector('.chip--prio').textContent = 'приоритет ' + (it.priority || 0);
     node.querySelector('.title').textContent = it.title || it.id;
     var tl = node.querySelector('.triggers');
@@ -110,15 +122,16 @@
       it._bytes = bytes;
     });
 
-    var d = DoodleLabels.demoDate(it.when, year);
+    var d = it.pool ? poolDate(it, year) : DoodleLabels.demoDate(it.when, year);
     var run = node.querySelector('.run');
-    if (d) run.href = 'index.html?date=' + d + (it.when.type === 'birthday' ? '&birthday=' + d : ''); else run.remove();
+    if (d) run.href = 'index.html?date=' + d + (it.when && it.when.type === 'birthday' ? '&birthday=' + d : ''); else run.remove();
     return node;
   }
 
   fetch(manifestUrl.href, { cache: 'no-cache' })
     .then(function (r) { return r.json(); })
     .then(function (m) {
+      manifestCache = m;
       var tpl = document.getElementById('card-tpl');
       var root = document.getElementById('seasons');
       var year = new Date().getFullYear();

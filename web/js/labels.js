@@ -5,7 +5,7 @@
   var MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
     'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   var WEEKDAYS = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
-  var SEASONS = { winter: 'Зима', spring: 'Весна', summer: 'Лето', autumn: 'Осень', special: 'Особые дни' };
+  var SEASONS = { winter: 'Зима', spring: 'Весна', summer: 'Лето', autumn: 'Осень', special: 'Особые дни', everyday: 'Каждый день' };
   var ANCHORS = { avatar: 'аватару', 'card-thumb': 'карте', paw: 'лапке', savings: 'копилке' };
 
   function mdLabel(md) {
@@ -36,12 +36,14 @@
   }
 
   // Лестница комбо: тап → быстрые тапы → финальный жест
+  var FINALES = { pull: 'Потянуть список', shake: 'Тряхнуть телефон', flip: 'Перевернуть экраном вниз' };
+
   function combo(effect) {
     var c = effect.combo || {};
     return [
-      'Тап по ' + (ANCHORS[effect.anchor || 'avatar'] || effect.anchor),
-      (c.taps || 3) + ' быстрых тапа',
-      c.finale === 'pull' ? 'Потянуть список' : 'Тряхнуть телефон'
+      effect.anchor === 'buddy' ? 'Тап по стикеру дня' : 'Тап по ' + (ANCHORS[effect.anchor || 'avatar'] || effect.anchor),
+      c.mode === 'trace' ? 'Провести пальцем по узору' : (c.taps || 3) + ' быстрых тапа',
+      FINALES[c.finale] || FINALES.shake
     ];
   }
 

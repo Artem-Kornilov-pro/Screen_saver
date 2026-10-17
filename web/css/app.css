@@ -545,3 +545,121 @@ input { font: inherit; color: inherit; }
 
 /* Сугроб на элементе: часть праздничного слоя, касания не ловит */
 .snow-cap { position: absolute; z-index: 3; pointer-events: none; }
+
+/* ---------- Стикер дня («обыденные» дудлы) ---------- */
+/* Единственное, что в дудле ловит касание: маленький, у краёв элементов */
+.doodle-buddy {
+  position: absolute;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, .45));
+  -webkit-tap-highlight-color: transparent;
+}
+.doodle-buddy-img { display: block; width: 100%; height: 100%; pointer-events: none; }
+.doodle-buddy-wear { position: absolute; pointer-events: none; }
+
+/* Выглядывает из-за верхнего края элемента и прячется обратно */
+.doodle-peek {
+  position: absolute;
+  bottom: 100%;
+  z-index: 4;
+  overflow: hidden;
+  pointer-events: none;
+}
+.doodle-peek .doodle-buddy {
+  left: 0;
+  bottom: -2px;
+  animation: doodle-peek 5s cubic-bezier(.3, 1.4, .5, 1) infinite;
+}
+.doodle-peek.is-out { overflow: visible; }
+.doodle-peek.is-out .doodle-buddy { animation: doodle-bob 1.6s ease-in-out infinite; }
+@keyframes doodle-peek {
+  0%, 52%, 100% { transform: translateY(170%); }
+  60%, 88% { transform: translateY(8%); }
+  72% { transform: translateY(14%) rotate(-7deg); }
+  80% { transform: translateY(6%) rotate(5deg); }
+}
+@keyframes doodle-bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-5px) rotate(3deg); }
+}
+
+/* Проплывает по экрану волной, потом пауза за краем */
+.doodle-buddy--float {
+  z-index: 12;
+  animation: doodle-float 11s linear infinite;
+}
+.doodle-buddy--float.is-parked { animation: doodle-bob 1.6s ease-in-out infinite; }
+@keyframes doodle-float {
+  0% { left: -20%; transform: translateY(0) rotate(-8deg); }
+  10% { transform: translateY(-14px) rotate(6deg); }
+  20% { transform: translateY(8px) rotate(-6deg); }
+  30% { transform: translateY(-12px) rotate(6deg); }
+  40% { transform: translateY(6px) rotate(-6deg); }
+  55% { left: 110%; transform: translateY(0) rotate(4deg); }
+  100% { left: 110%; transform: translateY(0); }
+}
+
+/* Большая подсказка финального жеста */
+.doodle-bighint {
+  position: absolute;
+  left: 50%; top: 44%;
+  z-index: 3;
+  width: 124px; height: 124px;
+  padding: 26px;
+  border-radius: 50%;
+  color: #c3f73a;
+  background: radial-gradient(circle, rgba(12, 14, 13, .9) 58%, rgba(12, 14, 13, 0) 72%);
+  box-shadow: 0 0 0 2px rgba(195, 247, 58, .45), 0 0 40px rgba(195, 247, 58, .35);
+  pointer-events: none;
+}
+.doodle-bighint svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.doodle-bighint [class^="g-"] { transform-box: fill-box; transform-origin: center; }
+
+.g-flip { animation: doodle-flip 1.8s ease-in-out infinite; }
+.g-trace { stroke-dasharray: 40; animation: doodle-trace-draw 1.6s ease-in-out infinite; }
+@keyframes doodle-flip {
+  0%, 25% { transform: rotate(0); }
+  50%, 75% { transform: rotate(180deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes doodle-trace-draw {
+  0% { stroke-dashoffset: 40; }
+  70%, 100% { stroke-dashoffset: 0; }
+}
+
+/* Узор, по которому ведут пальцем (ковёр) */
+.doodle-trace {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, .5));
+}
+.doodle-trace img, .doodle-trace svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.doodle-trace-path {
+  fill: none;
+  stroke: #fff9db;
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 2 12;
+  opacity: .9;
+}
+.doodle-trace-done {
+  fill: none;
+  stroke: #c3f73a;
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 0 6px #c3f73a);
+}
+.doodle-trace-dot { fill: #c3f73a; filter: drop-shadow(0 0 8px #c3f73a); }
+
+@media (prefers-reduced-motion: reduce) {
+  .doodle-peek .doodle-buddy, .doodle-buddy--float, .doodle-buddy--float.is-parked, .doodle-peek.is-out .doodle-buddy, .g-flip, .g-trace { animation: none; }
+  .doodle-peek .doodle-buddy { transform: translateY(8%); }
+  .doodle-buddy--float { left: 70%; }
+}
