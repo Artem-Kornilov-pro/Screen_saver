@@ -769,7 +769,9 @@
       var fx = fxCanvas(ctx);
       var n = Math.min(Math.round((e.count || 30) * (ctx.mult || 1)), MAX_PARTICLES - fx.list.length);
       var origin = e.origin === 'anchor' ? anchorPoint(ctx) : e.origin === 'at' ? anchorPoint(ctx, e.at) : null;
-      var ang = e.angle || [-30, 120], sp = e.speed || [200, 600], sz = e.size || [14, 30];
+      var ang = e.angle || [-30, 120], sp = e.speed || [200, 600];
+      var k = ctx.scale || 1;
+      var sz = (e.size || [14, 30]).map(function (v) { return v * k; });
       var spin = e.spin == null ? 3 : e.spin;
       var life = (e.durationMs || 2400) / 1000;
       // Взрыв из точки тормозится воздухом; дождь сверху/снизу идёт волной, а не залпом
@@ -886,7 +888,7 @@
     var ratio = (img.naturalWidth / img.naturalHeight) || 1;
     var w, h;
     if (e.fullWidth) { w = W; h = W / ratio; }
-    else { h = e.size || 72; w = h * ratio; }
+    else { h = (e.size || 72) * (ctx.scale || 1); w = h * ratio; }
     var el = document.createElement('img');
     el.className = 'doodle-sticker' + (ctx.style ? ' doodle-sticker--' + ctx.style : '');
     if (ctx.style === 'neon') el.style.setProperty('--neon', neonOf(img.src));
@@ -1020,7 +1022,9 @@
       '<circle cx="2.5" cy="16" r="2.2" fill="currentColor" stroke="none"/></svg>'
   };
 
-  var TRACE_RADIUS = 30;      // px: насколько близко палец должен пройти мимо точки узора
+  var TRACE_RADIUS = 30;
+  var BUDDY_LINGER_MS = 5000;  // сколько стикер дня ждёт после финала, прежде чем уйти
+  var BUDDY_FADE_MS = 1000;    // и как долго растворяется      // px: насколько близко палец должен пройти мимо точки узора
 
   // Дрожащая линия скетч-стикеров: SVG-фильтр, один на страницу
   function ensureDefs() {
@@ -1207,7 +1211,7 @@
     var b = c.item.effect.buddy;
     var img = c.img(b.image);
     if (!img) return null;
-    var size = b.size || 44;
+    var size = (b.size || 44) * (c.scale || 1);
     var ratio = (img.naturalWidth / img.naturalHeight) || 1;
     var width = Math.round(size * ratio);
     var day = dayNumber(c.date);
@@ -1257,6 +1261,7 @@
     if (mode === 'float') {
       el.classList.add('doodle-buddy--float');
       el.style.top = 24 + (day * 13) % 40 + '%';
+      c.buddyTop = el.style.top;
       c.root.appendChild(el);
     }
     c.buddyHolder = holder;
@@ -1277,6 +1282,41 @@
       c.anchor.style.top = r.top - root.top + 'px';
       c.anchor.classList.add('is-parked');
     }
+  }
+
+  // Обратно к пряткам: выглядывает из-за края или проплывает, как до первого тапа
+  function unparkBuddy(c) {
+    if (!c.buddyMode || !c.buddyParked) return;
+    c.buddyParked = false;
+    if (c.buddyMode === 'peek') {
+      c.buddyHolder.classList.remove('is-out');
+    } else {
+      c.anchor.classList.remove('is-parked');
+      c.anchor.style.left = '';
+      c.anchor.style.top = c.buddyTop;
+    }
+  }
+
+  // После финала стикер ждёт BUDDY_LINGER_MS, растворяется и снова прячется — его можно найти опять.
+  // Тап, пока он не исчез, отменяет уход и сразу запускает комбо заново.
+  function scheduleBuddyLeave(c) {
+    if (!c.buddyMode) return;
+    cancelBuddyLeave(c);
+    c.leaveTimer = window.setTimeout(function () {
+      c.buddyHolder.classList.add('is-leaving');
+      c.leaveTimer = window.setTimeout(function () {
+        unparkBuddy(c);
+        c.buddyHolder.classList.remove('is-leaving');
+        c.leaveTimer = 0;
+      }, BUDDY_FADE_MS);
+    }, BUDDY_LINGER_MS);
+  }
+
+  function cancelBuddyLeave(c) {
+    if (!c || !c.buddyMode) return;
+    window.clearTimeout(c.leaveTimer);
+    c.leaveTimer = 0;
+    c.buddyHolder.classList.remove('is-leaving');
   }
 
   function updateHud(c) {
@@ -1348,7 +1388,10 @@
         }, styled(c, 'gold', 1));
         markGold(c);
       }
-      later(c, FINALE_MS, function () { resetCombo(c); });
+      later(c, FINALE_MS, function () {
+        resetCombo(c);
+        scheduleBuddyLeave(c);
+      });
     }
     updateHud(c);
   }
@@ -1409,7 +1452,10 @@
     return kind === 'tap' || kind === combo.finale;
   }
 
-  function onTap() { fire('tap'); }
+  function onTap() {
+    cancelBuddyLeave(ctx);
+    fire('tap');
+  }
 
   function stepsOf(effect, type) {
     var list = effect.type === type ? [effect] : [];
@@ -1456,6 +1502,7 @@
       c.fx.g.clearRect(0, 0, c.fx.w, c.fx.h);
     }
     resetCombo(c);
+    cancelBuddyLeave(c);
   }
 
   // ---------- События приложения ----------
@@ -1606,7 +1653,7 @@
             url: url, img: function (n) { return imgs[url(n)]; },
             src: function (n) { return (imgs[url(n)] || {}).src || url(n); },
             timers: [], live: [], cleanups: [], skins: [], taps: [],
-            level: 0, lastAction: 0, hud: null,
+            level: 0, lastAction: 0, hud: null, scale: Number(manifest.scale) || 1,
             fx: null, hint: null, anchor: null
           };
           ensureDefs();
