@@ -27,6 +27,15 @@
   var debugGold = document.getElementById('debug-gold');
   var debugDoodleStatus = document.getElementById('debug-doodle-status');
 
+  // Как в приложении: экран не приближается. iOS Safari игнорирует user-scalable=no в viewport,
+  // поэтому гасим его собственные жесты щипка и щипок двумя пальцами по странице.
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (type) {
+    document.addEventListener(type, function (event) { event.preventDefault(); }, { passive: false });
+  });
+  document.addEventListener('touchmove', function (event) {
+    if (event.touches.length > 1) event.preventDefault();
+  }, { passive: false });
+
   function showToast(text) {
     toast.textContent = text;
     toast.classList.add('is-on');
@@ -285,6 +294,17 @@
     return null;
   }
 
+  // В сезон часть дней отдана дудлам дня из пула, поэтому первый день диапазона подходит не всегда:
+  // проверяем, что дудл на этой дате правда выпадает, иначе ищем ближайший такой день.
+  function demoDate(manifest, item, year) {
+    if (item.pool) return poolDate(manifest, item, year);
+    var date = DoodleLabels.demoDate(item.when, year);
+    if (!date || !item.when || item.when.type !== 'range') return date;
+    var parts = date.split('-').map(Number);
+    var picked = Doodles._pick(manifest, new Date(parts[0], parts[1] - 1, parts[2], 12));
+    return picked && picked.id === item.id ? date : poolDate(manifest, item, year) || date;
+  }
+
   // Кнопки быстрого перехода к дате дудла: строятся из того же манифеста
   function buildDoodleButtons() {
     if (!window.fetch) return;
@@ -293,10 +313,7 @@
       .then(function (manifest) {
         var year = new Date().getFullYear();
         manifest.items.forEach(function (item) {
-          // Сезонный дудл в обычный день делит очередь с пулом: берём день, когда он правда выпадает
-          var date = DoodleLabels.demoDate(item.when, year);
-          var picked = date && Doodles._pick(manifest, parseDate(date));
-          if (!picked || picked.id !== item.id) date = poolDate(manifest, item, year);
+          var date = demoDate(manifest, item, year);
           if (!date) return;
           var button = document.createElement('button');
           button.type = 'button';

@@ -6,7 +6,12 @@
     'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
   var WEEKDAYS = ['понедельник', 'вторник', 'среда', 'четверг', 'пятница', 'суббота', 'воскресенье'];
   var SEASONS = { winter: 'Зима', spring: 'Весна', summer: 'Лето', autumn: 'Осень', special: 'Особые дни', everyday: 'Каждый день' };
-  var ANCHORS = { avatar: 'аватару', 'card-thumb': 'карте', paw: 'лапке', savings: 'копилке' };
+  // Дудл запускается с язычка у края шапки: аватар и карта отданы приложению (профиль, карта).
+  // Стикер по экрану — только если в манифесте явно задан старый режим buddy.mode: peek или float.
+  function tapLabel(effect) {
+    var mode = effect.buddy && effect.buddy.mode;
+    return mode && mode !== 'tab' ? 'Тап по стикеру дня' : 'Тап по язычку справа';
+  }
 
   function mdLabel(md) {
     var p = md.split('-');
@@ -28,7 +33,7 @@
   function triggers(effect) {
     var t = effect.trigger || 'tap';
     return (Array.isArray(t) ? t : [t]).map(function (k) {
-      if (k === 'tap') return 'Тап по ' + (ANCHORS[effect.anchor || 'avatar'] || effect.anchor);
+      if (k === 'tap') return tapLabel(effect);
       if (k === 'pull') return 'Потянуть список';
       if (k === 'shake') return 'Тряхнуть телефон';
       return k;
@@ -41,7 +46,7 @@
   function combo(effect) {
     var c = effect.combo || {};
     return [
-      effect.anchor === 'buddy' ? 'Тап по стикеру дня' : 'Тап по ' + (ANCHORS[effect.anchor || 'avatar'] || effect.anchor),
+      tapLabel(effect),
       c.mode === 'trace' ? 'Провести пальцем по узору' : (c.taps || 3) + ' быстрых тапа',
       FINALES[c.finale] || FINALES.shake
     ];

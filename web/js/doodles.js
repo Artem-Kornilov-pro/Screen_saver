@@ -888,7 +888,9 @@
       var fx = fxCanvas(ctx);
       var n = Math.min(Math.round((e.count || 30) * (ctx.mult || 1)), MAX_PARTICLES - fx.list.length);
       var origin = e.origin === 'anchor' ? anchorPoint(ctx) : e.origin === 'at' ? anchorPoint(ctx, e.at) : null;
-      var ang = e.angle || [-30, 120], sp = e.speed || [200, 600], sz = e.size || [14, 30];
+      var ang = e.angle || [-30, 120], sp = e.speed || [200, 600];
+      var k = ctx.scale || 1;
+      var sz = (e.size || [14, 30]).map(function (v) { return v * k; });
       var spin = e.spin == null ? 3 : e.spin;
       var life = (e.durationMs || 2400) / 1000;
       // Взрыв из точки тормозится воздухом; дождь сверху/снизу идёт волной, а не залпом
@@ -1005,7 +1007,7 @@
     var ratio = (img.naturalWidth / img.naturalHeight) || 1;
     var w, h;
     if (e.fullWidth) { w = W; h = W / ratio; }
-    else { h = e.size || 72; w = h * ratio; }
+    else { h = (e.size || 72) * (ctx.scale || 1); w = h * ratio; }
     var el = document.createElement('img');
     el.className = 'doodle-sticker' + (ctx.style ? ' doodle-sticker--' + ctx.style : '');
     if (ctx.style === 'neon') el.style.setProperty('--neon', neonOf(img.src));
@@ -1386,6 +1388,7 @@
     if (mode === 'float') {
       el.classList.add('doodle-buddy--float');
       el.style.top = 24 + (day * 13) % 40 + '%';
+      c.buddyTop = el.style.top;
       c.root.appendChild(el);
     }
     c.buddyHolder = holder;
@@ -1518,7 +1521,10 @@
         }, styled(c, 'gold', 1));
         markGold(c);
       }
-      later(c, FINALE_MS, function () { resetCombo(c); });
+      later(c, FINALE_MS, function () {
+        resetCombo(c);
+        scheduleBuddyLeave(c);
+      });
     }
     updateHud(c);
   }
@@ -1579,7 +1585,10 @@
     return kind === 'tap' || kind === combo.finale;
   }
 
-  function onTap() { fire('tap'); }
+  function onTap() {
+    cancelBuddyLeave(ctx);
+    fire('tap');
+  }
 
   function stepsOf(effect, type) {
     var list = effect.type === type ? [effect] : [];
@@ -1650,6 +1659,7 @@
       c.fx.g.clearRect(0, 0, c.fx.w, c.fx.h);
     }
     resetCombo(c);
+    cancelBuddyLeave(c);
   }
 
   // ---------- События приложения ----------

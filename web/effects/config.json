@@ -2,7 +2,7 @@
   "version": 1,
   "maxParticles": 80,
   "settings": {
-    "shakeForce": 18,
+    "shakeForce": 15,
     "shakeCooldownMs": 1500,
     "firstShowDelayMs": 400,
     "fadeInMs": 600,
