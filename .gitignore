@@ -3,3 +3,6 @@
 .idea/
 *.log
 __pycache__/
+xcuserdata/
+*.xcuserstate
+DerivedData/
