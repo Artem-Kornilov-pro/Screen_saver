@@ -17,7 +17,8 @@
         "colors": ["#8EC5FF", "#B6DAFF", "#6FAEF0"],
         "spin": true,
         "tiltWind": true,
-        "tapToPop": true
+        "tapToPop": true,
+        "settle": { "chance": 0.4, "maxDepth": 10, "meltMs": 25000 }
       },
       "decor": [
         { "kind": "tree", "anchor": "bottom_end", "widthPct": 0.34 },

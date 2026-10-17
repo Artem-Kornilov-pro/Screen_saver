@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+<defs><radialGradient id="moon" cx="35%" cy="30%" r="80%"><stop offset="0" stop-color="#fffbe6"/><stop offset="0.5" stop-color="#ffe066"/><stop offset="1" stop-color="#f08c00"/></radialGradient><mask id="cut"><rect width="120" height="120" fill="#fff"/><circle cx="80" cy="42" r="38" fill="#000"/></mask></defs>
+<circle cx="56" cy="62" r="56" fill="#ffd43b" fill-opacity=".14"/>
+<circle cx="56" cy="62" r="44" fill="url(#moon)" mask="url(#cut)"/>
+<ellipse cx="30" cy="54" rx="7" ry="13" fill="#fff" fill-opacity=".6" transform="rotate(20 30 54)" mask="url(#cut)"/>
+<circle cx="44" cy="90" r="5" fill="#f08c00" fill-opacity=".35" mask="url(#cut)"/>
+<path d="M100.0 78.0 L102.4 83.6 L108.0 86.0 L102.4 88.4 L100.0 94.0 L97.6 88.4 L92.0 86.0 L97.6 83.6 Z" fill="#fff9db" stroke="#fff9db" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M106.0 10.0 L107.8 14.2 L112.0 16.0 L107.8 17.8 L106.0 22.0 L104.2 17.8 L100.0 16.0 L104.2 14.2 Z" fill="#fff9db" stroke="#fff9db" stroke-width="1.2" stroke-linejoin="round"/>
+</svg>

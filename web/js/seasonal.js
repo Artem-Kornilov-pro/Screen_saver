@@ -17,6 +17,7 @@
   var SHAKE_FORCE = 18;       // м/с², без гравитации
   var SHAKE_COOLDOWN = 1500;  // мс
   var SPRITE_SIZE = 64;       // px, заготовка снежинки
+  var CAP_BIN = 4;            // px, ширина столбика сугроба
 
   var SUPPORTED_PARTICLES = ['snowflake'];
 
@@ -34,7 +35,8 @@
       particles: {
         kind: 'snowflake', count: 60, speed: [45, 110], size: [12, 30],
         colors: ['#8EC5FF', '#B6DAFF', '#6FAEF0'],
-        spin: true, tiltWind: true, tapToPop: true
+        spin: true, tiltWind: true, tapToPop: true,
+        settle: { chance: 0.4, maxDepth: 10, meltMs: 25000 }
       },
       decor: [
         { kind: 'tree', anchor: 'bottom_end', widthPct: 0.34 },
@@ -80,7 +82,10 @@
     sprites: {},
     reduceMotion: false,
     onChange: null,
-    onShake: null
+    onShake: null,
+    caps: [],
+    settle: null,
+    meltTimer: 0
   };
 
   // ---------- Конфиг ----------
@@ -97,6 +102,17 @@
     var low = Math.max(Number(values[0]) || fallback[0], 1);
     var high = Math.max(Number(values[1]) || low, low);
     return [low, high];
+  }
+
+  // Снег оседает на элементах с data-snow. null — не оседает.
+  function normalizeSettle(raw) {
+    if (!raw || typeof raw !== 'object') return null;
+    return {
+      targets: typeof raw.targets === 'string' ? raw.targets : '[data-snow]',
+      chance: Math.max(0, Math.min(1, Number(raw.chance) || 0.3)),
+      maxDepth: Math.max(3, Math.min(20, Number(raw.maxDepth) || 9)),
+      meltMs: Math.max(3000, Number(raw.meltMs) || 25000)
+    };
   }
 
   function normalizeEffect(raw) {
@@ -125,7 +141,8 @@
         colors: colors.length ? colors : ['#8EC5FF'],
         spin: !!p.spin,
         tiltWind: !!p.tiltWind,
-        tapToPop: !!p.tapToPop
+        tapToPop: !!p.tapToPop,
+        settle: normalizeSettle(p.settle)
       },
       decor: (Array.isArray(raw.decor) ? raw.decor : []).filter(function (d) {
         return d && typeof d.kind === 'string';
@@ -196,6 +213,19 @@
   /** Возвращает показанный эффект или null с причиной в reason. */
   function trigger(name) {
     if (state.suppressed) return { effect: null, reason: 'Экран критичный, эффект запрещён' };
+    // Тряска стряхивает осевший снег, и сразу идёт новый
+    if (name === 'shake' && hasSnow()) {
+      if (!state.run) {
+        var again = effectFor(effectiveDate(), 'shake');
+        if (again) startRun(again);
+      }
+      if (state.run) {
+        shakeOff(state.run);
+        return { effect: state.run.effect, reason: '' };
+      }
+      clearCaps();
+      return { effect: null, reason: 'Снег стряхнули' };
+    }
     if (state.run) return { effect: state.run.effect, reason: 'Эффект уже идёт' };
     var date = effectiveDate();
     // С подменённой датой (демо) лимит «раз в день» не действует, иначе повторно показать эффект нельзя.
@@ -250,10 +280,16 @@
       guard: 1,
       closing: false,
       treeTapAt: -10,
+      settle: state.reduceMotion ? null : effect.particles.settle,
       flakes: [],
       sparks: []
     };
     resize();
+    if (run.settle) {
+      state.settle = run.settle;
+      window.clearTimeout(state.meltTimer);
+      prepareCaps(run.settle);
+    }
     for (var i = 0; i < run.targetCount; i++) run.flakes.push(makeFlake(run, true));
     state.run = run;
     state.lastTs = 0;
@@ -268,7 +304,146 @@
     state.ctx.setTransform(1, 0, 0, 1, 0, 0);
     state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
     state.canvas.hidden = true;
+    if (state.caps.length) scheduleMelt();
     notify();
+  }
+
+  // ---------- Снег оседает на интерфейсе ----------
+  //
+  // Сугроб — маленький canvas над верхним краем элемента. Он лежит внутри элемента (или рядом,
+  // в прокручиваемом экране, если элемент обрезает содержимое), поэтому скроллится вместе с ним.
+  // Касания не ловит. Тряска стряхивает снег, через meltMs он тает сам.
+
+  function capContainer(target) {
+    return window.getComputedStyle(target).overflow === 'hidden' ? (target.closest('.screen') || state.host) : target;
+  }
+
+  function prepareCaps(settle) {
+    var targets = state.host.querySelectorAll(settle.targets);
+    Array.prototype.forEach.call(targets, function (target) {
+      if (!target.getClientRects().length || target.offsetWidth < 30) return;
+      for (var i = 0; i < state.caps.length; i++) if (state.caps[i].target === target) return;
+      var container = capContainer(target);
+      if (container === target && window.getComputedStyle(target).position === 'static') target.style.position = 'relative';
+      var w = target.offsetWidth;
+      var h = settle.maxDepth + 6;
+      var canvas = document.createElement('canvas');
+      canvas.className = 'snow-cap';
+      canvas.setAttribute('aria-hidden', 'true');
+      canvas.width = Math.round(w * state.dpr);
+      canvas.height = Math.round(h * state.dpr);
+      canvas.style.width = w + 'px';
+      canvas.style.height = h + 'px';
+      canvas.style.left = (container === target ? 0 : target.offsetLeft) + 'px';
+      canvas.style.top = (container === target ? 0 : target.offsetTop) + 2 - h + 'px';
+      container.appendChild(canvas);
+      var bins = Math.ceil(w / CAP_BIN) + 1;
+      state.caps.push({
+        target: target, canvas: canvas, g: canvas.getContext('2d'), w: w, h: h, bins: bins,
+        depth: new Float32Array(bins), radius: parseFloat(window.getComputedStyle(target).borderTopLeftRadius) || 0,
+        dirty: false, rect: null
+      });
+    });
+  }
+
+  // У скруглённых углов снег тоньше: сугроб «стекает» с края
+  function capLimit(cap, x, maxDepth) {
+    var edge = Math.min(x, cap.w - x);
+    var k = Math.min(1, edge / Math.max(cap.radius, 8));
+    return maxDepth * k * k * (3 - 2 * k);
+  }
+
+  function deposit(cap, x, size, maxDepth) {
+    var center = x / CAP_BIN;
+    var spread = Math.max(1.5, size / CAP_BIN * 0.7);
+    var amount = size * 0.14;
+    var from = Math.max(0, Math.floor(center - spread * 2));
+    var to = Math.min(cap.bins - 1, Math.ceil(center + spread * 2));
+    for (var i = from; i <= to; i++) {
+      var d = (i - center) / spread;
+      cap.depth[i] = Math.min(capLimit(cap, i * CAP_BIN, maxDepth), cap.depth[i] + amount * Math.exp(-d * d));
+    }
+    cap.dirty = true;
+  }
+
+  function capRects() {
+    var host = state.host.getBoundingClientRect();
+    state.caps.forEach(function (cap) {
+      var r = cap.target.getBoundingClientRect();
+      cap.rect = r.width ? { left: r.left - host.left, right: r.right - host.left, top: r.top - host.top } : null;
+    });
+  }
+
+  function drawCap(cap) {
+    var g = cap.g;
+    var H = cap.h;
+    g.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
+    g.clearRect(0, 0, cap.w, H);
+    g.beginPath();
+    g.moveTo(0, H);
+    var px = 0;
+    var py = H - cap.depth[0];
+    g.lineTo(px, py);
+    for (var i = 1; i < cap.bins; i++) {
+      var x = Math.min(cap.w, i * CAP_BIN);
+      var y = H - cap.depth[i];
+      g.quadraticCurveTo(px, py, (px + x) / 2, (py + y) / 2);
+      px = x;
+      py = y;
+    }
+    g.lineTo(cap.w, H);
+    g.closePath();
+    var grad = g.createLinearGradient(0, H - 12, 0, H);
+    grad.addColorStop(0, '#FFFFFF');
+    grad.addColorStop(1, '#D6E6FF');
+    g.fillStyle = grad;
+    g.fill();
+    cap.dirty = false;
+  }
+
+  function hasSnow() {
+    return state.caps.some(function (cap) {
+      for (var i = 0; i < cap.bins; i++) if (cap.depth[i] > 0.8) return true;
+      return false;
+    });
+  }
+
+  function clearCaps() {
+    window.clearTimeout(state.meltTimer);
+    state.caps.forEach(function (cap) { cap.canvas.remove(); });
+    state.caps = [];
+  }
+
+  function scheduleMelt() {
+    window.clearTimeout(state.meltTimer);
+    state.meltTimer = window.setTimeout(function () {
+      var caps = state.caps;
+      state.caps = [];
+      caps.forEach(function (cap) {
+        cap.canvas.style.transition = 'opacity 1.5s';
+        cap.canvas.style.opacity = '0';
+      });
+      window.setTimeout(function () { caps.forEach(function (cap) { cap.canvas.remove(); }); }, 1600);
+    }, state.settle ? state.settle.meltMs : 25000);
+  }
+
+  // Снег с элементов разлетается комьями и падает
+  function shakeOff(run) {
+    capRects();
+    state.caps.forEach(function (cap) {
+      var r = cap.rect;
+      if (!r) return;
+      for (var i = 0; i < cap.bins; i += 2) {
+        var d = cap.depth[i];
+        if (d < 1.2) continue;
+        run.sparks.push({
+          x: r.left + i * CAP_BIN, y: r.top - d / 2,
+          vx: rand(-80, 80), vy: rand(-200, -40),
+          life: 1.1, color: '#FFFFFF', r: 1.4 + d * 0.3
+        });
+      }
+    });
+    clearCaps();
   }
 
   function step(run, dt) {
@@ -283,11 +458,20 @@
 
     var w = state.width;
     var h = state.height;
+    var settle = run.settle && !run.closing && state.caps.length ? run.settle : null;
+    if (settle) capRects();
     for (var i = run.flakes.length - 1; i >= 0; i--) {
       var f = run.flakes[i];
+      var prevY = f.y;
       var sway = Math.sin(run.time * 1.4 + f.phase) * 18 * (0.5 + f.depth);
       f.x += (run.wind * (0.5 + 0.5 * f.depth) + sway) * dt;
       f.y += f.fall * dt;
+      // Снежинка переднего плана, пересёкшая верхний край элемента, может на нём остаться
+      if (settle && f.depth > 0.25 && landOnCap(f, prevY, settle)) {
+        if (spawning) run.flakes[i] = makeFlake(run, false);
+        else run.flakes.splice(i, 1);
+        continue;
+      }
       f.angle += f.spin * dt;
       if (f.x < -f.size) f.x = w + f.size;
       else if (f.x > w + f.size) f.x = -f.size;
@@ -305,6 +489,18 @@
       s.y += s.vy * dt;
       if (s.life <= 0) run.sparks.splice(j, 1);
     }
+  }
+
+  function landOnCap(f, prevY, settle) {
+    for (var k = 0; k < state.caps.length; k++) {
+      var cap = state.caps[k];
+      var r = cap.rect;
+      if (r && prevY < r.top && f.y >= r.top && f.x > r.left + 2 && f.x < r.right - 2 && Math.random() < settle.chance) {
+        deposit(cap, f.x - r.left, f.size, settle.maxDepth);
+        return true;
+      }
+    }
+    return false;
   }
 
   function burst(run, x, y, count, speed) {
@@ -600,13 +796,14 @@
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     run.sparks.forEach(function (s) {
-      ctx.globalAlpha = Math.max(0, s.life / 0.6);
+      ctx.globalAlpha = Math.max(0, Math.min(1, s.life / 0.6));
       ctx.fillStyle = s.color;
       ctx.beginPath();
-      ctx.arc(s.x, s.y, 2.5, 0, Math.PI * 2);
+      ctx.arc(s.x, s.y, s.r || 2.5, 0, Math.PI * 2);
       ctx.fill();
     });
     ctx.globalAlpha = 1;
+    state.caps.forEach(function (cap) { if (cap.dirty) drawCap(cap); });
   }
 
   function frame(ts) {
@@ -645,7 +842,10 @@
       state.reduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
       if (options.dateOverride) state.dateOverride = options.dateOverride;
 
-      window.addEventListener('resize', function () { if (state.run) resize(); });
+      window.addEventListener('resize', function () {
+        if (state.run) resize();
+        clearCaps();
+      });
       document.addEventListener('pointerdown', onPointerDown, { capture: true, passive: true });
       window.addEventListener('deviceorientation', onOrientation);
       window.addEventListener('devicemotion', onMotion);
@@ -682,6 +882,9 @@
     setManualTilt: function (value) {
       state.manualTilt = Math.max(-1, Math.min(1, Number(value) || 0));
     },
+
+    /** Лежит ли осевший снег: тогда тряска стряхивает его. */
+    hasSnow: hasSnow,
 
     resetDailyLimit: function () {
       try { window.localStorage.removeItem(STORAGE_DAY); } catch (err) { /* нет хранилища — нечего сбрасывать */ }
