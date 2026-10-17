@@ -27,6 +27,15 @@
   var debugGold = document.getElementById('debug-gold');
   var debugDoodleStatus = document.getElementById('debug-doodle-status');
 
+  // Как в приложении: экран не приближается. iOS Safari игнорирует user-scalable=no в viewport,
+  // поэтому гасим его собственные жесты щипка и щипок двумя пальцами по странице.
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (type) {
+    document.addEventListener(type, function (event) { event.preventDefault(); }, { passive: false });
+  });
+  document.addEventListener('touchmove', function (event) {
+    if (event.touches.length > 1) event.preventDefault();
+  }, { passive: false });
+
   function showToast(text) {
     toast.textContent = text;
     toast.classList.add('is-on');

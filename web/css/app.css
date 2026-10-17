@@ -10,6 +10,8 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
+/* Как в приложении: прокрутка есть, приближения щипком и двойным тапом нет */
+html { touch-action: pan-x pan-y; -webkit-text-size-adjust: 100%; }
 body {
   background: #050606;
   color: var(--text);
@@ -43,6 +45,10 @@ input { font: inherit; color: inherit; }
 @media (max-width: 720px) {
   .stage { display: block; padding: 0; }
   .phone { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
+  /* На настоящем телефоне время и заряд рисует система: свою строку не показываем,
+     но место оставляем — под системной строкой висит гирлянда праздничного слоя */
+  .phone .statusbar { height: calc(env(safe-area-inset-top) + 44px); }
+  .phone .statusbar > * { display: none; }
 }
 
 /* ---------- Экраны ---------- */

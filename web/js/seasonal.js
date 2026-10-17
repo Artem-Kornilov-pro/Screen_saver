@@ -14,7 +14,7 @@
   var FADE_OUT = 1.5;         // с, исчезание в конце показа
   var GUARD_FADE = 0.2;       // с, исчезание при входе на критичный экран
   var MAX_DT = 1 / 20;        // с, защита от скачка после паузы вкладки
-  var SHAKE_FORCE = 18;       // м/с², без гравитации
+  var SHAKE_FORCE = 15;       // м/с², без гравитации (~1,5 g: ребёнок трясёт несильно)
   var SHAKE_COOLDOWN = 1500;  // мс
   var SPRITE_SIZE = 64;       // px, заготовка снежинки
   var CAP_BIN = 4;            // px, ширина столбика сугроба
@@ -526,7 +526,6 @@
   }
 
   function onPointerDown(event) {
-    askSensorPermission();
     var run = state.run;
     if (!run || run.closing || run.opacity < 0.2) return;
     var rect = state.host.getBoundingClientRect();
@@ -567,8 +566,15 @@
 
   function onMotion(event) {
     var a = event.acceleration;
-    if (!a || a.x === null) return;
-    var force = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+    var force;
+    if (a && a.x !== null) {
+      force = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z);
+    } else {
+      // Без гироскопа браузер даёт только ускорение с гравитацией: считаем отклонение от 1 g
+      var g = event.accelerationIncludingGravity;
+      if (!g || g.x === null) return;
+      force = Math.abs(Math.sqrt(g.x * g.x + g.y * g.y + g.z * g.z) - 9.81);
+    }
     var now = Date.now();
     if (force > SHAKE_FORCE && now - state.lastShake > SHAKE_COOLDOWN) {
       state.lastShake = now;
@@ -577,14 +583,22 @@
     }
   }
 
-  // iOS Safari отдаёт датчики только после явного разрешения по жесту пользователя.
+  // iOS Safari отдаёт датчики только после разрешения, а спросить можно только из жеста,
+  // который iOS считает настоящим: touchend или click. Касание пальцем (pointerdown) не считается —
+  // запрос молча отклоняется. Поэтому спрашиваем, пока не получим ответ «разрешить» или «запретить».
   function askSensorPermission() {
     if (state.sensorsAsked) return;
-    state.sensorsAsked = true;
-    [window.DeviceMotionEvent, window.DeviceOrientationEvent].forEach(function (api) {
-      if (api && typeof api.requestPermission === 'function') {
-        api.requestPermission().catch(function () { /* отказали — остаётся ручной ветер */ });
-      }
+    var apis = [window.DeviceMotionEvent, window.DeviceOrientationEvent].filter(function (api) {
+      return api && typeof api.requestPermission === 'function';
+    });
+    if (!apis.length) {
+      state.sensorsAsked = true;
+      return;
+    }
+    apis.forEach(function (api) {
+      api.requestPermission()
+        .then(function () { state.sensorsAsked = true; })
+        .catch(function () { /* вызов не из жеста — спросим на следующем тапе */ });
     });
   }
 
@@ -847,6 +861,8 @@
         clearCaps();
       });
       document.addEventListener('pointerdown', onPointerDown, { capture: true, passive: true });
+      document.addEventListener('touchend', askSensorPermission, { capture: true, passive: true });
+      document.addEventListener('click', askSensorPermission, true);
       window.addEventListener('deviceorientation', onOrientation);
       window.addEventListener('devicemotion', onMotion);
       document.addEventListener('visibilitychange', function () {

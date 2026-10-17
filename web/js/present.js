@@ -35,7 +35,8 @@
     ' padding: 8px 14px; border-radius: 999px; background: rgba(20, 24, 28, .82); color: #fff;' +
     ' font: 600 14px/1.2 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; white-space: nowrap; }' +
     '.present-caption small { margin-left: 6px; font-weight: 400; opacity: .7; }' +
-    '.present-caption.is-on { opacity: 1; transform: translate(-50%, 0); }';
+    '.present-caption.is-on { opacity: 1; transform: translate(-50%, 0); }' +
+    '.present-hint { bottom: calc(env(safe-area-inset-bottom) + 160px); }';
   document.head.appendChild(style);
 
   function showCaption(button) {
@@ -102,6 +103,24 @@
     next();
     return true;
   }
+
+  // На iPhone датчики включаются только после тапа и «Разрешить». Пока данных нет — подсказываем.
+  function sensorHint() {
+    var api = window.DeviceMotionEvent;
+    if (!api || typeof api.requestPermission !== 'function') return;
+    var hint = document.createElement('div');
+    hint.className = 'present-caption present-hint is-on';
+    hint.textContent = 'Коснитесь экрана — включится тряска';
+    document.body.appendChild(hint);
+    function done(event) {
+      var a = event.accelerationIncludingGravity;
+      if (!a || a.x === null) return;
+      hint.remove();
+      window.removeEventListener('devicemotion', done);
+    }
+    window.addEventListener('devicemotion', done);
+  }
+  sensorHint();
 
   // Экран не гаснет, пока телефон у жюри (iOS 16.4+, Android Chrome). В обёртке это делает приложение.
   function keepAwake() {
