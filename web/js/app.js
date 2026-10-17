@@ -66,11 +66,13 @@
 
   function openScreen(name) {
     var isTransfer = name === 'transfer';
+    var isQr = name === 'qr';
     transferScreen.hidden = !isTransfer;
-    mainScreen.hidden = isTransfer;
-    tabbar.hidden = isTransfer;
-    Seasonal.setSuppressed(isTransfer);
-    Doodles.setSuppressed(isTransfer);
+    mainScreen.hidden = isTransfer || isQr;
+    tabbar.hidden = isTransfer || isQr;
+    Seasonal.setSuppressed(isTransfer || isQr);
+    Doodles.setSuppressed(isTransfer || isQr);
+    QrFun.setOpen(isQr);
   }
 
   document.addEventListener('click', function (event) {
@@ -455,6 +457,13 @@
   });
   doodlesReady.then(function () { window.setTimeout(checkClock, 1500); });
   buildDoodleButtons();
+
+  // Прямая ссылка на QR-мастерскую; обычный запуск приложения остаётся прежним.
+  var qrTheme = params.get('qr');
+  if (qrTheme !== null) {
+    QrFun.selectTheme(qrTheme);
+    openScreen('qr');
+  }
 
   Promise.all([seasonalReady, doodlesReady]).then(function (results) {
     var result = results[0];
