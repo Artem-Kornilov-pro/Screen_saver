@@ -74,18 +74,66 @@
     return true;
   }
 
+  var HOLIDAY_PRIORITY = 40;
+
+  function dayNumber(d) {
+    return Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+  }
+
+  function eligible(it, p) {
+    if (it.enabled === false || !it.effect || !RENDERERS[it.effect.type]) return false;
+    if (it.minAppVersion && !versionGte(APP_VERSION, it.minAppVersion)) return false;
+    if (it.age && (p.age < it.age.min || p.age > it.age.max)) return false;
+    return true;
+  }
+
   function pick(manifest, d) {
     if (!manifest || manifest.enabled === false || manifest.schema !== 1) return null;
     var p = profile();
-    var list = (manifest.items || []).filter(function (it) {
-      if (it.enabled === false || !it.effect || !RENDERERS[it.effect.type]) return false;
-      if (it.minAppVersion && !versionGte(APP_VERSION, it.minAppVersion)) return false;
-      if (it.age && (p.age < it.age.min || p.age > it.age.max)) return false;
-      return matches(it.when, d);
-    });
+    var items = (manifest.items || []).filter(function (it) { return eligible(it, p); });
+    var dated = items.filter(function (it) { return !it.pool && matches(it.when, d); });
     var rank = function (it) { return it.when.type === 'birthday' ? Infinity : it.priority || 0; };
-    list.sort(function (a, b) { return rank(b) - rank(a); });
-    return list[0] || null;
+    dated.sort(function (a, b) { return rank(b) - rank(a); });
+    // Праздник и день рождения всегда главные
+    if (dated[0] && rank(dated[0]) >= HOLIDAY_PRIORITY) return dated[0];
+    // Обычный день: дудл дня по очереди — сезонный и «обыденные» из пула. У всех детей в этот день одинаковый.
+    var rotation = dated.concat(items.filter(function (it) { return it.pool; }));
+    return rotation.length ? rotation[dayNumber(d) % rotation.length] : null;
+  }
+
+  function seasonOf(manifest, d) {
+    var seasons = manifest.seasons || {};
+    var month = d.getMonth() + 1;
+    for (var id in seasons) {
+      if ((seasons[id].months || []).indexOf(month) !== -1) return { id: id, def: seasons[id] };
+    }
+    return null;
+  }
+
+  // «Обыденный» дудл надевает сезонную одежду: аксессуар на стикер дня и частицы сезона в сцену и финал
+  function dressForSeason(item, manifest, manifestUrl, d) {
+    var dressed = JSON.parse(JSON.stringify(item));
+    var season = seasonOf(manifest, d);
+    if (!season) return dressed;
+    var base = new URL(season.def.pack || 'packs/' + season.id + '/', manifestUrl);
+    var abs = function (name) { return new URL(name, base).href; };
+    var eff = dressed.effect;
+    if (season.def.wear && eff.buddy) {
+      eff.buddy.wear = abs(season.def.wear);
+      eff.buddy.wearScale = season.def.wearScale || 1.2;
+      eff.buddy.wearTop = season.def.wearTop == null ? -0.5 : season.def.wearTop;
+    }
+    if (season.def.particles && season.def.particles.length) {
+      var fall = {
+        type: 'particles', sprites: season.def.particles.map(abs), count: 14, origin: 'top', angle: [70, 110],
+        speed: [90, 180], gravity: 80, sway: 50, size: [14, 26], durationMs: 3200, delayMs: 200
+      };
+      eff.steps = (eff.steps || []).concat([fall]);
+      var finale = eff.combo && eff.combo.effect;
+      if (finale && finale.type === 'combo') finale.steps = (finale.steps || []).concat([JSON.parse(JSON.stringify(fall))]);
+    }
+    dressed.seasonId = season.id;
+    return dressed;
   }
 
   // ---------- Пак ----------
@@ -95,7 +143,7 @@
     if (obj && typeof obj === 'object') {
       Object.keys(obj).forEach(function (k) {
         var v = obj[k];
-        if (k === 'image' && typeof v === 'string') out[v] = true;
+        if ((k === 'image' || k === 'wear') && typeof v === 'string') out[v] = true;
         else if (k === 'sprites' && Array.isArray(v)) v.forEach(function (s) { out[s] = true; });
         else collectAssets(v, out);
       });
@@ -403,6 +451,60 @@
           }
           var e = EASE.inQuad((t - 0.82) / 0.18);
           return { x: x, y: y + e * 14, sx: 1 - e * 0.25, o: 1 - e };
+        })
+      };
+    },
+    // Ряд блоков над таб-баром: проявляется слева направо, мигает и «сгорает», как собранная линия
+    rowclear: function (W, H, w, h) {
+      var y = H - 120 - h;
+      return {
+        easing: 'linear',
+        frames: [0, 0.25, 0.4, 0.48, 0.56, 0.64, 0.72, 0.85, 1].map(function (o) {
+          var open = Math.min(1, o / 0.25);
+          var blink = o > 0.4 && o < 0.72 ? (Math.floor((o - 0.4) / 0.08) % 2 ? 0.35 : 1) : 1;
+          var gone = o > 0.72 ? EASE.inQuad((o - 0.72) / 0.28) : 0;
+          return {
+            offset: o,
+            transform: 'translate(0px,' + y.toFixed(1) + 'px) scale(' + (1 + gone * 0.05).toFixed(3) + ',' + (1 - gone).toFixed(3) + ')',
+            clipPath: 'inset(0 ' + ((1 - open) * 100).toFixed(1) + '% 0 0)',
+            opacity: (1 - gone) * blink
+          };
+        })
+      };
+    },
+    // Три прыжка через экран без вращения, с приседанием на приземлении (блочный человечек)
+    hop: function (W, H, w, h) {
+      var floor = H - 110 - h, hops = 3;
+      return {
+        frames: sample(90, function (t) {
+          var f = t * hops, i = Math.min(hops - 1, Math.floor(f)), u = f - i;
+          var contact = Math.max(0, 1 - Math.min(u, 1 - u) / 0.08);
+          var sy = 1 - 0.15 * contact, sx = 1 + 0.1 * contact;
+          return { x: -w + (W + 2 * w) * t, y: floor - 4 * u * (1 - u) * H * 0.22 + h * (1 - sy), r: (u - 0.5) * 10, sx: sx, sy: sy };
+        })
+      };
+    },
+    // Трюк на BMX: едет по низу, взлетает с трамплина и делает полный оборот
+    trick: function (W, H, w, h) {
+      var base = H - 100 - h;
+      return {
+        frames: sample(90, function (t) {
+          var air = t > 0.35 && t < 0.7 ? (t - 0.35) / 0.35 : -1;
+          var y = air >= 0 ? base - Math.sin(air * Math.PI) * H * 0.25 : base + Math.sin(t * 40) * 1.5;
+          return { x: -w + (W + 2 * w) * t, y: y, r: air >= 0 ? -EASE.inOutSine(air) * 360 : 0 };
+        })
+      };
+    },
+    // Две картинки качаются навстречу друг другу, как ладони в меме «67»
+    seesaw: function (W, H, w, h, from, to, e) {
+      var side = e && e.side ? 1 : 0;
+      var x = W / 2 + (side ? 0.55 : -0.55) * w - w / 2, y = H * 0.34;
+      return {
+        frames: sample(72, function (t) {
+          var o = t < 0.1 ? EASE.smooth(t / 0.1) : t > 0.88 ? EASE.smooth((1 - t) / 0.12) : 1;
+          var s = t < 0.15 ? spring(t / 0.15 * 1.2) : 1;
+          var ph = t * Math.PI * 8 + side * Math.PI;
+          return { x: x, y: y + Math.sin(ph) * 30, r: Math.sin(ph) * 10 * (side ? -1 : 1), sx: s, sy: s, o: o };
         })
       };
     },
@@ -799,7 +901,7 @@
     if (e.jitter) {
       from = { x: from.x + rand(-e.jitter, e.jitter), y: from.y + rand(-e.jitter, e.jitter) };
     }
-    var path = (ctx.reduced ? PATHS.fade : PATHS[e.anim] || PATHS.pop)(W, H, w, h, from, to);
+    var path = (ctx.reduced ? PATHS.fade : PATHS[e.anim] || PATHS.pop)(W, H, w, h, from, to, e);
     var anim = el.animate(path.frames, {
       duration: ctx.reduced ? 1600 : e.durationMs || 2000,
       easing: path.easing || 'linear',
@@ -908,8 +1010,17 @@
       '<g class="g-pull" stroke-width="2.4"><path d="M12 3v12M7 10.5l5 5 5-5"/></g><path d="M5 21h14" stroke-width="2" opacity=".5"/></svg>',
     shake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">' +
       '<g class="g-shake"><rect x="8" y="3" width="8" height="18" rx="2.2" stroke-width="2"/><circle cx="12" cy="17.4" r=".6" stroke-width="1.6"/></g>' +
-      '<path d="M4.2 8.5q-1.6 3.5 0 7M19.8 8.5q1.6 3.5 0 7" stroke-width="1.6" opacity=".7"/></svg>'
+      '<path d="M4.2 8.5q-1.6 3.5 0 7M19.8 8.5q1.6 3.5 0 7" stroke-width="1.6" opacity=".7"/></svg>',
+    flip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
+      '<g class="g-flip"><rect x="7" y="3" width="10" height="18" rx="2.2" stroke-width="2"/><circle cx="12" cy="6.4" r=".6" stroke-width="1.6"/></g>' +
+      '<path d="M3.5 10 A9 9 0 0 1 7 4.5 M20.5 14 A9 9 0 0 1 17 19.5" stroke-width="1.6"/>' +
+      '<path d="M5 3.8 L7 4.5 L6.6 6.6 M19 20.2 L17 19.5 L17.4 17.4" stroke-width="1.6"/></svg>',
+    trace: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path class="g-trace" d="M2 16 L7 8 L12 16 L17 8 L22 14" stroke-width="2.2"/>' +
+      '<circle cx="2.5" cy="16" r="2.2" fill="currentColor" stroke="none"/></svg>'
   };
+
+  var TRACE_RADIUS = 30;      // px: насколько близко палец должен пройти мимо точки узора
 
   // Дрожащая линия скетч-стикеров: SVG-фильтр, один на страницу
   function ensureDefs() {
@@ -928,7 +1039,7 @@
     var c = eff.combo || {};
     return {
       taps: c.taps || 3, windowMs: c.windowMs || 2500, finale: c.finale || 'shake', effect: c.effect || null,
-      gold: c.goldChance == null ? 0.1 : c.goldChance
+      gold: c.goldChance == null ? 0.1 : c.goldChance, mode: c.mode || 'taps', trace: c.trace || null
     };
   }
 
@@ -997,6 +1108,177 @@
     }
   }
 
+  // Большая пиктограмма финального жеста посреди экрана: «теперь тряхни» или «теперь переверни»
+  function bigHint(c, gesture) {
+    if (!GESTURE_ICONS[gesture]) return;
+    var el = document.createElement('div');
+    el.className = 'doodle-bighint';
+    el.innerHTML = GESTURE_ICONS[gesture];
+    c.layer.appendChild(el);
+    var anim = el.animate([
+      { opacity: 0, transform: 'translate(-50%,-50%) scale(.6)' },
+      { opacity: 1, transform: 'translate(-50%,-50%) scale(1)', offset: 0.15 },
+      { opacity: 1, transform: 'translate(-50%,-50%) scale(1)', offset: 0.8 },
+      { opacity: 0, transform: 'translate(-50%,-50%) scale(1.1)' }
+    ], { duration: 2800, easing: 'ease-out', fill: 'forwards' });
+    track(c, el, anim);
+  }
+
+  // ---------- Обводка узора (ковёр) ----------
+  //
+  // На уровне 1 поверх экрана появляется картинка с узором и светящейся дорожкой.
+  // Ребёнок ведёт пальцем по дорожке через все точки по порядку — это уровень 2.
+  // Касания не перехватываются: слушаем touchmove и mousemove пассивно, как и всё остальное.
+
+  function startTrace(c) {
+    var t = comboOf(c.item.effect).trace;
+    var img = t && c.img(t.image);
+    if (!img) return;
+    var W = c.layer.clientWidth, H = c.layer.clientHeight;
+    var w = W * (t.width || 0.8);
+    var h = w / ((img.naturalWidth / img.naturalHeight) || 1);
+    // Над карточкой баланса: там нет кнопок, и ведущий палец ничего случайно не нажмёт
+    var left = (W - w) / 2, top = H * 0.25 - h / 2;
+    var pts = t.path.map(function (pt) { return [pt[0] * w, pt[1] * h]; });
+    var d = 'M' + pts.map(function (pt) { return pt[0].toFixed(1) + ' ' + pt[1].toFixed(1); }).join(' L');
+    var box = document.createElement('div');
+    box.className = 'doodle-trace';
+    box.style.left = left + 'px';
+    box.style.top = top + 'px';
+    box.style.width = w + 'px';
+    box.style.height = h + 'px';
+    var pic = document.createElement('img');
+    pic.src = img.src;
+    pic.alt = '';
+    box.appendChild(pic);
+    box.insertAdjacentHTML('beforeend',
+      '<svg viewBox="0 0 ' + w.toFixed(1) + ' ' + h.toFixed(1) + '"><path class="doodle-trace-path" d="' + d + '"/>' +
+      '<path class="doodle-trace-done" d="M0 0"/><circle class="doodle-trace-dot" r="9">' +
+      '<animateMotion dur="2.4s" repeatCount="indefinite" path="' + d + '"/></circle></svg>');
+    c.layer.appendChild(box);
+    box.animate([
+      { opacity: 0, transform: 'scale(.6) rotate(-6deg)' },
+      { opacity: 1, transform: 'scale(1.04) rotate(1deg)', offset: 0.7 },
+      { opacity: 1, transform: 'none' }
+    ], { duration: 520, easing: 'ease-out' });
+    c.trace = { box: box, pts: pts, next: 0, left: left, top: top, done: box.querySelector('.doodle-trace-done') };
+  }
+
+  function endTrace(c) {
+    if (!c || !c.trace) return;
+    var box = c.trace.box;
+    c.trace = null;
+    var out = box.animate([{ opacity: 1 }, { opacity: 0, transform: 'scale(1.1)' }], { duration: 300, fill: 'forwards' });
+    out.onfinish = function () { box.remove(); };
+  }
+
+  function traceMove(clientX, clientY) {
+    var c = ctx;
+    if (!c || !c.trace || suppressed) return;
+    var tr = c.trace;
+    var l = c.layer.getBoundingClientRect();
+    var p = tr.pts[tr.next];
+    if (Math.hypot(clientX - l.left - tr.left - p[0], clientY - l.top - tr.top - p[1]) > TRACE_RADIUS) return;
+    tr.next++;
+    c.lastAction = Date.now();
+    tr.done.setAttribute('d', 'M' + tr.pts.slice(0, tr.next).map(function (pt) { return pt[0].toFixed(1) + ' ' + pt[1].toFixed(1); }).join(' L'));
+    if (tr.next % 2) haptic();
+    if (tr.next >= tr.pts.length) {
+      endTrace(c);
+      playLevel(c, 2);
+    } else {
+      updateHud(c);
+    }
+  }
+
+  var mouseIsDown = false;
+  document.addEventListener('touchstart', function (e) { if (e.touches[0]) traceMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+  document.addEventListener('touchmove', function (e) { if (e.touches[0]) traceMove(e.touches[0].clientX, e.touches[0].clientY); }, { passive: true });
+  document.addEventListener('mousedown', function (e) { mouseIsDown = true; traceMove(e.clientX, e.clientY); }, { capture: true, passive: true });
+  document.addEventListener('mouseup', function () { mouseIsDown = false; }, { capture: true, passive: true });
+  document.addEventListener('mousemove', function (e) { if (mouseIsDown) traceMove(e.clientX, e.clientY); }, { passive: true });
+
+  // ---------- Стикер дня поверх экрана («обыденные» дудлы) ----------
+  //
+  // Один день стикер выглядывает из-за края элемента, другой — проплывает по экрану.
+  // Это единственное, что ловит касание в дудле, поэтому стикер маленький и стоит у краёв.
+
+  function createBuddy(c) {
+    var b = c.item.effect.buddy;
+    var img = c.img(b.image);
+    if (!img) return null;
+    var size = b.size || 44;
+    var ratio = (img.naturalWidth / img.naturalHeight) || 1;
+    var width = Math.round(size * ratio);
+    var day = dayNumber(c.date);
+    var mode = b.mode || (day % 2 ? 'float' : 'peek');
+    var el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'doodle-buddy';
+    el.setAttribute('aria-label', 'Дудл дня');
+    el.style.width = width + 'px';
+    el.style.height = size + 'px';
+    var pic = document.createElement('img');
+    pic.className = 'doodle-buddy-img';
+    pic.src = img.src;
+    pic.alt = '';
+    el.appendChild(pic);
+    var wearImg = b.wear && c.img(b.wear);
+    if (wearImg) {
+      var wear = document.createElement('img');
+      var ws = size * (b.wearScale || 1.2);
+      wear.className = 'doodle-buddy-wear';
+      wear.src = wearImg.src;
+      wear.alt = '';
+      wear.style.width = ws + 'px';
+      wear.style.left = (width - ws) / 2 + 'px';
+      wear.style.top = size * b.wearTop + 'px';
+      el.appendChild(wear);
+    }
+    var holder = el;
+    if (mode === 'peek') {
+      var hosts = Array.prototype.filter.call(c.root.querySelectorAll('[data-snow]'), function (host) {
+        return host.getClientRects().length && window.getComputedStyle(host).overflow !== 'hidden';
+      });
+      if (hosts.length) {
+        var target = hosts[day % hosts.length];
+        if (window.getComputedStyle(target).position === 'static') target.style.position = 'relative';
+        holder = document.createElement('span');
+        holder.className = 'doodle-peek';
+        holder.style.width = width + 'px';
+        holder.style.height = Math.round(size * 1.7) + 'px';
+        holder.style.left = 14 + (day * 37) % Math.max(1, target.offsetWidth - width - 28) + 'px';
+        holder.appendChild(el);
+        target.appendChild(holder);
+      } else {
+        mode = 'float';
+      }
+    }
+    if (mode === 'float') {
+      el.classList.add('doodle-buddy--float');
+      el.style.top = 24 + (day * 13) % 40 + '%';
+      c.root.appendChild(el);
+    }
+    c.buddyHolder = holder;
+    c.buddyMode = mode;
+    return el;
+  }
+
+  // После первого тапа стикер перестаёт прятаться и уплывать: дальше комбо
+  function parkBuddy(c) {
+    if (!c.buddyMode || c.buddyParked) return;
+    c.buddyParked = true;
+    if (c.buddyMode === 'peek') {
+      c.buddyHolder.classList.add('is-out');
+    } else {
+      var r = c.anchor.getBoundingClientRect();
+      var root = c.root.getBoundingClientRect();
+      c.anchor.style.left = Math.max(8, Math.min(root.width - r.width - 8, r.left - root.left)) + 'px';
+      c.anchor.style.top = r.top - root.top + 'px';
+      c.anchor.classList.add('is-parked');
+    }
+  }
+
   function updateHud(c) {
     var combo = comboOf(c.item.effect);
     if (!c.hud) {
@@ -1012,9 +1294,10 @@
     var dots = c.hud.querySelectorAll('.doodle-combo-dots i');
     for (var i = 0; i < dots.length; i++) {
       dots[i].classList.toggle('is-on', i < c.level);
-      dots[i].style.setProperty('--p', i === c.level && c.level === 1 ? String(c.taps.length / combo.taps) : '0');
+      var progress = combo.mode === 'trace' ? (c.trace ? c.trace.next / c.trace.pts.length : 0) : c.taps.length / combo.taps;
+      dots[i].style.setProperty('--p', i === c.level && c.level === 1 ? String(progress) : '0');
     }
-    var next = c.level === 1 ? 'tap3' : c.level === 2 ? combo.finale : '';
+    var next = c.level === 1 ? (combo.mode === 'trace' ? 'trace' : 'tap3') : c.level === 2 ? combo.finale : '';
     var gesture = c.hud.querySelector('.doodle-combo-gesture');
     if (gesture.getAttribute('data-gesture') !== next) {
       gesture.setAttribute('data-gesture', next);
@@ -1027,6 +1310,7 @@
   function resetCombo(c) {
     c.level = 0;
     c.gold = false;
+    endTrace(c);
     c.taps = [];
     if (c.hud) { c.hud.remove(); c.hud = null; }
   }
@@ -1037,12 +1321,15 @@
     haptic();
     if (level === 1) {
       hideHint(c);
+      parkBuddy(c);
       run(withVariant(eff), styled(c, 'sketch', 1));
+      if (comboOf(eff).mode === 'trace') startTrace(c);
       if (c.facts) showFact(c);
       markFound(c);
     } else if (level === 2) {
       run(withVariant(eff), styled(c, 'sticker', 1.4));
       burstFrom(c, 'sticker', 12);
+      later(c, 1100, function () { bigHint(c, comboOf(eff).finale); });
     } else {
       // Редкий золотой финал: тот же финал, но золотом и с дождём искр. Наград с ценностью нет.
       var combo = comboOf(eff);
@@ -1090,6 +1377,11 @@
         return true;
       }
       c.lastAction = now;
+      // В обводке тапы не считаются: подсказываем, что нужно вести пальцем
+      if (combo.mode === 'trace') {
+        nudge(c);
+        return true;
+      }
       c.taps = c.taps.filter(function (t) { return now - t < combo.windowMs; });
       c.taps.push(now);
       tapFeedback(c);
@@ -1127,6 +1419,15 @@
 
   function arm(c) {
     var eff = c.item.effect;
+    if (eff.anchor === 'buddy') {
+      c.anchor = eff.buddy ? createBuddy(c) : null;
+      if (!c.anchor) return false;
+      ctx = c;
+      c.anchor.addEventListener('click', onTap);
+      c.cleanups.push(function () { c.buddyHolder.remove(); });
+      if (suppressed) c.buddyHolder.style.visibility = 'hidden';
+      return true;
+    }
     c.anchor = c.root.querySelector('[data-anchor="' + (eff.anchor || 'avatar') + '"]');
     if (!c.anchor) return false;
     ctx = c;
@@ -1174,13 +1475,14 @@
   // «Красивое» число: 777, 5 555 · 1 000, 35 000 · 1 234, 9 876 · 12 321
   function nicePattern(value, patterns) {
     var n = Math.floor(Math.abs(Number(value)));
-    if (!isFinite(n) || n < 100) return null;
+    if (!isFinite(n) || n < 10) return null;
     var str = String(n);
     var checks = {
       repdigit: /^(\d)\1{2,}$/.test(str),
       round: n >= 1000 && n % 1000 === 0,
       sequence: str.length >= 3 && isSequence(str),
-      mirror: str.length >= 4 && str === str.split('').reverse().join('') && !/^(\d)\1+$/.test(str)
+      mirror: str.length >= 4 && str === str.split('').reverse().join('') && !/^(\d)\1+$/.test(str),
+      sixseven: str.indexOf('67') !== -1
     };
     for (var i = 0; i < patterns.length; i++) if (checks[patterns[i]]) return patterns[i];
     return null;
@@ -1222,6 +1524,10 @@
     ectx.defs.forEach(function (d) {
       if (d.on !== name || now - (d._last || 0) < (d.cooldownMs || 0)) return;
       var info = { label: '', pattern: null };
+      if (name === 'clock') {
+        var m = d.match || {};
+        if ((m.day != null && (!data || data.day !== m.day)) || (m.hour != null && (!data || data.hour !== m.hour))) return;
+      }
       if (name === 'balance') {
         info.pattern = nicePattern(data && data.value, d.patterns || ['repdigit', 'round', 'sequence', 'mirror']);
         if (!info.pattern) return;
@@ -1283,6 +1589,7 @@
         armEvents(manifest, manifestUrl, opts, reduced, token);
         var item = pick(manifest, opts.date);
         if (!item) return null;
+        if (item.pool) item = dressForSeason(item, manifest, manifestUrl, opts.date);
         var base = new URL(item.pack || 'packs/' + item.id + '/', manifestUrl);
         var url = function (name) { return new URL(name, base).href; };
         var imgs = {};
@@ -1325,6 +1632,7 @@
         stopAll(ctx);
         stopAll(ectx);
       }
+      if (ctx && ctx.buddyHolder) ctx.buddyHolder.style.visibility = suppressed ? 'hidden' : '';
     },
     // События приложения: 'balance' { value }, 'topup' { amount }, 'flip' (перевернули экраном вниз и обратно)
     event: fireEvent,

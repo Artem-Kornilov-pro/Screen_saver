@@ -90,9 +90,29 @@
     flipDownSince = 0;
     if (flipArmed && tilt < 60) {
       flipArmed = false;
-      Doodles.event('flip');
+      flip();
     }
   });
+
+  // Переворот: финал комбо, если дудл его ждёт, иначе событие «ночь»
+  function flip() {
+    if (Doodles.trigger('flip')) return 'Переворот ушёл дудлу';
+    return Doodles.event('flip') ? 'Ночь' : 'На переворот сейчас ничего нет';
+  }
+
+  // «67»: 6-го числа в 19:00 — один раз за вечер. Проверяем при входе и раз в минуту.
+  function checkClock() {
+    var date = Seasonal.effectiveDate();
+    var now = new Date();
+    if (date.getDate() !== 6 || now.getHours() !== 19) return;
+    var key = 'sbkids.clock67';
+    var day = Doodles.ymd(date);
+    try { if (window.localStorage.getItem(key) === day) return; } catch (err) { /* без хранилища — просто покажем */ }
+    if (Doodles.event('clock', { day: 6, hour: 19 })) {
+      try { window.localStorage.setItem(key, day); } catch (err) { /* нет хранилища */ }
+    }
+  }
+  window.setInterval(checkClock, 60000);
 
   // ---------- Баланс: события «пополнение» и «красивое число» ----------
 
@@ -214,6 +234,15 @@
     });
   }
 
+  // Дудл из пула выпадает по очереди: ищем ближайший к началу года день, когда он дудл дня
+  function poolDate(manifest, item, year) {
+    for (var d = new Date(year, 0, 1, 12); d.getFullYear() === year; d.setDate(d.getDate() + 1)) {
+      var picked = Doodles._pick(manifest, d);
+      if (picked && picked.id === item.id) return Doodles.ymd(d);
+    }
+    return null;
+  }
+
   // Кнопки быстрого перехода к дате дудла: строятся из того же манифеста
   function buildDoodleButtons() {
     if (!window.fetch) return;
@@ -222,14 +251,14 @@
       .then(function (manifest) {
         var year = new Date().getFullYear();
         manifest.items.forEach(function (item) {
-          var date = DoodleLabels.demoDate(item.when, year);
+          var date = item.pool ? poolDate(manifest, item, year) : DoodleLabels.demoDate(item.when, year);
           if (!date) return;
           var button = document.createElement('button');
           button.type = 'button';
           button.setAttribute('data-id', item.id);
           button.appendChild(document.createTextNode(item.title || item.id));
           var small = document.createElement('small');
-          small.textContent = DoodleLabels.when(item.when);
+          small.textContent = item.pool ? 'дудл дня · ' + Number(date.slice(8)) + '.' + date.slice(5, 7) : DoodleLabels.when(item.when);
           button.appendChild(small);
           button.addEventListener('click', function () {
             // День рождения живёт в профиле: для демо кладём его на ту же дату
@@ -299,7 +328,8 @@
   debugReduced.addEventListener('change', startDoodles);
   debugGold.addEventListener('change', function () { Doodles.setGold(debugGold.checked); });
   document.getElementById('debug-topup').addEventListener('click', function () { topUp(500); });
-  document.getElementById('debug-flip').addEventListener('click', function () { Doodles.event('flip'); });
+  document.getElementById('debug-flip').addEventListener('click', function () { debugStatus.textContent = flip(); });
+  document.getElementById('debug-clock').addEventListener('click', function () { Doodles.event('clock', { day: 6, hour: 19 }); });
   Array.prototype.forEach.call(document.querySelectorAll('[data-balance]'), function (button) {
     button.addEventListener('click', function () { setBalance(Number(button.getAttribute('data-balance'))); });
   });
@@ -321,6 +351,7 @@
       idle(function () { resolve(startDoodles()); });
     });
   });
+  doodlesReady.then(function () { window.setTimeout(checkClock, 1500); });
   buildDoodleButtons();
 
   Promise.all([seasonalReady, doodlesReady]).then(function (results) {

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="90" viewBox="0 0 140 90">
+<defs><radialGradient id="tyre" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#495057"/><stop offset="1" stop-color="#212529"/></radialGradient></defs>
+<ellipse cx="70" cy="86" rx="56" ry="3" fill="#000" fill-opacity=".2"/>
+<circle cx="26" cy="64" r="21" fill="none" stroke="#868e96" stroke-width="6"/>
+<circle cx="114" cy="64" r="21" fill="none" stroke="#868e96" stroke-width="6"/>
+<circle cx="26" cy="64" r="17" fill="none" stroke="#dee2e6" stroke-width="1.6"/>
+<circle cx="114" cy="64" r="17" fill="none" stroke="#dee2e6" stroke-width="1.6"/>
+<path d="M26 64 L43.0 64.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M26 64 L38.0 76.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M26 64 L26.0 81.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M26 64 L14.0 76.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M26 64 L9.0 64.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M26 64 L14.0 52.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M26 64 L26.0 47.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M26 64 L38.0 52.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M114 64 L131.0 64.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M114 64 L126.0 76.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M114 64 L114.0 81.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M114 64 L102.0 76.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M114 64 L97.0 64.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M114 64 L102.0 52.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M114 64 L114.0 47.0" stroke="#adb5bd" stroke-width="1.4"/><path d="M114 64 L126.0 52.0" stroke="#adb5bd" stroke-width="1.4"/>
+<circle cx="26" cy="64" r="4" fill="#ffd43b"/><circle cx="114" cy="64" r="4" fill="#ffd43b"/>
+<path d="M26 64 L56 64 L48 34 Z M56 64 L96 34 L48 34" fill="none" stroke="#fa5252" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+<path d="M96 34 L114 64" stroke="#fa5252" stroke-width="5" stroke-linecap="round"/>
+<path d="M92 20 L98 36" stroke="#495057" stroke-width="4" stroke-linecap="round"/>
+<path d="M84 18 H102" stroke="#212529" stroke-width="5" stroke-linecap="round"/>
+<path d="M40 28 H56" stroke="#212529" stroke-width="6" stroke-linecap="round"/>
+<path d="M48 34 L46 28" stroke="#495057" stroke-width="4"/>
+<circle cx="56" cy="64" r="6" fill="#ffd43b"/>
+</svg>
