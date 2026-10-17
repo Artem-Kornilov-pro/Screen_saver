@@ -1127,6 +1127,7 @@
   var TRACE_RADIUS = 30;       // px: насколько близко палец должен пройти мимо точки узора
   var BUDDY_LINGER_MS = 5000;  // сколько стикер дня ждёт после финала, прежде чем уйти
   var BUDDY_FADE_MS = 1000;    // и как долго растворяется
+  var TAB_ICON_SIZE = 26;      // px: картинка дудла в язычке — с иконку, чтобы не спорить с интерфейсом
 
   // Дрожащая линия скетч-стикеров: SVG-фильтр, один на страницу
   function ensureDefs() {
@@ -1328,13 +1329,13 @@
     var b = c.item.effect.buddy || {};
     var img = c.img(buddyImageOf(c.item.effect));
     if (!img) return null;
-    var size = (b.size || 44) * (c.scale || 1);
+    // По умолчанию — язычок: маленькая капсула в шапке «картинка + ●○○». Не закрывает кнопки,
+    // тап по аватару и карте остаётся приложению. peek и float — старые режимы из конфига (buddy.mode).
+    var mode = b.mode || 'tab';
+    var size = mode === 'tab' ? TAB_ICON_SIZE : (b.size || 44) * (c.scale || 1);
     var ratio = (img.naturalWidth / img.naturalHeight) || 1;
     var width = Math.round(size * ratio);
     var day = dayNumber(c.date);
-    // По умолчанию — язычок сбоку: не закрывает кнопки, тап по аватару и карте остаётся приложению.
-    // peek и float — старые режимы, включаются из конфига (buddy.mode).
-    var mode = b.mode || 'tab';
     var el = document.createElement('button');
     el.type = 'button';
     el.className = 'doodle-buddy';
@@ -1453,10 +1454,16 @@
       var hud = document.createElement('span');
       hud.className = 'doodle-combo';
       hud.innerHTML = '<span class="doodle-combo-dots"><i></i><i></i><i></i></span><span class="doodle-combo-gesture"></span>';
-      // Шкала встаёт с той стороны якоря, где есть место
-      var r = c.anchor.getBoundingClientRect(), l = c.layer.getBoundingClientRect();
-      if (r.right + 100 > l.right) hud.classList.add('doodle-combo--left');
-      c.anchor.appendChild(hud);
+      if (c.buddyMode === 'tab') {
+        // В язычке шкала — часть капсулы и видна всегда: тусклые точки зовут поиграть
+        hud.classList.add('doodle-combo--inline');
+        c.buddyHolder.appendChild(hud);
+      } else {
+        // Шкала встаёт с той стороны якоря, где есть место
+        var r = c.anchor.getBoundingClientRect(), l = c.layer.getBoundingClientRect();
+        if (r.right + 100 > l.right) hud.classList.add('doodle-combo--left');
+        c.anchor.appendChild(hud);
+      }
       c.hud = hud;
     }
     var dots = c.hud.querySelectorAll('.doodle-combo-dots i');
@@ -1485,7 +1492,8 @@
       window.setTimeout(apply, 0);
     }
     c.taps = [];
-    if (c.hud) { c.hud.remove(); c.hud = null; }
+    if (c.buddyMode === 'tab' && c.hud) updateHud(c);
+    else if (c.hud) { c.hud.remove(); c.hud = null; }
   }
 
   function playLevel(c, level) {
@@ -1617,6 +1625,7 @@
     target.addEventListener('click', onTap);
     c.cleanups.push(function () { c.buddyHolder.remove(); });
     if (suppressed) c.buddyHolder.style.visibility = 'hidden';
+    if (c.buddyMode === 'tab') updateHud(c);
     return true;
   }
 

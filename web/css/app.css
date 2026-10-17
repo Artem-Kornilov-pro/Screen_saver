@@ -12,6 +12,8 @@
 html, body { height: 100%; }
 /* Как в приложении: прокрутка есть, приближения щипком и двойным тапом нет */
 html { touch-action: pan-x pan-y; -webkit-text-size-adjust: 100%; }
+/* Без системного «потяни, чтобы обновить» и резинки страницы: протяжку обрабатывает макет */
+html, body { overscroll-behavior: none; }
 body {
   background: #050606;
   color: var(--text);
@@ -678,35 +680,61 @@ input { font: inherit; color: inherit; }
   .doodle-buddy--float { left: 70%; }
 }
 
-/* ---------- Язычок дудла сбоку ---------- */
-/* Сидит у правого края шапки, наполовину за краем экрана: не закрывает кнопки, аватар и карта
-   остаются приложению. Раз в несколько секунд выглядывает, чтобы его заметили. */
+/* ---------- Язычок дудла ---------- */
+/* Маленькая капсула справа в шапке: картинка дудла + шкала комбо ●○○ в одном месте.
+   Не закрывает кнопки — аватар и карта остаются приложению. Картинка раз в несколько секунд
+   покачивается, чтобы язычок заметили; во время комбо капсула подсвечена. */
 .doodle-tab {
   position: absolute;
   top: 50%;
-  right: -16px;
+  right: 0;
   z-index: 4;
   display: flex;
   align-items: center;
-  padding: 6px 26px 6px 10px;
-  border-radius: 999px 0 0 999px;
-  background: rgba(20, 23, 22, .9);
-  box-shadow: 0 0 0 1px rgba(195, 247, 58, .4), 0 6px 18px rgba(0, 0, 0, .45);
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px 0 5px;
+  border-radius: 999px;
+  background: rgba(20, 23, 22, .88);
+  box-shadow: 0 0 0 1px rgba(195, 247, 58, .3), 0 4px 12px rgba(0, 0, 0, .35);
   cursor: pointer;
   pointer-events: auto;
-  transform: translate(30%, -50%);
-  transition: transform .35s cubic-bezier(.3, 1.4, .5, 1), opacity 1s ease;
-  animation: doodle-tab-nudge 6s ease-in-out infinite;
+  transform: translateY(-50%);
+  transition: box-shadow .25s ease, opacity 1s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.doodle-tab .doodle-buddy { position: relative; filter: drop-shadow(0 3px 6px rgba(0, 0, 0, .4)); }
-.doodle-tab.is-out { transform: translate(0, -50%); animation: none; }
-.doodle-tab.is-leaving { opacity: 0; }
+.doodle-tab:active { transform: translateY(-50%) scale(.96); }
+.doodle-tab .doodle-buddy {
+  position: relative;
+  flex: none;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .4));
+  animation: doodle-tab-nudge 6s ease-in-out infinite;
+}
+.doodle-tab.is-out { box-shadow: 0 0 0 1px rgba(195, 247, 58, .75), 0 0 14px rgba(195, 247, 58, .35); }
+.doodle-tab.is-out .doodle-buddy { animation: none; }
+.doodle-tab:has(.is-done) { box-shadow: 0 0 0 1px #c3f73a, 0 0 18px rgba(195, 247, 58, .55); }
+.doodle-tab:has(.is-gold) { box-shadow: 0 0 0 1px #ffd43b, 0 0 22px rgba(255, 212, 59, .8); }
+.doodle-tab.is-leaving { opacity: .35; }
+/* Шкала внутри капсулы: без своего фона и рамки */
+.doodle-combo--inline {
+  position: static;
+  gap: 6px;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  transform: none;
+  animation: none;
+}
+.doodle-combo--inline.is-done, .doodle-combo--inline.is-gold { box-shadow: none; }
+.doodle-combo--inline .doodle-combo-dots { gap: 4px; }
+.doodle-combo--inline .doodle-combo-dots i { width: 7px; height: 7px; }
+.doodle-combo--inline .doodle-combo-gesture { width: 20px; height: 20px; }
 @keyframes doodle-tab-nudge {
-  0%, 78%, 100% { transform: translate(30%, -50%); }
-  84% { transform: translate(6%, -50%) rotate(-4deg); }
-  90% { transform: translate(18%, -50%) rotate(2deg); }
+  0%, 82%, 100% { transform: none; }
+  86% { transform: rotate(-14deg) scale(1.12); }
+  91% { transform: rotate(10deg) scale(1.08); }
+  95% { transform: rotate(-4deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .doodle-tab { animation: none; }
+  .doodle-tab .doodle-buddy { animation: none; }
 }

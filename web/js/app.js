@@ -32,8 +32,29 @@
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (type) {
     document.addEventListener(type, function (event) { event.preventDefault(); }, { passive: false });
   });
+  // Протяжка вниз — это наш pull-to-refresh с анимацией, а не перезагрузка страницы Safari:
+  // если палец тянет вниз, а прокручивать вверх уже некуда, системный жест гасим.
+  // Свои обработчики протяжки (passive) события всё равно получают.
+  var touchStartY = null;
+  document.addEventListener('touchstart', function (event) {
+    touchStartY = event.touches.length === 1 ? event.touches[0].clientY : null;
+  }, { passive: true });
+
+  function scrolledDown(el) {
+    for (; el && el !== document.body; el = el.parentElement) {
+      var overflow = window.getComputedStyle(el).overflowY;
+      if ((overflow === 'auto' || overflow === 'scroll') && el.scrollHeight > el.clientHeight) return el.scrollTop > 0;
+    }
+    return false;
+  }
+
   document.addEventListener('touchmove', function (event) {
-    if (event.touches.length > 1) event.preventDefault();
+    if (event.touches.length > 1) {
+      event.preventDefault();
+      return;
+    }
+    if (touchStartY === null || event.touches[0].clientY <= touchStartY) return;
+    if (!scrolledDown(event.target)) event.preventDefault();
   }, { passive: false });
 
   function showToast(text) {
