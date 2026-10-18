@@ -561,7 +561,7 @@
         "type": "combo",
         "trigger": [
           "tap",
-          "pull"
+          "shake"
         ],
         "anchor": "avatar",
         "hint": {
@@ -637,7 +637,7 @@
         "combo": {
           "taps": 3,
           "windowMs": 2500,
-          "finale": "pull",
+          "finale": "shake",
           "effect": {
             "type": "sticker",
             "image": "kite.svg",
@@ -649,7 +649,7 @@
         "cooldownMs": 1500
       },
       "fact": "1 июня — День защиты детей. У каждого ребёнка есть право на игру и отдых.",
-      "share": "Потяни список вниз — там шарики!",
+      "share": "Тряхни телефон — там шарики!",
       "enabled": true
     },
     {
@@ -2468,7 +2468,7 @@
                 "anim": "pop",
                 "size": 100,
                 "durationMs": 2400,
-                "at": "avatar"
+                "at": "center"
               },
               {
                 "type": "particles",

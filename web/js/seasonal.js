@@ -770,6 +770,11 @@
       if (!g || g.x === null) return;
       force = Math.abs(Math.sqrt(g.x * g.x + g.y * g.y + g.z * g.z) - 9.81);
     }
+    onForce(force);
+  }
+
+  // Сила встряски в м/с² — из браузера или от приложения (Seasonal.motion)
+  function onForce(force) {
     var now = Date.now();
     if (force > SHAKE_FORCE && now - state.lastShake > SHAKE_COOLDOWN) {
       state.lastShake = now;
@@ -1060,8 +1065,11 @@
       document.addEventListener('pointerdown', onPointerDown, { capture: true, passive: true });
       document.addEventListener('touchend', askSensorPermission, { capture: true, passive: true });
       document.addEventListener('click', askSensorPermission, true);
-      window.addEventListener('deviceorientation', onOrientation);
-      window.addEventListener('devicemotion', onMotion);
+      // nativeSensors: датчики считает приложение и передаёт в setTilt и motion
+      if (!options.nativeSensors) {
+        window.addEventListener('deviceorientation', onOrientation);
+        window.addEventListener('devicemotion', onMotion);
+      }
       document.addEventListener('visibilitychange', function () {
         if (document.hidden) {
           if (state.run) endRun();
@@ -1095,6 +1103,15 @@
     setManualTilt: function (value) {
       state.manualTilt = Math.max(-1, Math.min(1, Number(value) || 0));
     },
+
+    /** Наклон от приложения (нативный датчик): −1 … 1, как gamma / 45 в браузере. */
+    setTilt: function (value) {
+      state.hasSensor = true;
+      state.tilt = Math.max(-1, Math.min(1, Number(value) || 0));
+    },
+
+    /** Встряска от приложения: сила в м/с² без гравитации. Порог и пауза — из конфига. */
+    motion: function (force) { onForce(Number(force) || 0); },
 
     /** Лежит ли осевший снег: тогда тряска стряхивает его. */
     hasSnow: hasSnow,

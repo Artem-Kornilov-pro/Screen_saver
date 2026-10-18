@@ -50,6 +50,17 @@
   <button type="button" id="debug-doodle-reset" class="dbg-wide">Сбросить дудлы</button>
   <p id="debug-doodle-status" class="dbg-status">…</p>
 
+  <h3 class="dbg-section">Показ</h3>
+  <p class="dbg-hint">Кнопки громкости: «+» — следующий дудл, «−» — предыдущий. Сцена запускается сама.</p>
+  <label class="dbg-check"><input type="checkbox" id="debug-auto"> Автосмена дудлов</label>
+  <label>Каждые
+    <select id="debug-auto-sec">
+      <option value="30">30 секунд</option>
+      <option value="60" selected>60 секунд</option>
+      <option value="90">90 секунд</option>
+    </select>
+  </label>
+
   <h3 class="dbg-section">События</h3>
   <div class="dbg-row">
     <button type="button" id="debug-topup">Пополнение +500 ₽</button>
