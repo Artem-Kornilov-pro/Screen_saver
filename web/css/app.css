@@ -47,10 +47,8 @@ input { font: inherit; color: inherit; }
 @media (max-width: 720px) {
   .stage { display: block; padding: 0; }
   .phone { width: 100vw; height: 100vh; height: 100dvh; border-radius: 0; box-shadow: none; }
-  /* На настоящем телефоне время и заряд рисует система: свою строку не показываем,
-     но место оставляем — под системной строкой висит гирлянда праздничного слоя */
+  /* На настоящем телефоне место под системной строкой: там висит гирлянда праздничного слоя */
   .phone .statusbar { height: calc(env(safe-area-inset-top) + 44px); }
-  .phone .statusbar > * { display: none; }
 }
 
 /* ---------- Экраны ---------- */
@@ -71,17 +69,9 @@ input { font: inherit; color: inherit; }
 /* Список тянут мышкой на демо: без выделения текста */
 .screen-main { -webkit-user-select: none; user-select: none; }
 
-.statusbar {
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 10px;
-  font-size: 15px;
-  font-weight: 600;
-}
-.sb-icons { display: flex; gap: 6px; align-items: center; }
-.sb-icons svg { fill: currentColor; }
+/* Время, сеть и заряд рисует система: своей строки нет, только место под гирлянду */
+.statusbar { height: 44px; }
+.statusbar > * { display: none; }
 
 /* ---------- Главный экран ---------- */
 .header { height: 60px; display: flex; align-items: center; }
