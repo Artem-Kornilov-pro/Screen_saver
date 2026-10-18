@@ -1,0 +1,33 @@
+/* Слой эффектов поверх нативного экрана: страница прозрачная, касания проходят насквозь,
+   кроме стикера дня (.doodle-buddy) и отладки. Остальное — из app.css. */
+
+html, body { background: transparent !important; overflow: hidden; }
+body { position: fixed; inset: 0; }
+
+.ov-app { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+
+/* Картинка экрана для просмотра в браузере (?preview=1); в приложении под слоем нативный экран */
+body:has(.ov-preview) { background: #eef0f4 !important; }
+.ov-preview { position: absolute; pointer-events: none; user-select: none; }
+
+/* Невидимые двойники нативных элементов: якоря дудлов, снег, шапка стикера */
+.ov-ghosts { position: absolute; inset: 0; pointer-events: none; }
+.ov-ghost { position: absolute; pointer-events: none; }
+.ov-ghost[data-anchor="avatar"] { border-radius: 50%; }
+
+/* Шестерёнка отладки — на свободном месте над таб-баром, место задаёт layout.json */
+.ov-app .debug-toggle {
+  position: absolute; z-index: 20;
+  display: grid; place-items: center;
+  bottom: auto;
+  border-radius: 50%;
+  color: #fff;
+  width: 34px; height: 34px;
+  pointer-events: auto;
+  background: rgba(28, 31, 30, .55);
+}
+.debug { pointer-events: auto; }
+@media (min-width: 721px) {
+  .debug { position: fixed; right: 12px; top: 12px; max-height: calc(100vh - 24px); display: none; z-index: 40; }
+  .debug.is-open { display: flex; }
+}

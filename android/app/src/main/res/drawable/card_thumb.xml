@@ -1,0 +1,8 @@
+<!-- Миниатюра карты: наш узор волнами, без чужих персонажей -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:width="76dp" android:height="50dp" android:viewportWidth="76" android:viewportHeight="50">
+    <clip-path android:pathData="M10,0h56a10,10 0,0 1,10 10v30a10,10 0,0 1,-10 10h-56a10,10 0,0 1,-10 -10v-30a10,10 0,0 1,10 -10z" />
+    <path android:fillColor="#8AD62A" android:pathData="M0,0h76v50h-76z" />
+    <path android:strokeColor="#3FA31A" android:strokeWidth="6" android:pathData="M-4,12 C10,2 20,22 34,12 S58,2 80,12" />
+    <path android:strokeColor="#C9F54A" android:strokeWidth="6" android:pathData="M-4,28 C10,18 20,38 34,28 S58,18 80,28" />
+    <path android:strokeColor="#3FA31A" android:strokeWidth="6" android:pathData="M-4,44 C10,34 20,54 34,44 S58,34 80,44" />
+</vector>
