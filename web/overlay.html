@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Слой эффектов СберKids</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/overlay.css">
+</head>
+<body>
+<!--
+  Слой эффектов поверх нативного приложения (Android, WebView с прозрачным фоном).
+  Под ним — нативный экран. Здесь только невидимые якоря на месте его элементов (прямоугольники присылает
+  Kotlin), праздничный слой и дудлы.
+  ?preview=1 подкладывает картинку экрана — чтобы смотреть слой в браузере без телефона.
+-->
+<div class="ov-app" id="app">
+  <div class="ov-ghosts" id="ghosts"></div>
+
+  <canvas class="seasonal-layer" id="seasonal-layer" aria-hidden="true"></canvas>
+  <span class="safe-top-probe" id="safe-top-probe" aria-hidden="true"></span>
+
+  <div class="doodle-layer" id="doodle-layer" aria-hidden="true"></div>
+  <div class="sr-only" id="doodle-live" aria-live="polite"></div>
+
+  <button class="debug-toggle" id="debug-toggle" type="button" aria-label="Отладка эффекта" aria-expanded="false">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M19.4 13a7.5 7.5 0 0 0 0-2l2-1.6-2-3.4-2.4 1a7.3 7.3 0 0 0-1.7-1L15 3.5h-4L10.7 6a7.3 7.3 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.6a7.5 7.5 0 0 0 0 2l-2 1.6 2 3.4 2.4-1c.5.4 1.1.7 1.7 1l.3 2.5h4l.3-2.5c.6-.3 1.2-.6 1.7-1l2.4 1 2-3.4-2-1.6ZM13 15a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" fill="currentColor" transform="translate(-1 0)"/></svg>
+  </button>
+</div>
+
+<aside class="debug" id="debug-panel" aria-label="Отладка">
+  <h3>Дата</h3>
+  <label class="dbg-check"><input type="checkbox" id="debug-override"> Подменить дату</label>
+  <input type="date" id="debug-date" aria-label="Дата устройства">
+
+  <h3 class="dbg-section">Праздничный слой</h3>
+  <div class="dbg-row">
+    <button type="button" id="debug-show">Показать слой</button>
+    <button type="button" id="debug-reset">Сбросить «раз в день»</button>
+  </div>
+  <p id="debug-status" class="dbg-status">…</p>
+
+  <h3 class="dbg-section">Дудлы</h3>
+  <div class="dbg-list" id="debug-doodles"></div>
+  <div class="dbg-row">
+    <button type="button" id="debug-pull">Потянуть список</button>
+    <button type="button" id="debug-shake">Тряхнуть</button>
+  </div>
+  <label class="dbg-check"><input type="checkbox" id="debug-gold"> Золотой финал всегда</label>
+  <button type="button" id="debug-doodle-reset" class="dbg-wide">Сбросить дудлы</button>
+  <p id="debug-doodle-status" class="dbg-status">…</p>
+
+  <h3 class="dbg-section">События</h3>
+  <div class="dbg-row">
+    <button type="button" id="debug-topup">Пополнение +500 ₽</button>
+    <button type="button" id="debug-flip">Экраном вниз</button>
+  </div>
+  <div class="dbg-row">
+    <button type="button" data-balance="7777">Баланс 7 777</button>
+    <button type="button" data-balance="12345">12 345</button>
+    <button type="button" data-balance="1067">1 067</button>
+  </div>
+  <button type="button" id="debug-clock" class="dbg-wide">6-е, 19:00</button>
+
+  <h3 class="dbg-section">Конфиги</h3>
+  <label>CDN (папка с config.json и doodles/manifest.json)
+    <input type="text" id="debug-cdn" placeholder="https://…/cdn/" spellcheck="false">
+  </label>
+  <button type="button" id="debug-cdn-apply" class="dbg-wide">Применить CDN</button>
+  <p id="debug-cdn-status" class="dbg-status">…</p>
+</aside>
+
+<script src="js/seasonal.js"></script>
+<script src="js/doodles.js"></script>
+<script src="js/labels.js"></script>
+<script src="js/overlay.js"></script>
+</body>
+</html>

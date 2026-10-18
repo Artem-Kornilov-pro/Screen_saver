@@ -1,0 +1,27 @@
+{
+  "comment": "Только для просмотра слоя в браузере (overlay.html?preview=1): зоны экрана в пикселях картинки underlay.webp (до увеличения ×3), rect = [left, top, right, bottom]. В приложении зоны присылает Kotlin с настоящих view. anchor — data-anchor для дудлов, snow — на верх зоны оседает снег, dock — шапка, где ходит стикер дня.",
+  "image": "overlay/underlay.webp",
+  "width": 394,
+  "height": 996,
+  "zones": [
+    { "id": "dock", "rect": [26, 29, 303, 87], "dock": true },
+    { "id": "avatar", "rect": [26, 29, 83, 87], "anchor": "avatar", "toast": "Открываем профиль" },
+    { "id": "qr", "rect": [311, 29, 367, 86], "toast": "Открываем QR" },
+    { "id": "card", "rect": [17, 148, 377, 271], "snow": true, "toast": "Открываем «СберКарту»" },
+    { "id": "balance", "rect": [41, 206, 250, 242], "anchor": "balance" },
+    { "id": "card-thumb", "rect": [256, 170, 352, 252], "anchor": "card-thumb", "toast": "Открываем «СберКарту»" },
+    { "id": "bonus", "rect": [17, 283, 377, 349], "snow": true, "toast": "Открываем бонусы" },
+    { "id": "transfer", "rect": [17, 394, 283, 509], "snow": true, "open": "transfer" },
+    { "id": "self", "rect": [294, 393, 376, 509], "snow": true, "toast": "Перевод себе" },
+    { "id": "ad", "rect": [17, 552, 376, 661], "snow": true, "toast": "Открываем тест" },
+    { "id": "mobile", "rect": [17, 678, 377, 753], "snow": true, "toast": "Открываем «Пополнить мобилку»" },
+    { "id": "history", "rect": [17, 755, 377, 831], "snow": true, "anchor": "income", "toast": "Открываем историю" },
+    { "id": "gear", "rect": [16, 839, 50, 873], "debug": true },
+    { "id": "tabbar", "rect": [12, 879, 381, 971], "snow": true },
+    { "id": "tab-main", "rect": [20, 893, 98, 965], "toast": "Главный" },
+    { "id": "tab-savings", "rect": [100, 893, 165, 965], "anchor": "savings", "toast": "Открываем копилки" },
+    { "id": "tab-paw", "rect": [172, 900, 221, 950], "anchor": "paw", "toast": "Центральная кнопка" },
+    { "id": "tab-tasks", "rect": [228, 893, 296, 965], "toast": "Открываем дела" },
+    { "id": "tab-content", "rect": [300, 893, 372, 965], "toast": "Открываем контент" }
+  ]
+}

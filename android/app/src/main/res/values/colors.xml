@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Фон из css/app.css (переменная bg) -->
+    <color name="bg">#0B0D0C</color>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">СберKids</string>
+    <!-- Адрес CDN с config.json и doodles/manifest.json. Правка файлов там меняет эффекты без релиза.
+         Пусто — работаем только на дефолте из APK. -->
+    <string name="cdn_url" translatable="false">https://rypleshhh.github.io/Screen_saver/web/cdn/</string>
+</resources>
