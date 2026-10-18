@@ -1,0 +1,3256 @@
+{
+  "schema": 1,
+  "enabled": true,
+  "generatedAt": "2026-10-16T12:00:00Z",
+  "prefetchDays": 5,
+  "scale": 1.4,
+  "settings": {
+    "holidayPriority": 40,
+    "maxParticles": 80,
+    "comboIdleMs": 7000,
+    "finaleMs": 3200,
+    "buddyLingerMs": 5000,
+    "buddyFadeMs": 1000,
+    "traceRadius": 30,
+    "goldChance": 0.1,
+    "flipHoldMs": 1200,
+    "flipDownAngle": 150,
+    "flipUpAngle": 60
+  },
+  "items": [
+    {
+      "id": "winter-ski",
+      "title": "Снеговик-лыжник",
+      "season": "winter",
+      "when": {
+        "type": "range",
+        "from": "12-01",
+        "to": "02-28"
+      },
+      "priority": 10,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/winter/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "shake"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "image",
+          "image": "snowflake.svg"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "hat.svg",
+            "scale": 1.6,
+            "ttl": "day"
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "snowflake.svg",
+              "snowflake2.svg",
+              "snowball.svg"
+            ],
+            "count": 40,
+            "origin": "top",
+            "angle": [
+              80,
+              100
+            ],
+            "speed": [
+              90,
+              180
+            ],
+            "gravity": 50,
+            "sway": 50,
+            "size": [
+              12,
+              28
+            ],
+            "durationMs": 3800
+          },
+          {
+            "type": "sticker",
+            "image": "snowman-ski.svg",
+            "anim": "ski",
+            "size": 170,
+            "durationMs": 3000,
+            "delayMs": 200
+          }
+        ],
+        "variants": [
+          {
+            "weight": 75,
+            "override": {}
+          },
+          {
+            "weight": 25,
+            "override": {
+              "steps.1.sprites": [
+                "snowball.svg"
+              ],
+              "steps.1.count": 30
+            }
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "sticker",
+            "image": "penguin.svg",
+            "anim": "walk",
+            "size": 80,
+            "durationMs": 2600
+          }
+        },
+        "cooldownMs": 1500
+      },
+      "fact": "У каждой снежинки 6 лучей. А двух одинаковых снежинок не бывает!",
+      "share": "Ко мне в приложение заехал снеговик на лыжах!",
+      "enabled": true
+    },
+    {
+      "id": "newyear-garland",
+      "title": "Новогодняя гирлянда",
+      "season": "winter",
+      "when": {
+        "type": "range",
+        "from": "12-25",
+        "to": "01-08"
+      },
+      "priority": 40,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/newyear/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "pull"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "sparkle"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "hat.svg",
+            "scale": 1.6,
+            "ttl": "day"
+          },
+          {
+            "type": "sticker",
+            "image": "garland.svg",
+            "anim": "unroll",
+            "fullWidth": true,
+            "durationMs": 3600
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "confetti1.svg",
+              "confetti2.svg",
+              "confetti3.svg"
+            ],
+            "count": 44,
+            "origin": "top",
+            "angle": [
+              60,
+              120
+            ],
+            "speed": [
+              160,
+              320
+            ],
+            "gravity": 320,
+            "sway": 40,
+            "size": [
+              10,
+              20
+            ],
+            "durationMs": 3000,
+            "delayMs": 400
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "pull",
+          "effect": {
+            "type": "sticker",
+            "image": "gift.svg",
+            "anim": "pop",
+            "at": "paw",
+            "size": 72,
+            "durationMs": 2200
+          }
+        },
+        "cooldownMs": 1500,
+        "buddy": {
+          "image": "gift.svg"
+        }
+      },
+      "fact": "Подарки можно копить заранее: 50 ₽ в неделю — это 2 600 ₽ к Новому году.",
+      "share": "У меня в приложении зажглась гирлянда!",
+      "enabled": true
+    },
+    {
+      "id": "spring-boat",
+      "title": "Кораблик и капель",
+      "season": "spring",
+      "when": {
+        "type": "range",
+        "from": "03-01",
+        "to": "05-31"
+      },
+      "priority": 10,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/spring/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "shake"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "image",
+          "image": "drop.svg"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "crown.svg",
+            "scale": 1.6,
+            "ttl": "day"
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "drop.svg"
+            ],
+            "count": 26,
+            "origin": "top",
+            "angle": [
+              88,
+              92
+            ],
+            "speed": [
+              380,
+              520
+            ],
+            "gravity": 900,
+            "spin": 0,
+            "size": [
+              10,
+              18
+            ],
+            "durationMs": 1400
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "petal.svg"
+            ],
+            "count": 14,
+            "origin": "top",
+            "angle": [
+              70,
+              110
+            ],
+            "speed": [
+              60,
+              120
+            ],
+            "gravity": 40,
+            "sway": 60,
+            "size": [
+              14,
+              22
+            ],
+            "durationMs": 3600,
+            "delayMs": 500
+          },
+          {
+            "type": "sticker",
+            "image": "boat.svg",
+            "anim": "sail",
+            "size": 92,
+            "durationMs": 4200,
+            "delayMs": 300
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "sticker",
+            "image": "frog.svg",
+            "anim": "bounce",
+            "size": 70,
+            "durationMs": 2800
+          }
+        },
+        "cooldownMs": 1500
+      },
+      "fact": "Весной тает снег и бегут ручьи. Береги воду: закрывай кран, пока чистишь зубы.",
+      "share": "По моему приложению плывёт кораблик!",
+      "enabled": true
+    },
+    {
+      "id": "cosmonautics",
+      "title": "День космонавтики",
+      "season": "spring",
+      "when": {
+        "type": "fixed",
+        "md": "04-12"
+      },
+      "priority": 50,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/cosmonautics/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "shake"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "sparkle"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "helmet.svg",
+            "scale": 1.6,
+            "ttl": "day"
+          },
+          {
+            "type": "sticker",
+            "image": "rocket.svg",
+            "anim": "fly",
+            "size": 120,
+            "durationMs": 1800,
+            "delayMs": 150
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "star1.svg",
+              "star2.svg",
+              "planet.svg"
+            ],
+            "count": 36,
+            "origin": "anchor",
+            "angle": [
+              -35,
+              115
+            ],
+            "speed": [
+              220,
+              640
+            ],
+            "gravity": 650,
+            "size": [
+              14,
+              30
+            ],
+            "durationMs": 2400
+          }
+        ],
+        "variants": [
+          {
+            "weight": 80,
+            "override": {}
+          },
+          {
+            "weight": 20,
+            "override": {
+              "steps.2.sprites": [
+                "rocket.svg",
+                "star2.svg"
+              ]
+            }
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "sticker",
+            "image": "alien.svg",
+            "anim": "drift",
+            "size": 100,
+            "durationMs": 2600
+          }
+        },
+        "cooldownMs": 1500,
+        "buddy": {
+          "image": "rocket.svg"
+        }
+      },
+      "fact": "12 апреля — День космонавтики! Первым в космос полетел Юрий Гагарин. Его полёт длился 108 минут.",
+      "share": "У меня в приложении стартовала ракета!",
+      "enabled": true
+    },
+    {
+      "id": "summer-beach",
+      "title": "Пляжный мяч",
+      "season": "summer",
+      "when": {
+        "type": "range",
+        "from": "06-01",
+        "to": "08-31"
+      },
+      "priority": 10,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/summer/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "shake"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "image",
+          "image": "sun.svg"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "sunglasses.svg",
+            "scale": 1.1,
+            "dy": 0.04,
+            "ttl": "day"
+          },
+          {
+            "type": "sticker",
+            "image": "beachball.svg",
+            "anim": "bounce",
+            "size": 80,
+            "durationMs": 3200
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "bubble.svg"
+            ],
+            "count": 18,
+            "origin": "bottom",
+            "angle": [
+              -100,
+              -80
+            ],
+            "speed": [
+              90,
+              170
+            ],
+            "gravity": -20,
+            "sway": 35,
+            "spin": 0.5,
+            "size": [
+              16,
+              36
+            ],
+            "durationMs": 3800
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "sun.svg"
+            ],
+            "count": 10,
+            "origin": "anchor",
+            "angle": [
+              -20,
+              100
+            ],
+            "speed": [
+              150,
+              320
+            ],
+            "gravity": 300,
+            "size": [
+              14,
+              22
+            ],
+            "durationMs": 1600
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "sticker",
+            "image": "crab.svg",
+            "anim": "walk",
+            "size": 64,
+            "durationMs": 3200
+          }
+        },
+        "cooldownMs": 1500
+      },
+      "fact": "Летом солнце очень жаркое. Надевай панамку и пей больше воды.",
+      "share": "У меня в приложении уже лето, а у тебя?",
+      "enabled": true
+    },
+    {
+      "id": "june1-balloons",
+      "title": "Шарики на 1 июня",
+      "season": "summer",
+      "when": {
+        "type": "fixed",
+        "md": "06-01"
+      },
+      "priority": 50,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/june1/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "shake"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "image",
+          "image": "balloon-green.svg"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "partyhat.svg",
+            "scale": 1.6,
+            "ttl": "day"
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "balloon-red.svg",
+              "balloon-blue.svg",
+              "balloon-yellow.svg",
+              "balloon-green.svg"
+            ],
+            "count": 16,
+            "origin": "bottom",
+            "angle": [
+              -100,
+              -80
+            ],
+            "speed": [
+              150,
+              250
+            ],
+            "gravity": -40,
+            "sway": 25,
+            "spin": 0.4,
+            "size": [
+              46,
+              72
+            ],
+            "durationMs": 4000
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "confetti1.svg",
+              "confetti3.svg"
+            ],
+            "count": 24,
+            "origin": "top",
+            "angle": [
+              70,
+              110
+            ],
+            "speed": [
+              120,
+              260
+            ],
+            "gravity": 260,
+            "sway": 30,
+            "size": [
+              8,
+              14
+            ],
+            "durationMs": 2800,
+            "delayMs": 300
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "sticker",
+            "image": "kite.svg",
+            "anim": "drift",
+            "size": 96,
+            "durationMs": 3000
+          }
+        },
+        "cooldownMs": 1500
+      },
+      "fact": "1 июня — День защиты детей. У каждого ребёнка есть право на игру и отдых.",
+      "share": "Тряхни телефон — там шарики!",
+      "enabled": true
+    },
+    {
+      "id": "autumn-leaves",
+      "title": "Листопад",
+      "season": "autumn",
+      "when": {
+        "type": "range",
+        "from": "09-01",
+        "to": "11-30"
+      },
+      "priority": 10,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/autumn/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "shake"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "image",
+          "image": "maple.svg"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "hat.svg",
+            "scale": 1.6,
+            "ttl": "day"
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "maple.svg",
+              "leaf.svg",
+              "acorn.svg"
+            ],
+            "count": 28,
+            "origin": "top",
+            "angle": [
+              80,
+              100
+            ],
+            "speed": [
+              120,
+              220
+            ],
+            "gravity": 60,
+            "sway": 70,
+            "size": [
+              18,
+              32
+            ],
+            "durationMs": 3600
+          },
+          {
+            "type": "sticker",
+            "image": "umbrella.svg",
+            "anim": "float",
+            "size": 120,
+            "durationMs": 3400,
+            "delayMs": 300
+          }
+        ],
+        "variants": [
+          {
+            "weight": 75,
+            "override": {}
+          },
+          {
+            "weight": 25,
+            "override": {
+              "steps.1.sprites": [
+                "maple.svg"
+              ],
+              "steps.1.count": 40
+            }
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "sticker",
+            "image": "hedgehog.svg",
+            "anim": "walk",
+            "size": 90,
+            "durationMs": 3600
+          }
+        },
+        "cooldownMs": 1500
+      },
+      "fact": "Осенью белки и ёжики делают запасы на зиму. Люди тоже копят — например, в копилке.",
+      "share": "У меня в приложении листопад!",
+      "enabled": true
+    },
+    {
+      "id": "savings-day",
+      "title": "Монетки в копилку",
+      "season": "autumn",
+      "when": {
+        "type": "fixed",
+        "md": "10-31"
+      },
+      "priority": 50,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/savings/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "shake"
+        ],
+        "anchor": "card-thumb",
+        "hint": {
+          "type": "image",
+          "image": "coin.svg"
+        },
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "coin.svg",
+            "anim": "arc",
+            "at": "savings",
+            "size": 30,
+            "repeat": 6,
+            "staggerMs": 110,
+            "jitter": 14,
+            "durationMs": 900
+          },
+          {
+            "type": "sticker",
+            "image": "jar.svg",
+            "anim": "pop",
+            "at": "savings",
+            "size": 64,
+            "durationMs": 2000,
+            "delayMs": 650
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "star.svg"
+            ],
+            "count": 12,
+            "origin": "at",
+            "at": "savings",
+            "angle": [
+              -165,
+              -15
+            ],
+            "speed": [
+              140,
+              280
+            ],
+            "gravity": 500,
+            "size": [
+              10,
+              18
+            ],
+            "durationMs": 1400,
+            "delayMs": 1000
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "particles",
+            "sprites": [
+              "coin.svg"
+            ],
+            "count": 40,
+            "origin": "top",
+            "angle": [
+              80,
+              100
+            ],
+            "speed": [
+              200,
+              360
+            ],
+            "gravity": 600,
+            "size": [
+              18,
+              30
+            ],
+            "durationMs": 2200
+          }
+        },
+        "cooldownMs": 1500
+      },
+      "fact": "31 октября — Всемирный день сбережений. Если откладывать 10 ₽ в день, за год накопится 3 650 ₽!",
+      "share": "Я закинул монетки в копилку!",
+      "enabled": true
+    },
+    {
+      "id": "birthday",
+      "title": "День рождения",
+      "season": "special",
+      "when": {
+        "type": "birthday"
+      },
+      "priority": 100,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/birthday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "shake"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "image",
+          "image": "candle.svg"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "starglasses.svg",
+            "scale": 1.1,
+            "dy": 0.04,
+            "ttl": "day"
+          },
+          {
+            "type": "sticker",
+            "image": "popper.svg",
+            "anim": "fly",
+            "size": 100,
+            "durationMs": 1800,
+            "delayMs": 100
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "confetti1.svg",
+              "confetti3.svg",
+              "firework.svg"
+            ],
+            "count": 32,
+            "origin": "anchor",
+            "angle": [
+              -40,
+              120
+            ],
+            "speed": [
+              220,
+              600
+            ],
+            "gravity": 600,
+            "size": [
+              12,
+              26
+            ],
+            "durationMs": 2400
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "confetti1.svg",
+              "confetti3.svg"
+            ],
+            "count": 20,
+            "origin": "top",
+            "angle": [
+              70,
+              110
+            ],
+            "speed": [
+              120,
+              260
+            ],
+            "gravity": 260,
+            "sway": 30,
+            "size": [
+              8,
+              14
+            ],
+            "durationMs": 2800,
+            "delayMs": 300
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "cake.svg",
+                "anim": "pop",
+                "at": "paw",
+                "size": 120,
+                "durationMs": 2800
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "firework.svg"
+                ],
+                "count": 24,
+                "origin": "top",
+                "angle": [
+                  60,
+                  120
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 200,
+                "sway": 20,
+                "size": [
+                  18,
+                  34
+                ],
+                "durationMs": 3000,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "knowledge-day",
+      "title": "1 сентября",
+      "season": "autumn",
+      "when": {
+        "type": "fixed",
+        "md": "09-01"
+      },
+      "priority": 50,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/school/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "pull"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "image",
+          "image": "pencil.svg"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "headphones.svg",
+            "scale": 1.5,
+            "ttl": "day"
+          },
+          {
+            "type": "sticker",
+            "image": "plane.svg",
+            "anim": "fly",
+            "size": 90,
+            "durationMs": 2200,
+            "delayMs": 150
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "paperball.svg",
+              "pencil.svg"
+            ],
+            "count": 24,
+            "origin": "top",
+            "angle": [
+              80,
+              100
+            ],
+            "speed": [
+              140,
+              260
+            ],
+            "gravity": 380,
+            "size": [
+              16,
+              30
+            ],
+            "durationMs": 2600
+          }
+        ],
+        "variants": [
+          {
+            "weight": 70,
+            "override": {}
+          },
+          {
+            "weight": 30,
+            "override": {
+              "steps.2.sprites": [
+                "paperball.svg"
+              ],
+              "steps.2.count": 30
+            }
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "pull",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "pencilrocket.svg",
+                "anim": "fly",
+                "size": 140,
+                "durationMs": 2000
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "paperball.svg",
+                  "pencil.svg"
+                ],
+                "count": 20,
+                "origin": "bottom",
+                "angle": [
+                  -110,
+                  -70
+                ],
+                "speed": [
+                  380,
+                  620
+                ],
+                "gravity": 500,
+                "size": [
+                  16,
+                  28
+                ],
+                "durationMs": 2200,
+                "delayMs": 300
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "summer-break",
+      "title": "Старт каникул",
+      "season": "spring",
+      "when": {
+        "type": "range",
+        "from": "05-25",
+        "to": "05-31"
+      },
+      "priority": 40,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/vacation/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap",
+          "shake"
+        ],
+        "anchor": "avatar",
+        "hint": {
+          "type": "image",
+          "image": "icecream.svg"
+        },
+        "steps": [
+          {
+            "type": "skin",
+            "image": "cap.svg",
+            "scale": 1.5,
+            "ttl": "day"
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "sheet.svg"
+            ],
+            "count": 20,
+            "origin": "top",
+            "angle": [
+              70,
+              110
+            ],
+            "speed": [
+              80,
+              160
+            ],
+            "gravity": 60,
+            "sway": 70,
+            "size": [
+              20,
+              34
+            ],
+            "durationMs": 3600
+          },
+          {
+            "type": "sticker",
+            "image": "skateboard.svg",
+            "anim": "sail",
+            "size": 46,
+            "durationMs": 3000,
+            "delayMs": 200
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "icecream.svg"
+            ],
+            "count": 10,
+            "origin": "anchor",
+            "angle": [
+              -30,
+              110
+            ],
+            "speed": [
+              200,
+              420
+            ],
+            "gravity": 600,
+            "size": [
+              18,
+              30
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "kite.svg",
+                "anim": "drift",
+                "size": 130,
+                "durationMs": 3000
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "sheet.svg",
+                  "icecream.svg"
+                ],
+                "count": 22,
+                "origin": "top",
+                "angle": [
+                  70,
+                  110
+                ],
+                "speed": [
+                  120,
+                  240
+                ],
+                "gravity": 120,
+                "sway": 50,
+                "size": [
+                  18,
+                  30
+                ],
+                "durationMs": 3000,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "coins8",
+      "title": "8-бит монетки",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "coin8.svg",
+          "size": 44,
+          "head": {
+            "x": 0.5,
+            "y": 0.2,
+            "w": 0.6,
+            "eyes": 0.45
+          }
+        },
+        "steps": [
+          {
+            "type": "particles",
+            "sprites": [
+              "coin8.svg",
+              "star8.svg"
+            ],
+            "count": 24,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              14,
+              26
+            ],
+            "durationMs": 1800
+          },
+          {
+            "type": "sticker",
+            "image": "coin8.svg",
+            "anim": "pop",
+            "size": 64,
+            "durationMs": 2000,
+            "at": "balance",
+            "delayMs": 150
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "particles",
+                "sprites": [
+                  "coin8.svg"
+                ],
+                "count": 40,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  16,
+                  30
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "star8.svg"
+                ],
+                "count": 14,
+                "origin": "anchor",
+                "angle": [
+                  -170,
+                  -10
+                ],
+                "speed": [
+                  220,
+                  520
+                ],
+                "gravity": 650,
+                "size": [
+                  14,
+                  26
+                ],
+                "durationMs": 1800
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "gamepad",
+      "title": "Геймпад",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "gamepad.svg",
+          "size": 40,
+          "head": {
+            "x": 0.5,
+            "y": 0.24,
+            "w": 0.42,
+            "eyes": 0.45
+          }
+        },
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "gamepad.svg",
+            "anim": "drift",
+            "size": 64,
+            "durationMs": 2600
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "pixA.svg",
+              "pixB.svg",
+              "pixC.svg"
+            ],
+            "count": 24,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              8,
+              14
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "flip",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "gamepad.svg",
+                "anim": "pop",
+                "size": 96,
+                "durationMs": 2600,
+                "at": "paw"
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "star8.svg",
+                  "pixA.svg",
+                  "pixB.svg",
+                  "pixC.svg"
+                ],
+                "count": 34,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  10,
+                  22
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "tetris",
+      "title": "Тетрис",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "tetT.svg",
+          "size": 36,
+          "head": {
+            "x": 0.5,
+            "y": 0.14,
+            "w": 0.4,
+            "eyes": 0.3
+          }
+        },
+        "steps": [
+          {
+            "type": "particles",
+            "sprites": [
+              "tetT.svg",
+              "tetL.svg",
+              "tetS.svg",
+              "tetO.svg",
+              "tetI.svg"
+            ],
+            "count": 20,
+            "origin": "top",
+            "angle": [
+              85,
+              95
+            ],
+            "speed": [
+              200,
+              320
+            ],
+            "gravity": 520,
+            "spin": 0.6,
+            "size": [
+              18,
+              30
+            ],
+            "durationMs": 2600
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "tetrow.svg",
+                "anim": "rowclear",
+                "size": 0,
+                "durationMs": 2200,
+                "fullWidth": true
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "pixA.svg",
+                  "pixB.svg",
+                  "pixC.svg"
+                ],
+                "count": 30,
+                "origin": "at",
+                "angle": [
+                  -170,
+                  -10
+                ],
+                "speed": [
+                  220,
+                  520
+                ],
+                "gravity": 650,
+                "size": [
+                  8,
+                  14
+                ],
+                "durationMs": 1800,
+                "at": "paw"
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "blocky",
+      "title": "Блочный человечек",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "blocky.svg",
+          "size": 50,
+          "head": {
+            "x": 0.5,
+            "y": 0.1,
+            "w": 0.52,
+            "eyes": 0.18
+          }
+        },
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "blocky.svg",
+            "anim": "walk",
+            "size": 84,
+            "durationMs": 3000
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "pixA.svg",
+              "pixB.svg",
+              "pixC.svg"
+            ],
+            "count": 20,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              8,
+              14
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "flip",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "blocky.svg",
+                "anim": "hop",
+                "size": 110,
+                "durationMs": 2800
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "star8.svg"
+                ],
+                "count": 24,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  12,
+                  22
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "snake",
+      "title": "Змейка",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "snake8.svg",
+          "size": 20
+        },
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "snake8.svg",
+            "anim": "walk",
+            "size": 26,
+            "durationMs": 3200
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "coin8.svg"
+            ],
+            "count": 12,
+            "origin": "top",
+            "angle": [
+              75,
+              105
+            ],
+            "speed": [
+              160,
+              320
+            ],
+            "gravity": 420,
+            "sway": 30,
+            "size": [
+              12,
+              20
+            ],
+            "durationMs": 2800,
+            "delayMs": 0
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "snake8.svg",
+                "anim": "walk",
+                "size": 44,
+                "durationMs": 3200
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "coin8.svg",
+                  "star8.svg"
+                ],
+                "count": 30,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  14,
+                  24
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": false
+    },
+    {
+      "id": "pong",
+      "title": "Понг",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "ball8.svg",
+          "size": 28
+        },
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "ball8.svg",
+            "anim": "bounce",
+            "size": 34,
+            "durationMs": 2600,
+            "repeat": 2,
+            "staggerMs": 700
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "pixB.svg"
+            ],
+            "count": 16,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              8,
+              12
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "flip",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "paddle8.svg",
+                "anim": "pop",
+                "size": 90,
+                "durationMs": 2400,
+                "at": "avatar"
+              },
+              {
+                "type": "sticker",
+                "image": "ball8.svg",
+                "anim": "bounce",
+                "size": 52,
+                "durationMs": 2600
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "ball8.svg",
+                  "pixB.svg"
+                ],
+                "count": 24,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  10,
+                  20
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": false
+    },
+    {
+      "id": "carpet",
+      "title": "Ковёр",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "carpet.svg",
+          "size": 44
+        },
+        "steps": [
+          {
+            "type": "particles",
+            "sprites": [
+              "star8.svg",
+              "gemA.svg"
+            ],
+            "count": 18,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              10,
+              20
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "carpet.svg",
+                "anim": "drift",
+                "size": 110,
+                "durationMs": 3000
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "star8.svg"
+                ],
+                "count": 26,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  10,
+                  20
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          },
+          "mode": "trace",
+          "trace": {
+            "image": "carpet.svg",
+            "width": 0.72,
+            "path": [
+              [
+                0.2,
+                0.5
+              ],
+              [
+                0.35,
+                0.27
+              ],
+              [
+                0.5,
+                0.5
+              ],
+              [
+                0.65,
+                0.27
+              ],
+              [
+                0.8,
+                0.5
+              ],
+              [
+                0.65,
+                0.73
+              ],
+              [
+                0.5,
+                0.5
+              ],
+              [
+                0.35,
+                0.73
+              ],
+              [
+                0.2,
+                0.5
+              ]
+            ]
+          }
+        }
+      },
+      "enabled": false
+    },
+    {
+      "id": "hearts",
+      "title": "Пиксельные сердечки",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "heart8.svg",
+          "size": 36,
+          "head": {
+            "x": 0.5,
+            "y": 0.22,
+            "w": 0.5,
+            "eyes": 0.42
+          }
+        },
+        "steps": [
+          {
+            "type": "particles",
+            "sprites": [
+              "heart8.svg"
+            ],
+            "count": 22,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              14,
+              28
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "flip",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "heart8.svg",
+                "anim": "pop",
+                "size": 90,
+                "durationMs": 2400,
+                "at": "avatar"
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "heart8.svg"
+                ],
+                "count": 36,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  14,
+                  26
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "bmx",
+      "title": "BMX",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "bmx.svg",
+          "size": 34
+        },
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "bmx.svg",
+            "anim": "trick",
+            "size": 64,
+            "durationMs": 2800
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "pixA.svg",
+              "pixB.svg",
+              "pixC.svg"
+            ],
+            "count": 16,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              8,
+              12
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "bmx.svg",
+                "anim": "trick",
+                "size": 96,
+                "durationMs": 2800
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "star8.svg"
+                ],
+                "count": 22,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  10,
+                  20
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": false
+    },
+    {
+      "id": "levelup",
+      "title": "Level up",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "arrow8.svg",
+          "size": 40
+        },
+        "steps": [
+          {
+            "type": "particles",
+            "sprites": [
+              "arrow8.svg"
+            ],
+            "count": 16,
+            "origin": "bottom",
+            "angle": [
+              -95,
+              -85
+            ],
+            "speed": [
+              180,
+              300
+            ],
+            "gravity": -60,
+            "spin": 0,
+            "size": [
+              14,
+              26
+            ],
+            "durationMs": 2800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "flip",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "arrow8.svg",
+                "anim": "fly",
+                "size": 110,
+                "durationMs": 1800
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "star8.svg"
+                ],
+                "count": 26,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  10,
+                  20
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": false
+    },
+    {
+      "id": "gems",
+      "title": "Кристаллы",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "gemB.svg",
+          "size": 38,
+          "head": {
+            "x": 0.5,
+            "y": 0.12,
+            "w": 0.5,
+            "eyes": 0.3
+          }
+        },
+        "steps": [
+          {
+            "type": "particles",
+            "sprites": [
+              "gemA.svg",
+              "gemB.svg",
+              "gemC.svg"
+            ],
+            "count": 22,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              14,
+              26
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "rays",
+                "colors": [
+                  "#22b8cf",
+                  "#f06595",
+                  "#94d82d",
+                  "#ffd43b"
+                ],
+                "durationMs": 2000
+              },
+              {
+                "type": "sticker",
+                "image": "gemA.svg",
+                "anim": "pop",
+                "size": 100,
+                "durationMs": 2400,
+                "at": "center"
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "gemA.svg",
+                  "gemB.svg",
+                  "gemC.svg"
+                ],
+                "count": 30,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  14,
+                  26
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "rocket8",
+      "title": "Пиксельная ракета",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "rocket8.svg",
+          "size": 44,
+          "head": {
+            "x": 0.5,
+            "y": 0.2,
+            "w": 0.5,
+            "eyes": 0.27
+          }
+        },
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "rocket8.svg",
+            "anim": "fly",
+            "size": 84,
+            "durationMs": 1800
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "star8.svg"
+            ],
+            "count": 16,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              10,
+              18
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "flip",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "sticker",
+                "image": "rocket8.svg",
+                "anim": "fly",
+                "size": 130,
+                "durationMs": 2000
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "star8.svg"
+                ],
+                "count": 32,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  10,
+                  22
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    },
+    {
+      "id": "dice",
+      "title": "Кубик",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "dice.svg",
+          "size": 40
+        },
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "dice.svg",
+            "anim": "bounce",
+            "size": 54,
+            "durationMs": 2600
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "pixA.svg",
+              "pixB.svg",
+              "pixC.svg"
+            ],
+            "count": 16,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              8,
+              12
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "shake",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "rays",
+                "colors": [
+                  "#ffffff",
+                  "#fa5252",
+                  "#ffd43b"
+                ],
+                "durationMs": 1800
+              },
+              {
+                "type": "sticker",
+                "image": "dice.svg",
+                "anim": "pop",
+                "size": 100,
+                "durationMs": 2400,
+                "at": "avatar"
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "pixA.svg",
+                  "pixB.svg",
+                  "pixC.svg"
+                ],
+                "count": 30,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  8,
+                  14
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": false
+    },
+    {
+      "id": "popit",
+      "title": "Поп-ит",
+      "season": "everyday",
+      "pool": true,
+      "age": {
+        "min": 6,
+        "max": 13
+      },
+      "minAppVersion": "1.0.0",
+      "pack": "packs/everyday/",
+      "effect": {
+        "type": "combo",
+        "trigger": [
+          "tap"
+        ],
+        "anchor": "buddy",
+        "buddy": {
+          "image": "popit.svg",
+          "size": 42,
+          "head": {
+            "x": 0.5,
+            "y": 0.1,
+            "w": 0.6,
+            "eyes": 0.45
+          }
+        },
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "popit.svg",
+            "anim": "pop",
+            "size": 72,
+            "durationMs": 2200,
+            "at": "balance"
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "pixA.svg",
+              "pixB.svg",
+              "pixC.svg"
+            ],
+            "count": 20,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              220,
+              520
+            ],
+            "gravity": 650,
+            "size": [
+              8,
+              14
+            ],
+            "durationMs": 1800
+          }
+        ],
+        "variants": [
+          {
+            "weight": 100,
+            "override": {}
+          }
+        ],
+        "combo": {
+          "taps": 3,
+          "windowMs": 2500,
+          "finale": "flip",
+          "effect": {
+            "type": "combo",
+            "steps": [
+              {
+                "type": "rays",
+                "colors": [
+                  "#fa5252",
+                  "#ff922b",
+                  "#fcc419",
+                  "#51cf66"
+                ],
+                "durationMs": 2000
+              },
+              {
+                "type": "sticker",
+                "image": "popit.svg",
+                "anim": "pop",
+                "size": 110,
+                "durationMs": 2600,
+                "at": "paw"
+              },
+              {
+                "type": "particles",
+                "sprites": [
+                  "pixA.svg",
+                  "pixB.svg",
+                  "pixC.svg"
+                ],
+                "count": 28,
+                "origin": "top",
+                "angle": [
+                  75,
+                  105
+                ],
+                "speed": [
+                  160,
+                  320
+                ],
+                "gravity": 420,
+                "sway": 30,
+                "size": [
+                  8,
+                  14
+                ],
+                "durationMs": 2800,
+                "delayMs": 200
+              }
+            ]
+          }
+        }
+      },
+      "enabled": true
+    }
+  ],
+  "events": [
+    {
+      "id": "nice-number",
+      "title": "Красивое число",
+      "on": "balance",
+      "rules": [
+        {
+          "type": "repeat",
+          "min": 3
+        },
+        {
+          "type": "multiple",
+          "of": 1000
+        },
+        {
+          "type": "sequence",
+          "min": 3
+        },
+        {
+          "type": "mirror",
+          "min": 4
+        }
+      ],
+      "anchor": "balance",
+      "pack": "packs/events/",
+      "style": "neon",
+      "cooldownMs": 4000,
+      "effect": {
+        "type": "combo",
+        "steps": [
+          {
+            "type": "rays",
+            "colors": [
+              "#ff922b",
+              "#f06595",
+              "#9775fa",
+              "#ffd43b"
+            ],
+            "durationMs": 1900
+          },
+          {
+            "type": "badge",
+            "image": "star3d.svg",
+            "size": 150,
+            "durationMs": 2600,
+            "delayMs": 60
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "sparkle.svg",
+              "coin.svg"
+            ],
+            "count": 30,
+            "origin": "anchor",
+            "angle": [
+              -170,
+              -10
+            ],
+            "speed": [
+              240,
+              560
+            ],
+            "gravity": 650,
+            "size": [
+              12,
+              26
+            ],
+            "durationMs": 2000,
+            "delayMs": 120
+          }
+        ]
+      },
+      "enabled": true
+    },
+    {
+      "id": "top-up",
+      "title": "Пополнение",
+      "on": "topup",
+      "anchor": "income",
+      "pack": "packs/events/",
+      "style": "sticker",
+      "cooldownMs": 1500,
+      "effect": {
+        "type": "combo",
+        "steps": [
+          {
+            "type": "sticker",
+            "image": "coin.svg",
+            "anim": "arc",
+            "at": "balance",
+            "size": 30,
+            "repeat": 6,
+            "staggerMs": 100,
+            "jitter": 14,
+            "durationMs": 900
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "sparkle.svg"
+            ],
+            "count": 14,
+            "origin": "at",
+            "at": "balance",
+            "angle": [
+              -165,
+              -15
+            ],
+            "speed": [
+              160,
+              320
+            ],
+            "gravity": 500,
+            "size": [
+              10,
+              20
+            ],
+            "durationMs": 1300,
+            "delayMs": 900
+          }
+        ]
+      },
+      "enabled": true
+    },
+    {
+      "id": "night",
+      "title": "Ночь",
+      "on": "flip",
+      "anchor": "avatar",
+      "pack": "packs/events/",
+      "style": "plain",
+      "cooldownMs": 3000,
+      "effect": {
+        "type": "combo",
+        "steps": [
+          {
+            "type": "night",
+            "durationMs": 6500
+          },
+          {
+            "type": "sticker",
+            "image": "moon.svg",
+            "anim": "hang",
+            "size": 110,
+            "durationMs": 6200,
+            "delayMs": 300
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "firefly.svg"
+            ],
+            "count": 30,
+            "origin": "bottom",
+            "angle": [
+              -120,
+              -60
+            ],
+            "speed": [
+              30,
+              90
+            ],
+            "gravity": -8,
+            "sway": 45,
+            "spin": 0,
+            "size": [
+              8,
+              18
+            ],
+            "durationMs": 6000,
+            "delayMs": 300
+          }
+        ]
+      },
+      "enabled": true
+    },
+    {
+      "id": "six-seven",
+      "title": "67 в балансе",
+      "on": "balance",
+      "rules": [
+        {
+          "type": "contains",
+          "value": "67"
+        }
+      ],
+      "anchor": "balance",
+      "pack": "packs/everyday/",
+      "style": "neon",
+      "cooldownMs": 4000,
+      "effect": {
+        "type": "combo",
+        "steps": [
+          {
+            "type": "rays",
+            "colors": [
+              "#ffa94d",
+              "#f06595",
+              "#b197fc",
+              "#22b8cf"
+            ],
+            "durationMs": 2200
+          },
+          {
+            "type": "sticker",
+            "image": "six.svg",
+            "anim": "seesaw",
+            "side": 0,
+            "size": 110,
+            "durationMs": 3000
+          },
+          {
+            "type": "sticker",
+            "image": "seven.svg",
+            "anim": "seesaw",
+            "side": 1,
+            "size": 110,
+            "durationMs": 3000
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "pixA.svg",
+              "pixB.svg",
+              "pixC.svg"
+            ],
+            "count": 30,
+            "origin": "top",
+            "angle": [
+              75,
+              105
+            ],
+            "speed": [
+              160,
+              320
+            ],
+            "gravity": 420,
+            "sway": 30,
+            "size": [
+              8,
+              14
+            ],
+            "durationMs": 2800,
+            "delayMs": 200
+          }
+        ]
+      },
+      "enabled": true
+    },
+    {
+      "id": "six-seven-clock",
+      "title": "67: 6-е число, 19:00",
+      "on": "clock",
+      "match": {
+        "day": 6,
+        "hour": 19
+      },
+      "anchor": "avatar",
+      "pack": "packs/everyday/",
+      "style": "neon",
+      "cooldownMs": 60000,
+      "effect": {
+        "type": "combo",
+        "steps": [
+          {
+            "type": "rays",
+            "colors": [
+              "#ffa94d",
+              "#f06595",
+              "#b197fc",
+              "#22b8cf"
+            ],
+            "durationMs": 2200
+          },
+          {
+            "type": "sticker",
+            "image": "six.svg",
+            "anim": "seesaw",
+            "side": 0,
+            "size": 110,
+            "durationMs": 3000
+          },
+          {
+            "type": "sticker",
+            "image": "seven.svg",
+            "anim": "seesaw",
+            "side": 1,
+            "size": 110,
+            "durationMs": 3000
+          },
+          {
+            "type": "particles",
+            "sprites": [
+              "pixA.svg",
+              "pixB.svg",
+              "pixC.svg"
+            ],
+            "count": 30,
+            "origin": "top",
+            "angle": [
+              75,
+              105
+            ],
+            "speed": [
+              160,
+              320
+            ],
+            "gravity": 420,
+            "sway": 30,
+            "size": [
+              8,
+              14
+            ],
+            "durationMs": 2800,
+            "delayMs": 200
+          }
+        ]
+      },
+      "enabled": true
+    }
+  ],
+  "seasons": {
+    "winter": {
+      "months": [
+        12,
+        1,
+        2
+      ],
+      "pack": "packs/winter/",
+      "wear": "hat.svg",
+      "wearScale": 1.3,
+      "wearTop": -0.55,
+      "particles": [
+        "snowflake.svg",
+        "snowflake2.svg"
+      ],
+      "wearFit": {
+        "bandY": 0.475,
+        "bandW": 0.5,
+        "clip": 0.48
+      }
+    },
+    "spring": {
+      "months": [
+        3,
+        4,
+        5
+      ],
+      "pack": "packs/spring/",
+      "wear": "crown.svg",
+      "wearScale": 1.3,
+      "wearTop": -0.5,
+      "particles": [
+        "petal.svg"
+      ],
+      "wearFit": {
+        "bandY": 0.42,
+        "bandW": 0.5
+      }
+    },
+    "summer": {
+      "months": [
+        6,
+        7,
+        8
+      ],
+      "pack": "packs/summer/",
+      "wear": "sunglasses.svg",
+      "wearScale": 0.95,
+      "wearTop": -0.05,
+      "particles": [
+        "bubble.svg",
+        "sun.svg"
+      ],
+      "wearFit": {
+        "bandY": 0.5,
+        "bandW": 0.7,
+        "at": "eyes"
+      }
+    },
+    "autumn": {
+      "months": [
+        9,
+        10,
+        11
+      ],
+      "pack": "packs/autumn/",
+      "wear": "hat.svg",
+      "wearScale": 1.3,
+      "wearTop": -0.55,
+      "particles": [
+        "maple.svg",
+        "leaf.svg"
+      ],
+      "wearFit": {
+        "bandY": 0.475,
+        "bandW": 0.5,
+        "clip": 0.48
+      }
+    }
+  }
+}

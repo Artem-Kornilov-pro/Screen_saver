@@ -1,0 +1,1 @@
+{"schema":1,"revision":"fixture-B","doodles":{"settings":{"maxParticles":24},"items":[{"id":"winter-ski","when":{"type":"range","from":"01-01","to":"12-31"},"priority":60}]},"seasonal":{"maxParticles":24,"effects":[{"id":"autumn","particles":{"count":12}}]},"native":{"qrThemes":["magic","rocket"],"qrFrames":["classic","portal"]}}

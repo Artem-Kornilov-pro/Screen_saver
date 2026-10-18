@@ -1,0 +1,121 @@
+{
+  "effects/doodles/packs/newyear/garland.svg": {
+    "base": "effects/doodles/packs/newyear/garland.svg#base",
+    "width": 400.0,
+    "height": 50.0,
+    "layers": [
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer0",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.0
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer1",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.17
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer2",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.34
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer3",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.51
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer4",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.68
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer5",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.85
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer6",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 1.02
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer7",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 1.19
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer8",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.16
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer9",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.33
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer10",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.5
+      },
+      {
+        "source": "effects/doodles/packs/newyear/garland.svg#layer11",
+        "attribute": "opacity",
+        "values": "1;.45;1",
+        "duration": 1.2,
+        "begin": 0.67
+      }
+    ]
+  },
+  "effects/doodles/packs/birthday/cake.svg": {
+    "base": "effects/doodles/packs/birthday/cake.svg#base",
+    "width": 120.0,
+    "height": 120.0,
+    "layers": [
+      {
+        "source": "effects/doodles/packs/birthday/cake.svg#layer0",
+        "attribute": "opacity",
+        "values": "1;.7;1;.85;1",
+        "duration": 0.5,
+        "begin": 0.0
+      },
+      {
+        "source": "effects/doodles/packs/birthday/cake.svg#layer1",
+        "attribute": "opacity",
+        "values": "1;.7;1;.85;1",
+        "duration": 0.63,
+        "begin": 0.0
+      },
+      {
+        "source": "effects/doodles/packs/birthday/cake.svg#layer2",
+        "attribute": "opacity",
+        "values": "1;.7;1;.85;1",
+        "duration": 0.76,
+        "begin": 0.0
+      }
+    ]
+  }
+}

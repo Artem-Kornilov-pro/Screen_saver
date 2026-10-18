@@ -1,0 +1,533 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		10691A12F1A678BC6E6B4F36 /* SberKids/Effects/SeasonalDecor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9299E6BEAC6DCB9C41E8A29 /* SberKids/Effects/SeasonalDecor.swift */; };
+		12DCDE95405A94726CF0AC8A /* SberKids/Resources/Content/config-broken.json in Resources */ = {isa = PBXBuildFile; fileRef = 45FD902A0B3FD13D6E88AC87 /* SberKids/Resources/Content/config-broken.json */; };
+		1B02128D3C646B75993301D7 /* SberKids/Views/HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96E2FA08A44A70F02BC7433 /* SberKids/Views/HomeView.swift */; };
+		1B8F032961170D68555F73FB /* SberKids/Effects/EffectEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 057DDE2E6C68AC3413CEEC22 /* SberKids/Effects/EffectEngine.swift */; };
+		2FC1A27438065EA83D111974 /* SberKids/Resources/Content/asset-map.json in Resources */ = {isa = PBXBuildFile; fileRef = E36761CCC3D665F5051F6800 /* SberKids/Resources/Content/asset-map.json */; };
+		30A6A993FD78BC15068FAFF2 /* SberKids/App/Design.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57520F0E19AD23B148986C53 /* SberKids/App/Design.swift */; };
+		34BE2D0AE8C66D6EE743FB05 /* SberKids/Core/Trajectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = E461D8AD8DEA32BDB9706551 /* SberKids/Core/Trajectory.swift */; };
+		6860B5C00CB7138BAE8B0DCC /* SberKids/Resources/Content/seasonal.json in Resources */ = {isa = PBXBuildFile; fileRef = 0FEEBCA98C89042CA669CCE6 /* SberKids/Resources/Content/seasonal.json */; };
+		6AAB235011BD407874302B95 /* SberKids/Views/DoodleDock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94EC45F7F25645CB26021645 /* SberKids/Views/DoodleDock.swift */; };
+		6F1A6AB647CE6059AAD9A6DD /* SberKids/Resources/Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0B3D9A47B3486C460F56A81F /* SberKids/Resources/Assets.xcassets */; };
+		7172FBBA639FEC2B8DB3C8AE /* SberKids/Views/QRActors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47A685C644E933D5D560DEC4 /* SberKids/Views/QRActors.swift */; };
+		7368D0B8507666A053844756 /* SberKids/Views/DemoPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E63062A7D67DB9E01B6E050 /* SberKids/Views/DemoPanel.swift */; };
+		75F89DFC407A47C084D6BCF3 /* SberKids/Resources/Content/manifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 4FB937AF081904B51B815A78 /* SberKids/Resources/Content/manifest.json */; };
+		840ED59701DC0EE8F3ECD5EC /* SberKids/Effects/EffectLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3921BC26B3F2766B762AB279 /* SberKids/Effects/EffectLayer.swift */; };
+		926AFE19A2E7A2B1440F7AFE /* SberKids/Resources/Content/config-b.json in Resources */ = {isa = PBXBuildFile; fileRef = 820688C37CBB5F5327D0DC2E /* SberKids/Resources/Content/config-b.json */; };
+		969C32513E5ADB75A2F182DA /* SberKids/Core/Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318BF76C00D3A352C4FDC55A /* SberKids/Core/Configuration.swift */; };
+		9FC6314466C1FAEA1D36ED74 /* SberKids/Resources/Content/config-missing.json in Resources */ = {isa = PBXBuildFile; fileRef = B3A551C3D601D99C74BC35D6 /* SberKids/Resources/Content/config-missing.json */; };
+		A3E0DF17C5FCF1AEF7B5A14F /* UITests/FlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165079FA68535FB475CBB484 /* UITests/FlowTests.swift */; };
+		D4CD2A865F97FFFB9E174C93 /* Tests/ContentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4797FFF80A0B7A613094C4 /* Tests/ContentTests.swift */; };
+		D81464F60711B9DA5A1AB2C1 /* SberKids/Camera/Camera.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DF51A4FF07E654F867F434A /* SberKids/Camera/Camera.swift */; };
+		D9D69829864196639D061747 /* SberKids/Resources/Content/config-a.json in Resources */ = {isa = PBXBuildFile; fileRef = 50371B5652706465B785057C /* SberKids/Resources/Content/config-a.json */; };
+		E69256C85375EADABB4DC903 /* SberKids/Resources/Content/config-incompatible.json in Resources */ = {isa = PBXBuildFile; fileRef = 07BE267A5D955F10EE8D8748 /* SberKids/Resources/Content/config-incompatible.json */; };
+		EAB142D7B57623329A9855B6 /* SberKids/Core/Content.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE671D25AAA33919D41BE6D /* SberKids/Core/Content.swift */; };
+		F48E09BC70404FF989091D8F /* SberKids/App/AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17EE91F03148076D96583FA3 /* SberKids/App/AppModel.swift */; };
+		FDC12315ED30875681BE57DC /* SberKids/Resources/Content/animation-map.json in Resources */ = {isa = PBXBuildFile; fileRef = 817FD6AFC58C1ADEAB066B34 /* SberKids/Resources/Content/animation-map.json */; };
+		FF1B72B7132FFEE462F60043 /* SberKids/Views/QRView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D3A7B465FAF736A94B3E2DE /* SberKids/Views/QRView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		21C3B35706CA4A2CC0FC46BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E4D9E0ACC35BC9516F194FBA;
+			remoteInfo = SberKids;
+		};
+		B758FEF7FB81A041C647252D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E4D9E0ACC35BC9516F194FBA;
+			remoteInfo = SberKids;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		057DDE2E6C68AC3413CEEC22 /* SberKids/Effects/EffectEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Effects/EffectEngine.swift; sourceTree = "<group>"; };
+		07BE267A5D955F10EE8D8748 /* SberKids/Resources/Content/config-incompatible.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "SberKids/Resources/Content/config-incompatible.json"; sourceTree = "<group>"; };
+		0B3D9A47B3486C460F56A81F /* SberKids/Resources/Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SberKids/Resources/Assets.xcassets; sourceTree = "<group>"; };
+		0FEEBCA98C89042CA669CCE6 /* SberKids/Resources/Content/seasonal.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SberKids/Resources/Content/seasonal.json; sourceTree = "<group>"; };
+		116CC1C8580D1F6993DEAFA9 /* SberKids.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = SberKids.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		165079FA68535FB475CBB484 /* UITests/FlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITests/FlowTests.swift; sourceTree = "<group>"; };
+		17EE91F03148076D96583FA3 /* SberKids/App/AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/App/AppModel.swift; sourceTree = "<group>"; };
+		2AE671D25AAA33919D41BE6D /* SberKids/Core/Content.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Core/Content.swift; sourceTree = "<group>"; };
+		2D3A7B465FAF736A94B3E2DE /* SberKids/Views/QRView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Views/QRView.swift; sourceTree = "<group>"; };
+		2DF51A4FF07E654F867F434A /* SberKids/Camera/Camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Camera/Camera.swift; sourceTree = "<group>"; };
+		318BF76C00D3A352C4FDC55A /* SberKids/Core/Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Core/Configuration.swift; sourceTree = "<group>"; };
+		3921BC26B3F2766B762AB279 /* SberKids/Effects/EffectLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Effects/EffectLayer.swift; sourceTree = "<group>"; };
+		3BB4FF060B20DF7F796EDB04 /* SberKidsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = SberKidsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		45FD902A0B3FD13D6E88AC87 /* SberKids/Resources/Content/config-broken.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "SberKids/Resources/Content/config-broken.json"; sourceTree = "<group>"; };
+		47A685C644E933D5D560DEC4 /* SberKids/Views/QRActors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Views/QRActors.swift; sourceTree = "<group>"; };
+		4FB937AF081904B51B815A78 /* SberKids/Resources/Content/manifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = SberKids/Resources/Content/manifest.json; sourceTree = "<group>"; };
+		50371B5652706465B785057C /* SberKids/Resources/Content/config-a.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "SberKids/Resources/Content/config-a.json"; sourceTree = "<group>"; };
+		57520F0E19AD23B148986C53 /* SberKids/App/Design.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/App/Design.swift; sourceTree = "<group>"; };
+		5D4797FFF80A0B7A613094C4 /* Tests/ContentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/ContentTests.swift; sourceTree = "<group>"; };
+		817FD6AFC58C1ADEAB066B34 /* SberKids/Resources/Content/animation-map.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "SberKids/Resources/Content/animation-map.json"; sourceTree = "<group>"; };
+		820688C37CBB5F5327D0DC2E /* SberKids/Resources/Content/config-b.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "SberKids/Resources/Content/config-b.json"; sourceTree = "<group>"; };
+		8E63062A7D67DB9E01B6E050 /* SberKids/Views/DemoPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Views/DemoPanel.swift; sourceTree = "<group>"; };
+		94EC45F7F25645CB26021645 /* SberKids/Views/DoodleDock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Views/DoodleDock.swift; sourceTree = "<group>"; };
+		A96E2FA08A44A70F02BC7433 /* SberKids/Views/HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Views/HomeView.swift; sourceTree = "<group>"; };
+		B3A551C3D601D99C74BC35D6 /* SberKids/Resources/Content/config-missing.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "SberKids/Resources/Content/config-missing.json"; sourceTree = "<group>"; };
+		C9299E6BEAC6DCB9C41E8A29 /* SberKids/Effects/SeasonalDecor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Effects/SeasonalDecor.swift; sourceTree = "<group>"; };
+		DEDCEA6E923A1C72555F52FC /* SberKidsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = SberKidsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E36761CCC3D665F5051F6800 /* SberKids/Resources/Content/asset-map.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "SberKids/Resources/Content/asset-map.json"; sourceTree = "<group>"; };
+		E461D8AD8DEA32BDB9706551 /* SberKids/Core/Trajectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SberKids/Core/Trajectory.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5872ADC2BBE0931471AFF9BC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5DE9E6308FB56B8225B2322B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E89CDBBE563EFD0556D195D1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B28B7AF69320201D1CF206EB = {
+			isa = PBXGroup;
+			children = (
+				17EE91F03148076D96583FA3 /* SberKids/App/AppModel.swift */,
+				57520F0E19AD23B148986C53 /* SberKids/App/Design.swift */,
+				2DF51A4FF07E654F867F434A /* SberKids/Camera/Camera.swift */,
+				318BF76C00D3A352C4FDC55A /* SberKids/Core/Configuration.swift */,
+				2AE671D25AAA33919D41BE6D /* SberKids/Core/Content.swift */,
+				E461D8AD8DEA32BDB9706551 /* SberKids/Core/Trajectory.swift */,
+				057DDE2E6C68AC3413CEEC22 /* SberKids/Effects/EffectEngine.swift */,
+				3921BC26B3F2766B762AB279 /* SberKids/Effects/EffectLayer.swift */,
+				C9299E6BEAC6DCB9C41E8A29 /* SberKids/Effects/SeasonalDecor.swift */,
+				8E63062A7D67DB9E01B6E050 /* SberKids/Views/DemoPanel.swift */,
+				94EC45F7F25645CB26021645 /* SberKids/Views/DoodleDock.swift */,
+				A96E2FA08A44A70F02BC7433 /* SberKids/Views/HomeView.swift */,
+				47A685C644E933D5D560DEC4 /* SberKids/Views/QRActors.swift */,
+				2D3A7B465FAF736A94B3E2DE /* SberKids/Views/QRView.swift */,
+				5D4797FFF80A0B7A613094C4 /* Tests/ContentTests.swift */,
+				165079FA68535FB475CBB484 /* UITests/FlowTests.swift */,
+				817FD6AFC58C1ADEAB066B34 /* SberKids/Resources/Content/animation-map.json */,
+				E36761CCC3D665F5051F6800 /* SberKids/Resources/Content/asset-map.json */,
+				50371B5652706465B785057C /* SberKids/Resources/Content/config-a.json */,
+				820688C37CBB5F5327D0DC2E /* SberKids/Resources/Content/config-b.json */,
+				45FD902A0B3FD13D6E88AC87 /* SberKids/Resources/Content/config-broken.json */,
+				07BE267A5D955F10EE8D8748 /* SberKids/Resources/Content/config-incompatible.json */,
+				B3A551C3D601D99C74BC35D6 /* SberKids/Resources/Content/config-missing.json */,
+				4FB937AF081904B51B815A78 /* SberKids/Resources/Content/manifest.json */,
+				0FEEBCA98C89042CA669CCE6 /* SberKids/Resources/Content/seasonal.json */,
+				0B3D9A47B3486C460F56A81F /* SberKids/Resources/Assets.xcassets */,
+				FBDC4F23F93125BBEEAE800C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FBDC4F23F93125BBEEAE800C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				116CC1C8580D1F6993DEAFA9 /* SberKids.app */,
+				3BB4FF060B20DF7F796EDB04 /* SberKidsTests.xctest */,
+				DEDCEA6E923A1C72555F52FC /* SberKidsUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4BFB22A7A2C0E19610D9D476 /* SberKidsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E141DB1097A3B3FB7890DC31 /* Build configuration list for PBXNativeTarget "SberKidsTests" */;
+			buildPhases = (
+				A95C4C73F7C5048527E14375 /* Sources */,
+				5872ADC2BBE0931471AFF9BC /* Frameworks */,
+				823D6551D44910EF93E42444 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1EAB374EDA037E8AA2CB1AF /* PBXTargetDependency */,
+			);
+			name = SberKidsTests;
+			productName = SberKidsTests;
+			productReference = 3BB4FF060B20DF7F796EDB04 /* SberKidsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		B1D0F625F4C895C9A2BDBF78 /* SberKidsUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9AD8EB335E8C63057974B7C1 /* Build configuration list for PBXNativeTarget "SberKidsUITests" */;
+			buildPhases = (
+				BFCC2578D8FFB6C3272E71C6 /* Sources */,
+				E89CDBBE563EFD0556D195D1 /* Frameworks */,
+				0E53D69186344B4C71C333F5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3C0D7D617AA3CE65917C583D /* PBXTargetDependency */,
+			);
+			name = SberKidsUITests;
+			productName = SberKidsUITests;
+			productReference = DEDCEA6E923A1C72555F52FC /* SberKidsUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		E4D9E0ACC35BC9516F194FBA /* SberKids */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 18E0E7C93E318415E3817CF4 /* Build configuration list for PBXNativeTarget "SberKids" */;
+			buildPhases = (
+				7A92B6ECDB6F38DC0DA48160 /* Sources */,
+				5DE9E6308FB56B8225B2322B /* Frameworks */,
+				4CDDB9FE3262CEA672A49251 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SberKids;
+			productName = SberKids;
+			productReference = 116CC1C8580D1F6993DEAFA9 /* SberKids.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		98F54143AB4E86B28C3AFEE0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 2710;
+			};
+			buildConfigurationList = F8C70E4123C9AE82C42562CC /* Build configuration list for PBXProject "SberKids" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = ru;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				ru,
+				en,
+				Base,
+			);
+			mainGroup = B28B7AF69320201D1CF206EB;
+			productRefGroup = FBDC4F23F93125BBEEAE800C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E4D9E0ACC35BC9516F194FBA /* SberKids */,
+				4BFB22A7A2C0E19610D9D476 /* SberKidsTests */,
+				B1D0F625F4C895C9A2BDBF78 /* SberKidsUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0E53D69186344B4C71C333F5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4CDDB9FE3262CEA672A49251 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FDC12315ED30875681BE57DC /* SberKids/Resources/Content/animation-map.json in Resources */,
+				2FC1A27438065EA83D111974 /* SberKids/Resources/Content/asset-map.json in Resources */,
+				D9D69829864196639D061747 /* SberKids/Resources/Content/config-a.json in Resources */,
+				926AFE19A2E7A2B1440F7AFE /* SberKids/Resources/Content/config-b.json in Resources */,
+				12DCDE95405A94726CF0AC8A /* SberKids/Resources/Content/config-broken.json in Resources */,
+				E69256C85375EADABB4DC903 /* SberKids/Resources/Content/config-incompatible.json in Resources */,
+				9FC6314466C1FAEA1D36ED74 /* SberKids/Resources/Content/config-missing.json in Resources */,
+				75F89DFC407A47C084D6BCF3 /* SberKids/Resources/Content/manifest.json in Resources */,
+				6860B5C00CB7138BAE8B0DCC /* SberKids/Resources/Content/seasonal.json in Resources */,
+				6F1A6AB647CE6059AAD9A6DD /* SberKids/Resources/Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		823D6551D44910EF93E42444 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7A92B6ECDB6F38DC0DA48160 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F48E09BC70404FF989091D8F /* SberKids/App/AppModel.swift in Sources */,
+				30A6A993FD78BC15068FAFF2 /* SberKids/App/Design.swift in Sources */,
+				D81464F60711B9DA5A1AB2C1 /* SberKids/Camera/Camera.swift in Sources */,
+				969C32513E5ADB75A2F182DA /* SberKids/Core/Configuration.swift in Sources */,
+				EAB142D7B57623329A9855B6 /* SberKids/Core/Content.swift in Sources */,
+				34BE2D0AE8C66D6EE743FB05 /* SberKids/Core/Trajectory.swift in Sources */,
+				1B8F032961170D68555F73FB /* SberKids/Effects/EffectEngine.swift in Sources */,
+				840ED59701DC0EE8F3ECD5EC /* SberKids/Effects/EffectLayer.swift in Sources */,
+				10691A12F1A678BC6E6B4F36 /* SberKids/Effects/SeasonalDecor.swift in Sources */,
+				7368D0B8507666A053844756 /* SberKids/Views/DemoPanel.swift in Sources */,
+				6AAB235011BD407874302B95 /* SberKids/Views/DoodleDock.swift in Sources */,
+				1B02128D3C646B75993301D7 /* SberKids/Views/HomeView.swift in Sources */,
+				7172FBBA639FEC2B8DB3C8AE /* SberKids/Views/QRActors.swift in Sources */,
+				FF1B72B7132FFEE462F60043 /* SberKids/Views/QRView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A95C4C73F7C5048527E14375 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D4CD2A865F97FFFB9E174C93 /* Tests/ContentTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BFCC2578D8FFB6C3272E71C6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3E0DF17C5FCF1AEF7B5A14F /* UITests/FlowTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3C0D7D617AA3CE65917C583D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E4D9E0ACC35BC9516F194FBA /* SberKids */;
+			targetProxy = B758FEF7FB81A041C647252D /* PBXContainerItemProxy */;
+		};
+		B1EAB374EDA037E8AA2CB1AF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E4D9E0ACC35BC9516F194FBA /* SberKids */;
+			targetProxy = 21C3B35706CA4A2CC0FC46BF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0BE8AE5676240D65D13A5245 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.sberhack.kids.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TEST_TARGET_NAME = SberKids;
+			};
+			name = Release;
+		};
+		159BA90DF1740A64E70BFCC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = K7V38QTHCJ;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SberKids/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.sberhack.kids.native;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		5F04B469806A6F2CA527F8C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.sberhack.kids.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TEST_TARGET_NAME = SberKids;
+			};
+			name = Debug;
+		};
+		89E1FD6268CC0F221A2BE178 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		8F13D1783004C9D346BF8B63 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.sberhack.kids.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SberKids.app/SberKids";
+			};
+			name = Release;
+		};
+		9CDC55CF2662A7C6AE402341 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.sberhack.kids.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SberKids.app/SberKids";
+			};
+			name = Debug;
+		};
+		B6FAFD940EB9BB5AECB6C560 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = K7V38QTHCJ;
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SberKids/Info.plist;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = org.sberhack.kids.native;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		E6DE6C99132752C914FEF632 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		18E0E7C93E318415E3817CF4 /* Build configuration list for PBXNativeTarget "SberKids" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B6FAFD940EB9BB5AECB6C560 /* Debug */,
+				159BA90DF1740A64E70BFCC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9AD8EB335E8C63057974B7C1 /* Build configuration list for PBXNativeTarget "SberKidsUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F04B469806A6F2CA527F8C9 /* Debug */,
+				0BE8AE5676240D65D13A5245 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E141DB1097A3B3FB7890DC31 /* Build configuration list for PBXNativeTarget "SberKidsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9CDC55CF2662A7C6AE402341 /* Debug */,
+				8F13D1783004C9D346BF8B63 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8C70E4123C9AE82C42562CC /* Build configuration list for PBXProject "SberKids" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				89E1FD6268CC0F221A2BE178 /* Debug */,
+				E6DE6C99132752C914FEF632 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 98F54143AB4E86B28C3AFEE0 /* Project object */;
+}
