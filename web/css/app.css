@@ -680,61 +680,53 @@ input { font: inherit; color: inherit; }
   .doodle-buddy--float { left: 70%; }
 }
 
-/* ---------- Язычок дудла ---------- */
-/* Маленькая капсула справа в шапке: картинка дудла + шкала комбо ●○○ в одном месте.
-   Не закрывает кнопки — аватар и карта остаются приложению. Картинка раз в несколько секунд
-   покачивается, чтобы язычок заметили; во время комбо капсула подсвечена. */
+/* ---------- Стикер дня в шапке ---------- */
+/* Просто стикер справа в шапке, без фона и шкалы: всё время немного двигается, чтобы его заметили.
+   Не закрывает кнопки — аватар и карта остаются приложению. Уровень комбо видно по самому стикеру:
+   каракуля → наклейка → неон (или золото). */
 .doodle-tab {
   position: absolute;
-  top: 50%;
-  right: 0;
+  top: 0;
+  bottom: 0;
+  right: -4px;
   z-index: 4;
   display: flex;
   align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding: 0 10px 0 5px;
-  border-radius: 999px;
-  background: rgba(20, 23, 22, .88);
-  box-shadow: 0 0 0 1px rgba(195, 247, 58, .3), 0 4px 12px rgba(0, 0, 0, .35);
+  /* Невидимые 10 px вокруг стикера: пальцем легче попасть по движущейся цели */
+  padding: 0 10px;
   cursor: pointer;
   pointer-events: auto;
-  transform: translateY(-50%);
-  transition: box-shadow .25s ease, opacity 1s ease;
+  transition: opacity 1s ease;
   -webkit-tap-highlight-color: transparent;
 }
-.doodle-tab:active { transform: translateY(-50%) scale(.96); }
 .doodle-tab .doodle-buddy {
   position: relative;
-  flex: none;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .4));
-  animation: doodle-tab-nudge 6s ease-in-out infinite;
+  display: block;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .45));
+  animation: doodle-tab-idle 3.4s ease-in-out infinite;
 }
-.doodle-tab.is-out { box-shadow: 0 0 0 1px rgba(195, 247, 58, .75), 0 0 14px rgba(195, 247, 58, .35); }
-.doodle-tab.is-out .doodle-buddy { animation: none; }
-.doodle-tab:has(.is-done) { box-shadow: 0 0 0 1px #c3f73a, 0 0 18px rgba(195, 247, 58, .55); }
-.doodle-tab:has(.is-gold) { box-shadow: 0 0 0 1px #ffd43b, 0 0 22px rgba(255, 212, 59, .8); }
+.doodle-tab.is-out .doodle-buddy { animation: doodle-tab-play .9s ease-in-out infinite; }
 .doodle-tab.is-leaving { opacity: .35; }
-/* Шкала внутри капсулы: без своего фона и рамки */
-.doodle-combo--inline {
-  position: static;
-  gap: 6px;
-  padding: 0;
-  background: none;
-  box-shadow: none;
-  transform: none;
-  animation: none;
+.doodle-tab.lvl-1 .doodle-buddy-img {
+  filter: drop-shadow(1.5px 0 0 #f4f1e6) drop-shadow(-1.5px 0 0 #f4f1e6) drop-shadow(0 1.5px 0 #f4f1e6) drop-shadow(0 -1.5px 0 #f4f1e6) url(#doodle-boil);
 }
-.doodle-combo--inline.is-done, .doodle-combo--inline.is-gold { box-shadow: none; }
-.doodle-combo--inline .doodle-combo-dots { gap: 4px; }
-.doodle-combo--inline .doodle-combo-dots i { width: 7px; height: 7px; }
-.doodle-combo--inline .doodle-combo-gesture { width: 20px; height: 20px; }
-@keyframes doodle-tab-nudge {
-  0%, 82%, 100% { transform: none; }
-  86% { transform: rotate(-14deg) scale(1.12); }
-  91% { transform: rotate(10deg) scale(1.08); }
-  95% { transform: rotate(-4deg); }
+.doodle-tab.lvl-2 .doodle-buddy-img {
+  filter: drop-shadow(2.5px 0 0 #fff) drop-shadow(-2.5px 0 0 #fff) drop-shadow(0 2.5px 0 #fff) drop-shadow(0 -2.5px 0 #fff);
+}
+.doodle-tab.lvl-3 .doodle-buddy-img { filter: drop-shadow(0 0 4px #c3f73a) drop-shadow(0 0 12px #39ff88) saturate(1.3); }
+.doodle-tab.lvl-3.is-gold .doodle-buddy-img { filter: drop-shadow(0 0 4px #fff3bf) drop-shadow(0 0 12px #ffd43b) sepia(.35) saturate(1.6); }
+/* Покачивается и плавает на месте */
+@keyframes doodle-tab-idle {
+  0%, 100% { transform: translate(0, 0) rotate(-6deg); }
+  25% { transform: translate(-5px, -4px) rotate(4deg); }
+  50% { transform: translate(0, -7px) rotate(8deg); }
+  75% { transform: translate(4px, -2px) rotate(-3deg); }
+}
+/* Во время комбо пульсирует: «я тут, жми ещё» */
+@keyframes doodle-tab-play {
+  0%, 100% { transform: scale(1) rotate(-8deg); }
+  50% { transform: scale(1.14) rotate(8deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .doodle-tab .doodle-buddy { animation: none; }
+  .doodle-tab .doodle-buddy, .doodle-tab.is-out .doodle-buddy { animation: none; }
 }
