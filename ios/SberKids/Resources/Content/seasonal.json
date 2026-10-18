@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "maxParticles": 80,
+  "settings": {
+    "shakeForce": 15,
+    "shakeCooldownMs": 1500,
+    "firstShowDelayMs": 400,
+    "fadeInMs": 600,
+    "fadeOutMs": 1500
+  },
+  "effects": [
+    {
+      "id": "new_year",
+      "title": "Новый год",
+      "dates": {
+        "from": "12-20",
+        "to": "01-10"
+      },
+      "priority": 100,
+      "triggers": [
+        "first_open_of_day",
+        "shake"
+      ],
+      "durationMs": 9000,
+      "particles": {
+        "kind": "snowflake",
+        "count": 60,
+        "speed": [
+          45,
+          110
+        ],
+        "size": [
+          12,
+          30
+        ],
+        "colors": [
+          "#8EC5FF",
+          "#B6DAFF",
+          "#6FAEF0"
+        ],
+        "spin": true,
+        "tiltWind": true,
+        "tapToPop": true,
+        "settle": {
+          "chance": 0.4,
+          "maxDepth": 10,
+          "meltMs": 25000
+        }
+      },
+      "decor": [
+        {
+          "kind": "tree",
+          "anchor": "bottom_end",
+          "widthPct": 0.34
+        },
+        {
+          "kind": "garland",
+          "anchor": "top"
+        }
+      ]
+    },
+    {
+      "id": "winter",
+      "title": "Зима",
+      "dates": {
+        "from": "12-01",
+        "to": "02-28"
+      },
+      "priority": 10,
+      "triggers": [
+        "first_open_of_day",
+        "shake"
+      ],
+      "durationMs": 8000,
+      "particles": {
+        "kind": "snowflake",
+        "count": 40,
+        "speed": [
+          40,
+          90
+        ],
+        "size": [
+          10,
+          24
+        ],
+        "colors": [
+          "#8EC5FF",
+          "#B6DAFF",
+          "#FFFFFF"
+        ],
+        "spin": true,
+        "tiltWind": true,
+        "tapToPop": true,
+        "settle": {
+          "chance": 0.3,
+          "maxDepth": 8,
+          "meltMs": 20000
+        }
+      }
+    },
+    {
+      "id": "spring",
+      "title": "Весна",
+      "dates": {
+        "from": "03-01",
+        "to": "05-31"
+      },
+      "priority": 10,
+      "triggers": [
+        "first_open_of_day",
+        "shake"
+      ],
+      "durationMs": 7000,
+      "particles": {
+        "kind": "sprites",
+        "sprites": [
+          "doodles/packs/spring/petal.svg"
+        ],
+        "count": 30,
+        "speed": [
+          35,
+          75
+        ],
+        "size": [
+          12,
+          22
+        ],
+        "spin": true,
+        "tiltWind": true,
+        "tapToPop": true
+      }
+    },
+    {
+      "id": "summer",
+      "title": "Лето",
+      "dates": {
+        "from": "06-01",
+        "to": "08-31"
+      },
+      "priority": 10,
+      "triggers": [
+        "first_open_of_day",
+        "shake"
+      ],
+      "durationMs": 7000,
+      "particles": {
+        "kind": "sprites",
+        "sprites": [
+          "doodles/packs/summer/bubble.svg"
+        ],
+        "count": 22,
+        "speed": [
+          30,
+          70
+        ],
+        "size": [
+          16,
+          34
+        ],
+        "rise": true,
+        "tiltWind": true,
+        "tapToPop": true
+      }
+    },
+    {
+      "id": "autumn",
+      "title": "Осень",
+      "dates": {
+        "from": "09-01",
+        "to": "11-30"
+      },
+      "priority": 10,
+      "triggers": [
+        "first_open_of_day",
+        "shake"
+      ],
+      "durationMs": 7000,
+      "particles": {
+        "kind": "sprites",
+        "sprites": [
+          "doodles/packs/autumn/maple.svg",
+          "doodles/packs/autumn/leaf.svg",
+          "doodles/packs/autumn/acorn.svg"
+        ],
+        "count": 28,
+        "speed": [
+          40,
+          90
+        ],
+        "size": [
+          16,
+          30
+        ],
+        "spin": true,
+        "tiltWind": true,
+        "tapToPop": true
+      }
+    }
+  ]
+}

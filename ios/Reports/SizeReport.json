@@ -1,0 +1,11 @@
+{
+  "sourceSHA": "006abd5a64c998f219946a45a42f84160b6b9e7b",
+  "configuration": "Release",
+  "platform": "iOS Simulator arm64",
+  "appBytes": 5898278,
+  "assetsCarBytes": 1276312,
+  "pngBytes": 1095012,
+  "baseline": "not measured",
+  "ipa": "not measured",
+  "fpsOnDevice": "not measured"
+}
