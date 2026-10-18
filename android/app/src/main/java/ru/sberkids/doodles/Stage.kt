@@ -318,9 +318,16 @@ class Stage(context: Context, private val cdnUrl: String, private val demoDate: 
     // Датчики: переворот, наклон и тряска — считаем нативно, слой получает готовые числа
     private val sensors = Sensors(context) { code -> if (pageReady && transfer.visibility != View.VISIBLE) js(code) }
 
-    fun resume() = sensors.start()
+    // Свернули и вернулись: страница получает visibilitychange — слой сверяет дату телефона
+    fun resume() {
+        web.onResume()
+        sensors.start()
+    }
 
-    fun pause() = sensors.stop()
+    fun pause() {
+        sensors.stop()
+        web.onPause()
+    }
 
     /** Показ: кнопки громкости листают дудлы. */
     fun step(dir: Int) {

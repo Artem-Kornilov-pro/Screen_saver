@@ -307,6 +307,7 @@
   // ---------- Дудлы ----------
 
   var doodleRun = 0;
+  var doodleDay = null;  // на какую дату выбран дудл дня
 
   function markDoodle(id) {
     Array.prototype.forEach.call(debugDoodles.querySelectorAll('button'), function (b) {
@@ -316,6 +317,7 @@
 
   function startDoodles() {
     var run = ++doodleRun;
+    doodleDay = Doodles.ymd(Seasonal.effectiveDate());
     debugDoodleStatus.textContent = 'Загрузка дудла…';
     var show = function (item) {
       markDoodle(item ? item.id : null);
@@ -408,8 +410,19 @@
   function cdnUrl(file) {
     return cdnBase ? new URL(file, cdnBase).href : null;
   }
-  debugDate.value = urlDate ? urlDate.toISOString().slice(0, 10) : new Date().getFullYear() + '-12-31';
+  // По умолчанию — дата телефона. Подмена только из отладки, показа (громкость) или ?date= для adb.
+  debugDate.value = Doodles.ymd(urlDate || new Date());
   debugOverride.checked = !!urlDate;
+
+  // Дату на телефоне поменяли в настройках или наступила полночь — дудл дня выбираем заново.
+  // Праздничный слой сам смотрит дату при каждом возвращении в приложение.
+  function followPhoneDate() {
+    if (debugOverride.checked || !doodleDay || Doodles.ymd(new Date()) === doodleDay) return;
+    debugDate.value = Doodles.ymd(new Date());
+    startDoodles();
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) followPhoneDate(); });
+  window.setInterval(followPhoneDate, 60000);
 
   function applyDateOverride() {
     Seasonal.setDateOverride(debugOverride.checked ? parseDate(debugDate.value) : null);
