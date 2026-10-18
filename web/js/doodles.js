@@ -219,6 +219,7 @@
     var eff = dressed.effect;
     if (season.def.wear && eff.buddy) {
       eff.buddy.wear = abs(season.def.wear);
+      eff.buddy.wearFit = season.def.wearFit || null;
       eff.buddy.wearScale = season.def.wearScale || 1.2;
       eff.buddy.wearTop = season.def.wearTop == null ? -0.5 : season.def.wearTop;
     }
@@ -1127,7 +1128,7 @@
   var TRACE_RADIUS = 30;       // px: насколько близко палец должен пройти мимо точки узора
   var BUDDY_LINGER_MS = 5000;  // сколько стикер дня ждёт после финала, прежде чем уйти
   var BUDDY_FADE_MS = 1000;    // и как долго растворяется
-  var TAB_ICON_SIZE = 26;      // px: картинка дудла в язычке — с иконку, чтобы не спорить с интерфейсом
+  var TAB_STICKER_SIZE = 40;   // px: стикер дня в шапке — заметный, но не спорит с интерфейсом
 
   // Дрожащая линия скетч-стикеров: SVG-фильтр, один на страницу
   function ensureDefs() {
@@ -1287,7 +1288,7 @@
     var p = tr.pts[tr.next];
     if (Math.hypot(clientX - l.left - tr.left - p[0], clientY - l.top - tr.top - p[1]) > TRACE_RADIUS) return;
     tr.next++;
-    c.lastAction = Date.now();
+    touchCombo(c, Date.now());
     tr.done.setAttribute('d', 'M' + tr.pts.slice(0, tr.next).map(function (pt) { return pt[0].toFixed(1) + ' ' + pt[1].toFixed(1); }).join(' L'));
     if (tr.next % 2) haptic();
     if (tr.next >= tr.pts.length) {
@@ -1332,7 +1333,7 @@
     // По умолчанию — язычок: маленькая капсула в шапке «картинка + ●○○». Не закрывает кнопки,
     // тап по аватару и карте остаётся приложению. peek и float — старые режимы из конфига (buddy.mode).
     var mode = b.mode || 'tab';
-    var size = mode === 'tab' ? TAB_ICON_SIZE : (b.size || 44) * (c.scale || 1);
+    var size = mode === 'tab' ? TAB_STICKER_SIZE : (b.size || 44) * (c.scale || 1);
     var ratio = (img.naturalWidth / img.naturalHeight) || 1;
     var width = Math.round(size * ratio);
     var day = dayNumber(c.date);
@@ -1348,15 +1349,12 @@
     pic.alt = '';
     el.appendChild(pic);
     var wearImg = b.wear && c.img(b.wear);
-    if (wearImg) {
+    if (wearImg && b.head !== false) {
       var wear = document.createElement('img');
-      var ws = size * (b.wearScale || 1.2);
       wear.className = 'doodle-buddy-wear';
       wear.src = wearImg.src;
       wear.alt = '';
-      wear.style.width = ws + 'px';
-      wear.style.left = (width - ws) / 2 + 'px';
-      wear.style.top = size * b.wearTop + 'px';
+      placeWear(wear, wearImg, b, width, size);
       el.appendChild(wear);
     }
     var holder = el;
@@ -1395,6 +1393,67 @@
     c.buddyHolder = holder;
     c.buddyMode = mode;
     return el;
+  }
+
+  // Стикер в шапке ходит вправо-влево по пустой части шапки: от правого края почти до аватара.
+  // Двигаем из JS, а не CSS-анимацией: так касание попадает ровно туда, где стикер виден,
+  // во всех браузерах (WebKit на iPhone у CSS-анимаций transform ищет касание по старой позиции).
+  var TAB_AVATAR_GAP = 72;    // px слева, куда стикер не заходит: там аватар
+  var TAB_WALK_MS = 9000;     // полный круг туда и обратно; у краёв стикер плавно замедляется
+
+  function setTabTravel(c) {
+    var dock = c.buddyHolder.parentNode;
+    c.tabTravel = Math.max(0, dock.clientWidth - c.buddyHolder.offsetWidth - TAB_AVATAR_GAP);
+  }
+
+  function startWalk(c) {
+    var holder = c.buddyHolder;
+    var phase = 0;
+    var last = 0;
+    setTabTravel(c);
+    function step(ts) {
+      if (!holder.isConnected) return;
+      // Во время комбо, на критичном экране и при «уменьшении движения» стоит на месте
+      var moving = !c.reduced && !suppressed && !holder.classList.contains('is-out');
+      if (last && moving) phase += (ts - last) / TAB_WALK_MS;
+      last = ts;
+      var k = 0.5 - Math.cos(phase * Math.PI * 2) / 2;   // 0 → 1 → 0, медленнее у краёв
+      holder.style.transform = 'translateX(' + (-k * (c.tabTravel || 0)).toFixed(1) + 'px)';
+      c.walkRaf = window.requestAnimationFrame(step);
+    }
+    c.walkRaf = window.requestAnimationFrame(step);
+    c.cleanups.push(function () { window.cancelAnimationFrame(c.walkRaf); });
+  }
+
+  window.addEventListener('resize', function () {
+    if (ctx && ctx.buddyMode === 'tab') setTabTravel(ctx);
+  });
+
+  // Сезонный наряд садится на «макушку» стикера (buddy.head из конфига: x, y, w, eyes — доли картинки).
+  // У наряда в сезоне (wearFit) сказано, где его околыш (bandY, bandW), докуда показывать (clip)
+  // и куда он садится: на макушку или на глаза (at: "eyes", как очки). Шапка шириной с макушку,
+  // околышем на её линию; шарф и уши, нарисованные для аватара, обрезаются.
+  function placeWear(wear, wearImg, b, width, height) {
+    var fit = b.wearFit;
+    if (!fit) {
+      // Старый способ: по центру, размер от высоты стикера
+      var ws = height * (b.wearScale || 1.2);
+      wear.style.width = ws + 'px';
+      wear.style.left = (width - ws) / 2 + 'px';
+      wear.style.top = height * b.wearTop + 'px';
+      return;
+    }
+    var head = isPlain(b.head) ? b.head : {};
+    var hx = head.x == null ? 0.5 : head.x;
+    var hy = head.y == null ? 0.12 : head.y;
+    var hw = head.w == null ? 0.6 : head.w;
+    var line = fit.at === 'eyes' ? (head.eyes == null ? 0.45 : head.eyes) : hy;
+    var ww = hw * width / (fit.bandW || 0.5);
+    var wh = ww * ((wearImg.naturalHeight / wearImg.naturalWidth) || 1);
+    wear.style.width = ww + 'px';
+    wear.style.left = hx * width - ww / 2 + 'px';
+    wear.style.top = line * height - (fit.bandY || 0.5) * wh + 'px';
+    if (fit.clip) wear.style.clipPath = 'inset(0 0 ' + ((1 - fit.clip) * 100).toFixed(1) + '% 0)';
   }
 
   // После первого тапа стикер перестаёт прятаться и уплывать: дальше комбо
@@ -1450,20 +1509,20 @@
 
   function updateHud(c) {
     var combo = comboOf(c.item.effect);
+    // Стикер в шапке без шкалы: уровень видно по самому стикеру — каракуля, наклейка, неон или золото
+    if (c.buddyMode === 'tab') {
+      [1, 2, 3].forEach(function (n) { c.buddyHolder.classList.toggle('lvl-' + n, c.level === n); });
+      c.buddyHolder.classList.toggle('is-gold', c.level >= 3 && !!c.gold);
+      return;
+    }
     if (!c.hud) {
       var hud = document.createElement('span');
       hud.className = 'doodle-combo';
       hud.innerHTML = '<span class="doodle-combo-dots"><i></i><i></i><i></i></span><span class="doodle-combo-gesture"></span>';
-      if (c.buddyMode === 'tab') {
-        // В язычке шкала — часть капсулы и видна всегда: тусклые точки зовут поиграть
-        hud.classList.add('doodle-combo--inline');
-        c.buddyHolder.appendChild(hud);
-      } else {
-        // Шкала встаёт с той стороны якоря, где есть место
-        var r = c.anchor.getBoundingClientRect(), l = c.layer.getBoundingClientRect();
-        if (r.right + 100 > l.right) hud.classList.add('doodle-combo--left');
-        c.anchor.appendChild(hud);
-      }
+      // Шкала встаёт с той стороны якоря, где есть место
+      var r = c.anchor.getBoundingClientRect(), l = c.layer.getBoundingClientRect();
+      if (r.right + 100 > l.right) hud.classList.add('doodle-combo--left');
+      c.anchor.appendChild(hud);
       c.hud = hud;
     }
     var dots = c.hud.querySelectorAll('.doodle-combo-dots i');
@@ -1482,7 +1541,21 @@
     c.hud.classList.toggle('is-gold', c.level >= 3 && !!c.gold);
   }
 
+  // Каждое действие продлевает комбо. Без действий comboIdleMs — сброс, и стикер в шапке снова ходит
+  // (иначе после одного тапа он так и стоял бы, пока ребёнок не сделает следующий жест).
+  function touchCombo(c, now) {
+    c.lastAction = now;
+    window.clearTimeout(c.idleTimer);
+    c.idleTimer = window.setTimeout(function () {
+      if (c.level > 0 && c.level < 3) {
+        resetCombo(c);
+        unparkBuddy(c);
+      }
+    }, COMBO_IDLE_MS);
+  }
+
   function resetCombo(c) {
+    window.clearTimeout(c.idleTimer);
     c.level = 0;
     c.gold = false;
     endTrace(c);
@@ -1492,7 +1565,7 @@
       window.setTimeout(apply, 0);
     }
     c.taps = [];
-    if (c.buddyMode === 'tab' && c.hud) updateHud(c);
+    if (c.buddyMode === 'tab') updateHud(c);
     else if (c.hud) { c.hud.remove(); c.hud = null; }
   }
 
@@ -1505,6 +1578,8 @@
       parkBuddy(c);
       run(withVariant(eff), styled(c, 'sketch', 1));
       if (comboOf(eff).mode === 'trace') startTrace(c);
+      // У стикера в шапке нет шкалы — что делать дальше, показывает большая пиктограмма
+      if (c.buddyMode === 'tab') later(c, 900, function () { bigHint(c, comboOf(eff).mode === 'trace' ? 'trace' : 'tap3'); });
       if (c.facts) showFact(c);
       markFound(c);
     } else if (level === 2) {
@@ -1549,18 +1624,18 @@
 
     if (c.level === 0) {
       if (!accepts) return false;
-      c.lastAction = now;
+      touchCombo(c, now);
       playLevel(c, 1);
       return true;
     }
     if (c.level === 1) {
       if (kind !== 'tap') {
         if (!accepts && kind !== combo.finale) return false;
-        c.lastAction = now;
+        touchCombo(c, now);
         nudge(c);
         return true;
       }
-      c.lastAction = now;
+      touchCombo(c, now);
       // В обводке тапы не считаются: подсказываем, что нужно вести пальцем
       if (combo.mode === 'trace') {
         nudge(c);
@@ -1579,12 +1654,12 @@
     }
     if (c.level === 2) {
       if (kind === combo.finale) {
-        c.lastAction = now;
+        touchCombo(c, now);
         playLevel(c, 3);
         return true;
       }
       if (kind !== 'tap') return false;
-      c.lastAction = now;
+      touchCombo(c, now);
       tapFeedback(c);
       nudge(c);
       return true;
@@ -1625,7 +1700,10 @@
     target.addEventListener('click', onTap);
     c.cleanups.push(function () { c.buddyHolder.remove(); });
     if (suppressed) c.buddyHolder.style.visibility = 'hidden';
-    if (c.buddyMode === 'tab') updateHud(c);
+    if (c.buddyMode === 'tab') {
+      updateHud(c);
+      startWalk(c);
+    }
     return true;
   }
 
