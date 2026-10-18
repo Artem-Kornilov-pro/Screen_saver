@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.content.pm.ApplicationInfo
 import android.os.Build
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.WindowInsets
 import android.webkit.WebView
 import android.window.OnBackInvokedDispatcher
@@ -25,6 +26,8 @@ class MainActivity : Activity() {
         if (debuggable) {
             WebView.setWebContentsDebuggingEnabled(true)
             catchCrashes()
+            // Телефон на показе у жюри: экран не гаснет
+            window.addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
 
         stage = Stage(this, getString(R.string.cdn_url), intent.getStringExtra("date"))
@@ -49,6 +52,27 @@ class MainActivity : Activity() {
                 if (!stage.back()) finish()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        stage.resume()
+    }
+
+    override fun onPause() {
+        stage.pause()
+        super.onPause()
+    }
+
+    // Показ: громкость «+» — следующий дудл, «−» — предыдущий. Саму громкость не меняем.
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        val dir = when (event.keyCode) {
+            KeyEvent.KEYCODE_VOLUME_UP -> 1
+            KeyEvent.KEYCODE_VOLUME_DOWN -> -1
+            else -> return super.dispatchKeyEvent(event)
+        }
+        if (event.action == KeyEvent.ACTION_DOWN && event.repeatCount == 0) stage.step(dir)
+        return true
     }
 
     // Отладочная сборка: падение записываем в файл и показываем при следующем запуске — без adb и logcat

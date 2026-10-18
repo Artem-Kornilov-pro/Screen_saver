@@ -165,6 +165,11 @@
     skipEffects();
   }, true);
 
+  // Тап по стикеру дня — в фокусе сцена дудла: праздничный слой на фоне мягко гаснет, чтобы не смешиваться с ней
+  app.addEventListener('click', function (event) {
+    if (event.target.closest('.doodle-buddy')) Seasonal.skip();
+  }, true);
+
   var skipScrollTop = 0;
   mainScreen.addEventListener('scroll', function () {
     if (Math.abs(mainScreen.scrollTop - skipScrollTop) < 24) return;

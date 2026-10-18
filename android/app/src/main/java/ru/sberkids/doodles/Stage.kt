@@ -315,6 +315,18 @@ class Stage(context: Context, private val cdnUrl: String, private val demoDate: 
 
     private fun js(code: String) = web.evaluateJavascript("window.Overlay && $code", null)
 
+    // Датчики: переворот, наклон и тряска — считаем нативно, слой получает готовые числа
+    private val sensors = Sensors(context) { code -> if (pageReady && transfer.visibility != View.VISIBLE) js(code) }
+
+    fun resume() = sensors.start()
+
+    fun pause() = sensors.stop()
+
+    /** Показ: кнопки громкости листают дудлы. */
+    fun step(dir: Int) {
+        if (pageReady && transfer.visibility != View.VISIBLE) js("Overlay.step($dir)")
+    }
+
     private fun setBalance(kopecks: Long) = main.animateBalance(kopecks) { rubles -> js("Overlay.balance($rubles)") }
 
     fun destroy() {

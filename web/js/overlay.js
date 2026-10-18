@@ -106,13 +106,20 @@
     return result.effect ? 'Показываем: ' + result.effect.title : result.reason;
   }
 
-  // Перевернули экраном вниз, подержали и вернули — финал комбо или событие «ночь»
+  // Перевернули экраном вниз, подержали и вернули — финал комбо или событие «ночь».
+  // angle — на сколько градусов экран отвёрнут от неба: 0 — лежит экраном вверх, 180 — экраном вниз.
+  // В приложении угол считает Kotlin по акселерометру (Overlay.sensors): deviceorientation в WebView
+  // на Android приходит не всегда. В браузере — |beta| из deviceorientation.
   var flipDownSince = 0;
   var flipArmed = false;
-  window.addEventListener('deviceorientation', function (event) {
-    if (event.beta === null || event.beta === undefined) return;
+  if (!native) {
+    window.addEventListener('deviceorientation', function (event) {
+      if (event.beta !== null && event.beta !== undefined) onFlipAngle(Math.abs(event.beta));
+    });
+  }
+
+  function onFlipAngle(tilt) {
     var cfg = Doodles.settings();
-    var tilt = Math.abs(event.beta);
     var now = Date.now();
     if (tilt > cfg.flipDownAngle) {
       if (!flipDownSince) flipDownSince = now;
@@ -124,7 +131,7 @@
       flipArmed = false;
       flip();
     }
-  });
+  }
 
   function flip() {
     if (Doodles.trigger('flip')) return 'Переворот ушёл дудлу';
@@ -184,8 +191,118 @@
     setSuppressed: function (flag) {
       Seasonal.setSuppressed(!!flag);
       Doodles.setSuppressed(!!flag);
-    }
+    },
+    // Датчики считает приложение: angle — 0 экраном вверх … 180 экраном вниз, tilt — наклон −1 … 1
+    sensors: function (angle, tilt) {
+      if (!started) return;
+      Seasonal.setTilt(tilt);
+      onFlipAngle(angle);
+    },
+    // Встряска: сила в м/с² без гравитации. Порог тряски решает конфиг праздничного слоя.
+    motion: function (force) {
+      if (!started) return;
+      if (force > 8) lastHuman = Date.now();
+      Seasonal.motion(force);
+    },
+    // Показ: кнопки громкости — следующий / предыдущий дудл
+    step: function (dir) { stepDemo(dir < 0 ? -1 : 1); }
   };
+
+  // ---------- Показ: переключение дудлов кнопками громкости и автосмена ----------
+
+  // Круг показа — те же кнопки дудлов, что в отладке. Самое яркое — первым, как в режиме жюри веба.
+  var DEMO_FIRST = ['newyear-garland', 'autumn-leaves', 'cosmonautics', 'birthday'];
+  var DEMO_AUTOPLAY_MS = 1500;  // сцена уровня 1 сама, чтобы показ не был «пустым»
+  var DEMO_GRACE_MS = 10000;    // жюри трогало телефон меньше 10 с назад — автосмена ждёт
+  var DEMO_SEASON_MS = 6000;    // сколько даём праздничному слою, прежде чем запустить сцену стикера
+  var demoIndex = -1;
+  var demoSteps = [];
+  var demoTimer = 0;
+  var demoCaption = null;
+  var demoCaptionTimer = 0;
+  var lastHuman = 0;
+  var debugAuto = document.getElementById('debug-auto');
+  var debugAutoSec = document.getElementById('debug-auto-sec');
+
+  document.addEventListener('pointerdown', function () { lastHuman = Date.now(); }, { capture: true, passive: true });
+
+  // Тап по стикеру дня — в фокусе сцена дудла: праздничный слой на фоне мягко гаснет, чтобы не смешиваться с ней
+  document.addEventListener('click', function (event) {
+    if (event.target.closest && event.target.closest('.doodle-buddy')) Seasonal.skip();
+  }, true);
+
+  function demoOrder() {
+    var buttons = Array.prototype.slice.call(debugDoodles.querySelectorAll('button[data-id]'));
+    var first = [];
+    DEMO_FIRST.forEach(function (id) {
+      buttons.forEach(function (b) { if (b.getAttribute('data-id') === id) first.push(b); });
+    });
+    return first.concat(buttons.filter(function (b) { return first.indexOf(b) === -1; }));
+  }
+
+  function showCaption(button, n, total) {
+    if (!demoCaption) {
+      demoCaption = document.createElement('div');
+      demoCaption.className = 'ov-caption';
+      document.body.appendChild(demoCaption);
+    }
+    demoCaption.textContent = '';
+    demoCaption.appendChild(document.createTextNode(button.firstChild.textContent));
+    var small = document.createElement('small');
+    small.textContent = n + '/' + total;
+    demoCaption.appendChild(small);
+    demoCaption.classList.add('is-on');
+    window.clearTimeout(demoCaptionTimer);
+    demoCaptionTimer = window.setTimeout(function () { demoCaption.classList.remove('is-on'); }, 2500);
+  }
+
+  function stepDemo(dir) {
+    var order = demoOrder();
+    if (!order.length) return;
+    if (debugPanel.classList.contains('is-open')) setDebugOpen(false);
+    demoIndex = ((demoIndex + dir) % order.length + order.length) % order.length;
+    var button = order[demoIndex];
+    button.click();
+    showCaption(button, demoIndex + 1, order.length);
+    // Быстро листают — прошлый шаг не доигрывает
+    demoSteps.forEach(window.clearTimeout);
+    demoSteps = [window.setTimeout(function () {
+      // Сначала праздничный слой (есть не на каждую дату — trigger сам скажет «нет»),
+      // сцена стикера — когда он отыграет: вместе они смешиваются, а тап по стикеру гасит слой
+      var shown = Seasonal.trigger('shake').effect;
+      demoSteps.push(window.setTimeout(playBuddy, shown ? Math.min(shown.durationMs || DEMO_SEASON_MS, DEMO_SEASON_MS) : 300));
+    }, DEMO_AUTOPLAY_MS)];
+    if (debugAuto.checked) scheduleAuto();
+  }
+
+  // Тап по стикеру — как будто ребёнок его нашёл: уровень 1, аксессуар на аватар
+  function playBuddy() {
+    var buddy = document.querySelector('.doodle-buddy');
+    if (buddy) buddy.click();
+  }
+
+  function scheduleAuto() {
+    window.clearTimeout(demoTimer);
+    if (!debugAuto.checked) return;
+    demoTimer = window.setTimeout(function autoNext() {
+      var idle = Date.now() - lastHuman;
+      if (idle < DEMO_GRACE_MS) {
+        demoTimer = window.setTimeout(autoNext, DEMO_GRACE_MS - idle + 200);
+        return;
+      }
+      stepDemo(1);
+    }, Number(debugAutoSec.value) * 1000);
+  }
+
+  debugAuto.addEventListener('change', function () {
+    if (debugAuto.checked) {
+      setDebugOpen(false);
+      stepDemo(1);
+    } else {
+      window.clearTimeout(demoTimer);
+    }
+  });
+  debugAutoSec.addEventListener('change', scheduleAuto);
 
   // ---------- Дудлы ----------
 
@@ -354,13 +471,18 @@
       .then(previewZones);
   }
 
+  // Датчики от приложения принимаем, когда оба слоя запущены
+  var started = false;
+
   layoutReady.then(function () {
+    started = true;
     var seasonalReady = Seasonal.init({
       host: app,
       canvas: document.getElementById('seasonal-layer'),
       configUrl: 'effects/config.json',
       cdnUrl: cdnUrl('config.json'),
       dateOverride: urlDate,
+      nativeSensors: !!native,
       onShake: shake,
       onChange: function (effect) {
         if (effect) debugStatus.textContent = 'Показываем: ' + effect.title;

@@ -27,6 +27,22 @@ body:has(.ov-preview) { background: #eef0f4 !important; }
   background: rgba(28, 31, 30, .55);
 }
 .debug { pointer-events: auto; }
+.debug select {
+  padding: 8px 10px; border: 1px solid #2a2f2c; border-radius: 10px;
+  background: #1a1d1c; color: #f2f5f3; font: inherit;
+}
+
+/* Подпись на показе: какой дудл включили кнопкой громкости или автосменой */
+.ov-caption {
+  position: fixed; left: 50%; bottom: 112px; z-index: 60;
+  transform: translate(-50%, 8px); opacity: 0; transition: opacity .3s, transform .3s;
+  pointer-events: none;
+  padding: 8px 14px; border-radius: 999px;
+  background: rgba(20, 24, 28, .82); color: #fff;
+  font: 600 14px/1.2 var(--font); white-space: nowrap;
+}
+.ov-caption small { margin-left: 8px; font-weight: 400; opacity: .7; }
+.ov-caption.is-on { opacity: 1; transform: translate(-50%, 0); }
 @media (min-width: 721px) {
   .debug { position: fixed; right: 12px; top: 12px; max-height: calc(100vh - 24px); display: none; z-index: 40; }
   .debug.is-open { display: flex; }

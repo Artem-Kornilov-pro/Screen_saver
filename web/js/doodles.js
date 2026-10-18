@@ -223,7 +223,10 @@
       eff.buddy.wearScale = season.def.wearScale || 1.2;
       eff.buddy.wearTop = season.def.wearTop == null ? -0.5 : season.def.wearTop;
     }
-    if (season.def.particles && season.def.particles.length) {
+    // Сезонные частицы в сцене стикера — только если дудл сам их просит (seasonParticles: true):
+    // поверх пиксельных монеток или кристаллов листья и снежинки смотрятся чужими.
+    // Сезон и так виден: наряд на стикере и праздничный слой.
+    if (dressed.seasonParticles === true && season.def.particles && season.def.particles.length) {
       var fall = {
         type: 'particles', sprites: season.def.particles.map(abs), count: 14, origin: 'top', angle: [70, 110],
         speed: [90, 180], gravity: 80, sway: 50, size: [14, 26], durationMs: 3200, delayMs: 200
@@ -335,8 +338,12 @@
     return name ? ctx.root.querySelector('[data-anchor="' + name + '"]') : (ctx.home || ctx.anchor);
   }
 
-  // Центр якоря в координатах слоя эффектов
+  // Центр якоря в координатах слоя эффектов. 'center' — середина экрана, там же большая подсказка жеста.
   function anchorPoint(ctx, name) {
+    if (name === 'center') {
+      var w = ctx.layer.clientWidth, h = ctx.layer.clientHeight;
+      return { x: w / 2, y: h * 0.44, left: w / 2, bottom: h * 0.44 };
+    }
     var el = anchorEl(ctx, name) || ctx.anchor;
     var r = el.getBoundingClientRect();
     var l = ctx.layer.getBoundingClientRect();
@@ -1111,13 +1118,17 @@
   var GESTURE_ICONS = {
     tap3: '<svg viewBox="0 0 24 24"><circle class="g-ripple" cx="10.6" cy="4.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.5"/>' +
       '<g class="g-hand" fill="currentColor"><rect x="9" y="4" width="3.2" height="11" rx="1.6"/><rect x="7.2" y="11" width="9.6" height="9.5" rx="3.2"/></g></svg>',
-    pull: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
-      '<g class="g-pull" stroke-width="2.4"><path d="M12 3v12M7 10.5l5 5 5-5"/></g><path d="M5 21h14" stroke-width="2" opacity=".5"/></svg>',
+    // Палец ведёт вниз, за ним след — «потяни список»
+    pull: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">' +
+      '<path class="g-trail" d="M10.6 -3v9" stroke-width="2" opacity=".6"/>' +
+      '<g class="g-swipe" fill="currentColor" stroke="none"><rect x="9" y="4" width="3.2" height="11" rx="1.6"/><rect x="7.2" y="11" width="9.6" height="9.5" rx="3.2"/></g></svg>',
     shake: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">' +
       '<g class="g-shake"><rect x="8" y="3" width="8" height="18" rx="2.2" stroke-width="2"/><circle cx="12" cy="17.4" r=".6" stroke-width="1.6"/></g>' +
       '<path d="M4.2 8.5q-1.6 3.5 0 7M19.8 8.5q1.6 3.5 0 7" stroke-width="1.6" opacity=".7"/></svg>',
     flip: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
-      '<g class="g-flip"><rect x="7" y="3" width="10" height="18" rx="2.2" stroke-width="2"/><circle cx="12" cy="6.4" r=".6" stroke-width="1.6"/></g>' +
+      // Телефон переворачивается экраном вниз и обратно: экран (заливка) пропадает, когда он «спиной»
+      '<g class="g-flip"><rect class="g-screen" x="8.6" y="4.6" width="6.8" height="14.8" rx="1" fill="currentColor" stroke="none"/>' +
+      '<rect x="7" y="3" width="10" height="18" rx="2.2" stroke-width="2"/><circle cx="12" cy="6.4" r=".6" stroke-width="1.6"/></g>' +
       '<path d="M3.5 10 A9 9 0 0 1 7 4.5 M20.5 14 A9 9 0 0 1 17 19.5" stroke-width="1.6"/>' +
       '<path d="M5 3.8 L7 4.5 L6.6 6.6 M19 20.2 L17 19.5 L17.4 17.4" stroke-width="1.6"/></svg>',
     trace: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
