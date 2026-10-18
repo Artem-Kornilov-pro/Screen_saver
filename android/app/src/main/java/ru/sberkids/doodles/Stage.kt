@@ -47,6 +47,8 @@ class Stage(context: Context, private val cdnUrl: String, private val demoDate: 
     private val spinner = ProgressBar(context)
     private val toast = TextView(context)
     private val transfer = buildTransfer()
+    // QR-сканер на весь экран, как в iOS-версии: закрыли — эффекты снова разрешены
+    val qr = QrScreen(context as android.app.Activity) { js("Overlay.setSuppressed(false)"); web.visibility = View.VISIBLE }
 
     private var loaded = false
     private var pageReady = false
@@ -84,6 +86,8 @@ class Stage(context: Context, private val cdnUrl: String, private val demoDate: 
 
         transfer.visibility = View.GONE
         addView(transfer, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
+        qr.visibility = View.GONE
+        addView(qr, LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT))
 
         // Тост как в вебе: светлая плашка над таб-баром, поверх всего
         toast.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14f)
@@ -111,6 +115,8 @@ class Stage(context: Context, private val cdnUrl: String, private val demoDate: 
         main.setInsets(top, bottom)
         (toast.layoutParams as LayoutParams).bottomMargin = bottom + dp(100)
         (web.layoutParams as LayoutParams).apply { topMargin = top; bottomMargin = bottom }
+        qr.setPadding(0, top, 0, bottom)
+        qr.setBackgroundColor(Color.rgb(0x0B, 0x12, 0x0E))
         (spinner.layoutParams as LayoutParams).topMargin = top + (12 * density).toInt()
         transfer.setPadding(transfer.paddingLeft, top, transfer.paddingRight, bottom)
         requestLayout()
@@ -172,7 +178,7 @@ class Stage(context: Context, private val cdnUrl: String, private val demoDate: 
     // ---------- Касания ----------
 
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (transfer.visibility == View.VISIBLE) return super.dispatchTouchEvent(ev)
+        if (transfer.visibility == View.VISIBLE || qr.isOpen) return super.dispatchTouchEvent(ev)
         if (ev.actionMasked == MotionEvent.ACTION_DOWN) {
             val x = ev.x.toInt()
             val y = ev.y.toInt()
@@ -216,6 +222,12 @@ class Stage(context: Context, private val cdnUrl: String, private val demoDate: 
         js("Overlay.skip()")
         when {
             open == "transfer" -> openTransfer(true)
+            open == "qr" -> {
+                // Экран сканера — без эффектов, как перевод
+                js("Overlay.setSuppressed(true)")
+                web.visibility = View.INVISIBLE
+                qr.open()
+            }
             toast != null -> showToast(toast)
         }
     }
@@ -239,6 +251,10 @@ class Stage(context: Context, private val cdnUrl: String, private val demoDate: 
 
     /** Системное «назад»: закрывает перевод. false — закрывать нечего. */
     fun back(): Boolean {
+        if (qr.isOpen) {
+            qr.close()
+            return true
+        }
         if (transfer.visibility != View.VISIBLE) return false
         openTransfer(false)
         return true
@@ -321,12 +337,14 @@ class Stage(context: Context, private val cdnUrl: String, private val demoDate: 
     // Свернули и вернулись: страница получает visibilitychange — слой сверяет дату телефона
     fun resume() {
         web.onResume()
+        qr.resume()
         sensors.start()
     }
 
     fun pause() {
         sensors.stop()
         web.onPause()
+        qr.pause()
     }
 
     /** Показ: кнопки громкости листают дудлы. */

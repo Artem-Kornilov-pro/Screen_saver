@@ -94,6 +94,14 @@ class MainActivity : Activity() {
         }
     }
 
+    // Ответ на запрос камеры для QR-сканера
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == QrScreen.REQUEST_CAMERA) {
+            stage.qr.onCameraPermission(grantResults.firstOrNull() == android.content.pm.PackageManager.PERMISSION_GRANTED)
+        }
+    }
+
     @Deprecated("Android 12 и ниже")
     override fun onBackPressed() {
         if (!stage.back()) @Suppress("DEPRECATION") super.onBackPressed()

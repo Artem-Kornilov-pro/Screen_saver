@@ -20,6 +20,11 @@ android {
     }
 }
 
+dependencies {
+    // Распознавание QR с камеры: в Android SDK своего декодера нет (на iOS это делает AVFoundation)
+    implementation("com.google.zxing:core:3.5.3")
+}
+
 // Слой эффектов (HTML + JS, конфиги и картинки по умолчанию) берётся прямо из web/ — тот же код,
 // что и в браузерном прототипе. В APK он лежит в assets, CDN ложится поверх без релиза.
 androidComponents {

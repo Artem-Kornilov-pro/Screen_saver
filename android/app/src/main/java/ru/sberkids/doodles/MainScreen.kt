@@ -239,7 +239,7 @@ class MainScreen(
             action(toast, open)
             tiles.add(this)
         }
-        row.addView(tile("QR", R.drawable.ic_qr, Color.rgb(0x6C, 0x4C, 0xF0), 18, toast = "Открываем QR"), LinearLayout.LayoutParams(dp(64), dp(104)))
+        row.addView(tile("QR", R.drawable.ic_qr, Color.rgb(0x6C, 0x4C, 0xF0), 18, open = "qr"), LinearLayout.LayoutParams(dp(64), dp(104)))
         row.addView(tile("Скинуть\nденег", R.drawable.ic_arrow, Color.rgb(0x1E, 0x88, 0xFF), 18, open = "transfer"),
             LinearLayout.LayoutParams(0, dp(104), 1f).apply { leftMargin = dp(8) })
         row.addView(tile("Пополнить\nмобилку", R.drawable.ic_phone, Color.rgb(0x0F, 0x8A, 0x45), 18, toast = "Открываем «Пополнить мобилку»"),

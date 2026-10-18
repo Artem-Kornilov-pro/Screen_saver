@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>QR-сканер СберKids</title>
+<link rel="stylesheet" href="css/app.css">
+<link rel="stylesheet" href="css/qr.css">
+</head>
+<body class="is-qr-open">
+<!--
+  QR-мастерская для Android-приложения: тот же qr.js, что в вебе и в iOS-версии (сюжеты, рамки, демо, камера).
+  Открывается на весь экран по плитке «QR», крестик закрывает экран в приложении.
+  ?qr=detective|fishing|magic|rocket|chase — сюжет, &frame=loupe|portal|porthole|cat — рамка.
+-->
+<div class="stage">
+  <div class="phone" id="app"></div>
+</div>
+<!-- qr.js прячет отладку главного экрана, пока открыт сканер: здесь её нет, нужны только заглушки -->
+<div id="debug-panel" hidden></div>
+<button id="debug-toggle" type="button" hidden></button>
+
+<script src="js/qr-native.js"></script>
+<script src="js/qr.js"></script>
+<script>
+  (function () {
+    'use strict';
+    var params = new URLSearchParams(window.location.search);
+    if (params.get('qr')) QrFun.selectTheme(params.get('qr'));
+    QrFun.setOpen(true);
+    // Крестик сканера: в вебе он возвращает на главный экран, в приложении — закрывает экран QR
+    document.addEventListener('click', function (event) {
+      if (!event.target.closest('[data-back]')) return;
+      QrFun.setOpen(false);
+      if (window.NativeBridge) NativeBridge.closeQr();
+    });
+  })();
+</script>
+</body>
+</html>
